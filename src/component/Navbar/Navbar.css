@@ -1,0 +1,109 @@
+.nav {
+    background-color: white;
+    box-shadow: 8px 0 8px -6px rgba(0, 0, 0, 0.3);
+    height: 98%;
+    width: 19%;
+    margin-left: 1%;
+    margin-right: 1%;
+    position: fixed; 
+    z-index: 1; 
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    display: flex; 
+    flex-direction: column;
+    align-items: left;
+    border-radius: 25px;
+    border: black solid;
+}
+
+.logo-wrapper{
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+}
+.logo{
+    max-width: 70%;
+}
+.navText, .navText-selected {
+    text-transform: uppercase;
+    padding: 0.35rem 0.5rem 0.35rem 1.5rem;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    text-decoration: none;
+    margin-bottom: 2vh;
+}
+
+.navText {
+    width: 100%;
+        color: var(--text-color);
+        fill: white;
+        border-radius: 40px 999em 999em 40px
+}
+
+
+.navText:hover {
+    background-color: #ff8333;
+    cursor: pointer;
+    color: white;
+}
+
+.navText-selected {
+    background-color: #ff8333;
+        cursor: pointer;
+        color: white;
+}
+
+.navText span, .navText-selected span {
+    font-family: "QuickSand", sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 25px;
+    display: flex;
+    align-items: center;
+    margin: 0px;
+}
+.dropdown p, .dropdown-selected p {
+    font-family: "QuickSand", sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 27px;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.02em;
+    margin: 0 0 0 4rem;
+    display: flex;
+    align-items: center;
+    padding-top: .3rem;
+    border-radius: 40px 999em 999em 40px;
+        text-decoration: none;
+        width: 70%;
+        padding-left: 10px;
+}
+
+.dropdown {
+    color: black;
+    fill: white;
+    z-index: 5 !important;
+    text-decoration: none;
+}
+
+.dropdown p:hover {
+    background-color: #ff8333;
+        color: white;
+}
+
+.dropdown-selected p {
+    color: white !important;
+        background-color: #ff8333;
+}
+.dropdown-selected {
+    fill: white;
+    background-color: white;
+    color: var(--primary-color);
+    border-radius: 40px 999em 999em 40px;
+    width: 90%;
+}

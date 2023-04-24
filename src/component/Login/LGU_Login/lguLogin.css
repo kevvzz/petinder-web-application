@@ -1,0 +1,127 @@
+.lgu-container
+{
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	justify-content:center;
+	min-height:100vh;
+	color:#000;
+	background-color: rgb(255 141 1);
+	/* background:url('image/bg3.jpg') center no-repeat; */
+	background-size:cover;
+}
+
+.lgu-form-block
+{
+	width: 350px;
+	border-radius:5px;
+	box-sizing:border-box;
+	overflow:hidden;
+}
+
+.lgu-click-box
+{
+	height:50px;
+	background-color:#ff8333;
+	color:#fff;
+	line-height:50px;
+	font-size:20px;
+	box-shadow:0 5px 10px rgba(0,0,0,.5);
+}
+
+.lgu-fold
+{
+	position:relative;
+	background:rgb(217 217 217);
+	padding:30px 20px;
+	border-width: 0.8vw;
+	border-style: solid;
+	border-color: rgb(63 65 67);
+	
+}
+
+.lgu-form .text-sm
+{
+	font-size:14px;
+}
+
+.lgu-form .form-input
+{
+	position:relative;
+}
+
+.lgu-form .form-input input
+{
+	width:100%;
+	margin-bottom:20px;
+	height:40px;
+	border:2px solid #fff;
+	border-radius:20px;
+	outline:none;
+	background:transparent;
+	padding-left:45px;
+}
+
+.lgu-form .form-input span
+{
+	position:absolute;
+	top:8px;
+	padding-left:20px;
+	color:rgb(255 141 1);
+}
+
+.lgu-form .form-input input:focus,.lgu-form .form-input input:valid
+{
+	border:2px solid #ff8333;
+}
+
+.lgu-form .form-input input:focus::placeholder
+{
+	color:#454b69;
+}
+
+.lgu-form input[type="checkbox"]:not(:checked) + label:before
+{
+	background:transparent;
+	border:2px solid #fff;
+	width:15px;
+	height:15px;
+}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before
+{
+	background-color:#ff8333!important;
+	border:0;
+	width:15px;
+	height:15px;
+}
+
+.lgu-form button[type="button"]
+{
+	margin-top:10px;
+	border:none;
+	cursor:pointer;
+	width:150px;
+	height:40px;
+	border-radius:5px;
+	background:#ff8333;
+	color:#fff;
+	font-weight:700;
+	transition:.5s;
+	margin-bottom:10px;
+	justify-content: center;
+}
+.lgu-petinderLogo{
+	width: 15vw;
+	height: auto;
+}
+.lgu-form button[type="button"]:hover
+{
+	background:#ff741a;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);
+    -webkit-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
+}
+
+

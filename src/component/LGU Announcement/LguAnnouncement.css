@@ -1,0 +1,54 @@
+/* ANNOUNCEMENT */
+
+.announcement-header h2{
+    color: rgb(254 80 2);
+    font-size: 8vh;
+    font-weight: bolder;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.line{
+    border-bottom: 10px solid rgb(255 141 1);
+    margin-top: 5px;
+    width: 100%;
+}
+.announcement-col{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.announcement-button button:hover{
+    background-color: black;
+    color: white;
+}
+.announcement-button button{
+    margin-left: 32vw;
+	border:none;
+	cursor:pointer;
+	width:250px;
+	height:50px;
+    border: black solid;
+	border-radius:5px;
+	background:#ff8333;
+	color:#fff;
+	font-weight:700;
+	transition:.5s;
+}
+.lguLogo{
+    height: auto;
+    width: 8vw;
+}
+/* Customer */
+.customer{
+    display: flex;
+    align-items: center;
+    margin-bottom: 3vh;
+}
+
+.customer-table{
+    display: flex;
+}
+.customer-info{
+    margin-top: 4vh;
+}

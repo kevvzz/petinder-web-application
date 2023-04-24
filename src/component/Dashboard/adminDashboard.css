@@ -1,0 +1,140 @@
+:root{
+    --main-color:  rgb(255 141 1);
+    --color-dark: #1D2231;
+    --text-gray: #8390A2;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style-type: none;
+    text-decoration: none;
+    font-family: sans-serif;
+}
+
+
+/* CARDS */
+.cards{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1rem;
+    margin-top: 1rem;
+}
+.card-single{
+    display: flex;
+    justify-content: space-between;
+    background: #fff;
+    padding: 1rem;
+    height: 20vh;
+    width: auto;
+    border-radius: 25px;
+}
+.card-single div:last-child span {
+    font-size: 3rem;
+    color: rgb(255 141 1);
+}
+.card-single div:first-child span{
+    color: black;
+}
+.card-single:nth-child(1){
+    background: rgb(92 225 230);
+}
+.card-single:nth-child(2){
+    background: rgb(203 108 230);
+}
+.card-single:nth-child(3){
+    background: rgb(201 226 101);
+}
+.card-single:nth-child(4){
+    background: rgb(255 87 87);
+}
+.card-single:nth-child(5){
+    background: rgb(255 141 1);
+}
+
+/* Customer */
+
+
+/* .sidebar-menu{
+    background-color: rgb(255 141 1);
+} */
+
+table{
+    border-collapse: collapse;
+}
+.recent-grid{
+    margin-top: 4vh;
+    display: grid;
+    grid-gap: 2rem;
+    grid-template-columns: 67% auto;
+}
+.projects-card{
+    /* background:#fff; */
+    border-radius: 5px;
+    margin-bottom: 5vh;
+}
+.card-header,
+.card-body{
+    padding: 1rem;
+    border-style: solid;
+}
+.card-body{
+    background: #fff;
+}
+.card-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(255 141 1) !important;
+    border-bottom: 1px solid #f0f0f0;
+
+}
+.card-header button{
+    background: rgb(255 141 1);
+    border-radius: 10px;
+    color: black;
+    font-size: 0.8rem;
+    padding: 0.8rem 0.8rem;
+}
+
+thead tr{
+    border-top: 1px solid red;
+    border-bottom: 1px solid red;
+
+}
+thead td{
+    font-weight: 700;
+}
+td{
+    padding: .5rem 1rem;
+    font-size: .9rem;
+    color: #222;
+}
+.card-body table{
+    border-collapse: collapse;
+}
+
+.card-body td{
+    width: 25%;
+}
+.card-body td:nth-child(3){
+    text-align: center;
+}
+
+.imageIcon{
+    height:80%; 
+    width: 80%; 
+    object-fit: contain;
+}
+.petImage{
+    flex: 1; 
+    border-radius: 50%; 
+    width: 50%; 
+    height: 50%;
+}
+.lguImage{
+    flex: 1; 
+    width: 25%; 
+    height: 25%;
+}

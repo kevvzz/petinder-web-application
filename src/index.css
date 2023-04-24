@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Fredoka','Poppins','QuickSand'
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -10,4 +10,20 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../src//Assets/Ubuntu-n1M0.ttf');
+}
+@font-face {
+  font-family: 'Fredoka';
+  src: url('../src//Assets/Fredoka.ttf');
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('../src//Assets/Poppins-Regular.ttf');
+}
+@font-face {
+  font-family: 'QuickSand';
+  src: url('../src//Assets/Quicksand-VariableFont_wght.ttf');
 }

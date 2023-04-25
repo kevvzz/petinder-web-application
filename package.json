@@ -1,3 +1,5 @@
+
+
 {
   "name": "petinder-web-app",
   "version": "0.1.0",
@@ -41,5 +43,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {
+    "gh-pages": "^5.0.0"
+  },
+"homepage": "https://kevvzz.github.io/petinder-web-application/",
+"scripts": {
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d build"
+}
+  
 }

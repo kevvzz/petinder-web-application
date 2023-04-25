@@ -32,7 +32,8 @@ function PetProfileAdmin() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showVaccineModal, setShowVaccineModal] = useState(false);
   const [editPetProfile, setEditPetProfile] = useState({});
-  const [vaccineInfo, setVaccineInfo] = useState([]);
+  const [exist, setShowExist] = useState(false);
+  const [vaccineInfo, setVaccineInfo] = useState("");
   
   function onClickDeletePet() {
     setShowDeleteModal(true);
@@ -76,14 +77,35 @@ function PetProfileAdmin() {
     setEditPetProfile(location.state.doc);
     // const vaccine = db.collection("P_Vaccination_File").doc(editPetProfile.id);
    
-    const vaccine = db.collection("P_Vaccination_File");
+    const vaccine = db.collection("P_Vaccination_File").doc(editPetProfile.id);
     vaccine.get()
-    .then((querySnapshot) => {
-      const documents = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setVaccineInfo(documents);
+    .then((doc) => {
+      if (doc.exists) {
+        setShowExist(true);
+        const data = doc.data();
+        const vBatchNumber = data.V_BatchNumber; 
+        const vDate = data.V_Date;
+        const vManufacturer = data.V_Manufacturer;
+        const vNextDate = data.V_NextVaccinationDate; 
+        const vType = data.V_TypeofVacine;
+        const vVetName = data.V_VeterinarianName;
+        const vWeight = data.V_Weight; 
+        setVaccineInfo({ 
+          batchNumber: vBatchNumber, 
+          date: vDate, 
+          manufacturer: vManufacturer, 
+          nextDate: vNextDate, 
+          type: vType, 
+          vetName: vVetName, 
+          weight: vWeight});
+      } else {
+        console.log("No such document!");
+      }
+    }).catch((error) => {
+      console.log("Error getting document:", error);
     });
   }, [location.state, editPetProfile]);
-
+  console.log(vaccineInfo);
   function handleRemove(e) {
     // Delete the document from Firestore
     db.collection('Pets_Profile')
@@ -161,41 +183,59 @@ function PetProfileAdmin() {
     (vaccineData.batchVaccine !== "" && vaccineData.batchVaccine !== null) &&
     (vaccineData.nextVaccine !== "" && vaccineData.nextVaccine !== null) &&
     (vaccineData.vetNameVaccine !== "" && vaccineData.vetNameVaccine !== null)) {
-      const vaccId = editPetProfile.id.toString();
-
-      let found = false;
-      for (let i = 0; i < vaccineInfo.length; i++) {
-        if (vaccineInfo[i].id === vaccId) {
-          found = true;
-          break;
-        }
-      }
-      console.log(found);
+      const vaccId = editPetProfile.id;
+      console.log(exist);
       // // Save the pet data to Firestore
-      if(found){
-        db.collection("P_Vaccination_File")
-        .doc(editPetProfile.id.toString())
-        .update({
-          P_IDNumber: editPetProfile.id.toString(),
-          V_IDNumber: firebase.firestore.FieldValue.arrayUnion(vaccineData.idVaccine),
-          V_BatchNumber: firebase.firestore.FieldValue.arrayUnion(vaccineData.batchVaccine),
-          V_Date: firebase.firestore.FieldValue.arrayUnion(vaccineData.dateVaccine),
-          V_Manufacturer: firebase.firestore.FieldValue.arrayUnion(vaccineData.manufacturerVaccine),
-          V_NextVaccinationDate: firebase.firestore.FieldValue.arrayUnion(vaccineData.nextVaccine),
-          V_TypeofVacine: firebase.firestore.FieldValue.arrayUnion(vaccineData.typeVaccine),
-          V_VeterinarianName: firebase.firestore.FieldValue.arrayUnion(vaccineData.vetNameVaccine),
-          V_Weight: firebase.firestore.FieldValue.arrayUnion(vaccineData.weightVaccine),
-        })
-        .then(() => {
-          toast.success("New Pet Vaccine Added Successfully!");
-          alert("New Pet Vaccine Added Successfully!");
-          setShowVaccineModal(false)
-          console.log("success");
-        })
-        .catch((error) => {
-          toast.error("Error adding Vaccine to Firestore: ");
-          console.log(error)
-        });
+      if(exist){
+        // Get the document reference
+        const docRef = db.collection("P_Vaccination_File").doc(editPetProfile.id);
+
+        // Get the current document data
+        docRef.get().then((doc) => {
+          const data = doc.data();
+            const V_BatchNumber = data.V_BatchNumber || [];
+            const V_Date = data.V_Date || [];
+            const V_IDNumber = data.V_IDNumber || [];
+            const V_Manufacturer = data.V_Manufacturer || [];
+            const V_NextVaccinationDate = data.V_NextVaccinationDate || [];
+            const V_TypeofVacine = data.V_TypeofVacine || [];
+            const V_VeterinarianName = data.V_VeterinarianName || [];
+            const V_Weight = data.V_Weight || [];
+
+            V_BatchNumber.push(vaccineData.batchVaccine);
+            V_Date.push(vaccineData.dateVaccine);
+            V_IDNumber.push(vaccineData.idVaccine);
+            V_Manufacturer.push(vaccineData.manufacturerVaccine);
+            V_NextVaccinationDate.push(vaccineData.nextVaccine);
+            V_TypeofVacine.push(vaccineData.typeVaccine);
+            V_VeterinarianName.push(vaccineData.vetNameVaccine);
+            V_Weight.push(vaccineData.weightVaccine);
+
+            docRef.update({
+              V_BatchNumber,
+              V_Date,
+              V_IDNumber,
+              V_Manufacturer,
+              V_NextVaccinationDate,
+              V_TypeofVacine,
+              V_VeterinarianName,
+              V_Weight
+            }).then(() => {
+              toast.success("New Pet Vaccine Added Successfully!");
+              alert("New Pet Vaccine Added Successfully!");
+              setShowExist(true)
+              setShowVaccineModal(false)
+              console.log("success");
+            })
+            .catch((error) => {
+              toast.error("Error adding Vaccine to Firestore: ");
+              console.log(error)
+            });
+          }
+          
+        );
+
+
       }else{
         db.collection("P_Vaccination_File")
         .doc(editPetProfile.id.toString())
@@ -213,6 +253,7 @@ function PetProfileAdmin() {
         .then(() => {
           toast.success("Pet Vaccine Added Successfully!");
           alert("Pet Vaccine Added Successfully!");
+          setShowExist(true)
           setShowVaccineModal(false)
           console.log("success");
         })
@@ -315,30 +356,37 @@ function PetProfileAdmin() {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    <th>No.</th>
                     <th>Date of Vaccine</th>
                     <th>Weight</th>
                     <th>Type of Vaccine</th>
                     <th>Manufacturer</th>
-                    <th>Lot No./ Batch No.</th>
+                    <th>Lot No./ Batch No.</th> 
                     <th>Date of Next Vaccination</th>
                     <th>VET Name and PRC Np.</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {vaccineInfo.map((row, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <th>{row.V_Date}</th>
-                      <th>{row.V_Weight}</th>
-                      <th>{row.V_TypeofVacine}</th>
-                      <th>{row.V_Manufacturer}</th>
-                      <th>{row.V_BatchNumber}</th>
-                      <th>{row.V_NextVaccinationDate}</th>
-                      <th>{row.V_VeterinarianName}</th>
-                    </tr>
-                  ))}
+                  {vaccineInfo && (
+                    <>
+                      {vaccineInfo.batchNumber.map((batch, index) => (
+                        <tr key={index}>
+                          <td>{vaccineInfo.date[index]}</td>
+                          <td>{vaccineInfo.weight[index]}</td>
+                          <td>{vaccineInfo.type[index]}</td>
+                          <td>{vaccineInfo.manufacturer[index]}</td>
+                          <td>{batch}</td>
+                          <td>{vaccineInfo.nextDate[index]}</td>
+                          <td>{vaccineInfo.vetName[index]}</td>
+                        </tr>
+                      ))}
+                
+                     
+                     
+                        
+                      
+                    </>
+                  )}
                 </tbody>
               </Table>
             </Col>

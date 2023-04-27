@@ -65,7 +65,7 @@ function AdminLguList() {
     } else {
       setFilteredOwner(
         allOwner.filter(
-          (owner) => owner.email.toLowerCase().indexOf(term) !== -1 || owner.name.toLowerCase().indexOf(term) !== -1
+          (owner) => owner.branch.toLowerCase().indexOf(term) !== -1 || owner.user.toLowerCase().indexOf(term) !== -1
         )
       );
     }

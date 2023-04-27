@@ -1,13 +1,15 @@
 import React, { useState,useRef,useEffect } from 'react';
+import {Modal, Row, Col, Form, InputGroup, Table } from 'react-bootstrap'
 import Overlay from 'react-bootstrap/Overlay';
 import Tooltip from 'react-bootstrap/Tooltip';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {AdminNavbar} from '../Navbar/Navbar';
-import {Modal, Row, Col, Form, InputGroup, Table } from 'react-bootstrap'
+
 
 // import { Table, thead, tbody, tr, th, td } from 'react-bootstrap';
 import DeleteModal from '../Modal/DeleteModal';
 import EditAdminPets from './EditAdminPets';
+import EditVaccine from '../Modal/EditVaccine';
 
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
@@ -31,10 +33,15 @@ function PetProfileAdmin() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showVaccineModal, setShowVaccineModal] = useState(false);
+  const [showEditVaccineModal, setShowEditVaccineModal] = useState(false);
   const [editPetProfile, setEditPetProfile] = useState({});
   const [exist, setShowExist] = useState(false);
   const [vaccineInfo, setVaccineInfo] = useState("");
-  
+  const [vaccineId, setVaccineId] = useState("");
+
+  // function onClickEditVaccine() {
+  //   setShowEditVaccineModal(true);
+  // }
   function onClickDeletePet() {
     setShowDeleteModal(true);
   }
@@ -105,7 +112,6 @@ function PetProfileAdmin() {
       console.log("Error getting document:", error);
     });
   }, [location.state, editPetProfile]);
-  console.log(vaccineInfo);
   function handleRemove(e) {
     // Delete the document from Firestore
     db.collection('Pets_Profile')
@@ -132,6 +138,7 @@ function PetProfileAdmin() {
     const { name, value } = event.target;
     setVaccineData({ ...vaccineData, [name]: value });
   };
+  
   const handleVaccineSave = () => {
 
     if(vaccineData.dateVaccine === ""){
@@ -223,6 +230,7 @@ function PetProfileAdmin() {
             }).then(() => {
               toast.success("New Pet Vaccine Added Successfully!");
               alert("New Pet Vaccine Added Successfully!");
+              window.location.reload();
               setShowExist(true)
               setShowVaccineModal(false)
               console.log("success");
@@ -253,6 +261,7 @@ function PetProfileAdmin() {
         .then(() => {
           toast.success("Pet Vaccine Added Successfully!");
           alert("Pet Vaccine Added Successfully!");
+          window.location.reload();
           setShowExist(true)
           setShowVaccineModal(false)
           console.log("success");
@@ -266,7 +275,63 @@ function PetProfileAdmin() {
     
 
   };
+  const handleSelectAction = (e) => {
+    const { id, value } = e.target;
+    if (value === "edit") {
+      setShowEditVaccineModal(true)
+      setVaccineId(id);
+    } else if (value === "delete"){
+      deleteVaccine(id);
+    }
+  }
+ 
+  function deleteVaccine(index){
+    const docRef = db.collection("P_Vaccination_File").doc(editPetProfile.id.toString());
+    docRef.get().then((doc) => {
+      if (doc.exists) {
+        const V_BatchNumber = doc.data().V_BatchNumber;
+        V_BatchNumber.splice(index, 1); // remove the element at the specified index
+        docRef.update({ V_BatchNumber: V_BatchNumber }); // update the document with the modified array
 
+        const V_Date = doc.data().V_Date;
+        V_Date.splice(index, 1); // remove the element at the specified index
+        docRef.update({ V_Date: V_Date }).then(() => {console.log("1");});// update the document with the modified array
+
+        const V_IDNumber = doc.data().V_IDNumber;
+        V_IDNumber.splice(index, 1); // remove the element at the specified index
+        docRef.update({ V_IDNumber: V_IDNumber }).then(() => {console.log("2");}); // update the document with the modified array
+
+        const V_Manufacturer = doc.data().V_Manufacturer;
+        V_Manufacturer.splice(index, 1); // remove the element at the specified index
+        docRef.update({ V_Manufacturer: V_Manufacturer }).then(() => {console.log("3");}); // update the document with the modified array
+
+        const V_NextVaccinationDate = doc.data().V_NextVaccinationDate;
+        V_NextVaccinationDate.splice(index, 1); // remove the element at the specified index
+        docRef.update({ V_NextVaccinationDate: V_NextVaccinationDate }).then(() => {console.log("4");}); // update the document with the modified array
+
+        const V_VeterinarianName = doc.data().V_VeterinarianName;
+        V_VeterinarianName.splice(index, 1); // remove the element at the specified index
+        docRef.update({ V_VeterinarianName: V_VeterinarianName }).then(() => {console.log("5");}); // update the document with the modified array
+
+        const V_TypeofVacine = doc.data().V_TypeofVacine;
+        V_TypeofVacine.splice(index, 1); // remove the element at the specified index
+        docRef.update({ V_TypeofVacine: V_TypeofVacine }).then(() => {console.log("6");}); // update the document with the modified array
+
+        const V_Weight = doc.data().V_Weight;
+        V_Weight.splice(index, 1); // remove the element at the specified index
+        docRef.update({ V_Weight: V_Weight }).then(() => {console.log("7");window.location.reload();}); // update the document with the modified array
+      } else {
+        console.log("No such document!");
+      }
+  })
+  .then(() => {
+    console.log("yeahhawww");
+
+  }).catch((error) => {
+    console.log("Error getting document:", error);
+  });
+   
+  }
   return (
     <div className='main-bg'>
       <AdminNavbar/>
@@ -369,22 +434,22 @@ function PetProfileAdmin() {
                 <tbody>
                   {vaccineInfo && (
                     <>
-                      {vaccineInfo.batchNumber.map((batch, index) => (
-                        <tr key={index}>
-                          <td>{vaccineInfo.date[index]}</td>
-                          <td>{vaccineInfo.weight[index]}</td>
-                          <td>{vaccineInfo.type[index]}</td>
-                          <td>{vaccineInfo.manufacturer[index]}</td>
-                          <td>{batch}</td>
-                          <td>{vaccineInfo.nextDate[index]}</td>
-                          <td>{vaccineInfo.vetName[index]}</td>
-                        </tr>
-                      ))}
-                
-                     
-                     
-                        
-                      
+                    {vaccineInfo.batchNumber.map((batch, index) => (
+                      <tr key={index}>
+                        <td>{vaccineInfo.date[index]}</td>
+                        <td>{vaccineInfo.weight[index]}</td>
+                        <td>{vaccineInfo.type[index]}</td>
+                        <td>{vaccineInfo.manufacturer[index]}</td>
+                        <td>{batch}</td>
+                        <td>{vaccineInfo.nextDate[index]}</td>
+                        <td>{vaccineInfo.vetName[index]}</td>
+                        <select className="dropdown-btn" aria-label="" onChange={handleSelectAction} id={index} value=''>
+                          <option selected hidden>Actions</option>
+                          <option value="edit">Edit</option>
+                          <option value="delete">Delete</option>
+                        </select>
+                      </tr>
+                    ))}
                     </>
                   )}
                 </tbody>
@@ -403,6 +468,14 @@ function PetProfileAdmin() {
               // showmodal1handler = {onClickEditLeaveType}
               editPetProfile = {editPetProfile}
               setEditPetProfile = {setEditPetProfile}
+          />
+          <EditVaccine
+            showmodal1 = {showEditVaccineModal}
+            hidemodal1 = {() => setShowEditVaccineModal(false)}
+            editPetProfile = {editPetProfile}
+            vaccineId = {vaccineId}
+            vaccineInfo = {vaccineInfo}
+            setVaccineInfo = {setVaccineInfo}
           />
             
         </div>

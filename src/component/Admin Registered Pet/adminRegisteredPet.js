@@ -68,7 +68,7 @@ function AdminRegisteredPet() {
         console.log("Error getting documents: ", error);
       });
   }, []);
-
+  console.log(allPets);
   function searchFilter(e) {
     let term = e.target.value.toLowerCase();
     if (term == "") {
@@ -76,7 +76,7 @@ function AdminRegisteredPet() {
     } else {
       setFilteredPets(
         allPets.filter(
-          (pet) => pet.pets.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
+          (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
         )
       );
     }
@@ -182,7 +182,7 @@ function petFilter(filter) {
                             <a>
                                 <img src={doc.url} alt="profile"/>
                                 <div>
-                                    <h4><center><b>{doc.name}</b></center></h4> 
+                                    <h4 className='name-pet'><center><b>{doc.name}</b></center></h4> 
                                 </div>
                             </a>   
                         </div>

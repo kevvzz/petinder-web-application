@@ -183,6 +183,9 @@
     margin-top: 4vh;
     text-transform: uppercase;
 }
+.name-pet{
+    text-transform:capitalize;
+}
 .vaccine{
     font-size: 3vw;
     font-weight: bolder;

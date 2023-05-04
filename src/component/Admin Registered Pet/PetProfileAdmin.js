@@ -30,18 +30,34 @@ import { useNavigate,useLocation} from 'react-router-dom';
 
 function PetProfileAdmin() {
   const navigate = useNavigate()
+
+  const location = useLocation();
+  const data = location.state.doc;
+  const [editPetProfile, setEditPetProfile] = useState({
+    id: '',
+    owner: '',
+    name: '',
+    species: '',
+    gender: '',
+    color: '' ,
+    age: '',
+    neutering: '',
+    breed: '',
+    status: '',
+    registerType: '',
+    lguAccount: '',
+    registerLocation: ''
+  });
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showVaccineModal, setShowVaccineModal] = useState(false);
   const [showEditVaccineModal, setShowEditVaccineModal] = useState(false);
-  const [editPetProfile, setEditPetProfile] = useState({});
   const [exist, setShowExist] = useState(false);
   const [vaccineInfo, setVaccineInfo] = useState("");
   const [vaccineId, setVaccineId] = useState("");
-
-  // function onClickEditVaccine() {
-  //   setShowEditVaccineModal(true);
-  // }
+ 
+  
   function onClickDeletePet() {
     setShowDeleteModal(true);
   }
@@ -51,8 +67,6 @@ function PetProfileAdmin() {
   function onClickVaccinePet() {
     setShowVaccineModal(true);
   }
-
-  const location = useLocation();
 
   const dateTarget = useRef(null);
   const [dateShowTooltip, setDateShowTooltip] = useState(false);
@@ -79,12 +93,55 @@ function PetProfileAdmin() {
     nextVaccine:'',
     vetNameVaccine: '',
   });
-  
+
+  console.log(editPetProfile);
   useEffect(() => {
-    setEditPetProfile(location.state.doc);
-    // const vaccine = db.collection("P_Vaccination_File").doc(editPetProfile.id);
-   
-    const vaccine = db.collection("P_Vaccination_File").doc(editPetProfile.id);
+    const docRef = db.collection("Pets_Profile").doc(data.id);
+    docRef.get()
+      .then((doc) => {
+        console.log(doc);
+        if (doc.exists) {
+          const pet = doc.data();
+          const { P_Age, 
+            P_Breed, 
+            P_Color, 
+            P_DateRegistered, 
+            P_Gender, 
+            P_IDNumber, 
+            P_LGUAccount, 
+            P_Name, 
+            P_Neutering, 
+            P_PetOwner, 
+            P_RegisterType, 
+            P_RegisteredLocation, 
+            P_Species, 
+            P_Status } = pet;
+
+          setEditPetProfile({ 
+            id: P_IDNumber,
+            owner: P_PetOwner,
+            name: P_Name,
+            species: P_Species,
+            gender: P_Gender,
+            color: P_Color,
+            age: P_Age,
+            neutering: P_Neutering,
+            breed: P_Breed,
+            status: P_Status,
+            registerType: P_RegisterType,
+            lguAccount: P_LGUAccount,
+            registerLocation: P_RegisteredLocation
+          });
+        } else {
+          console.log("No such document!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting document:", error);
+      });
+  }, []);
+  useEffect(() => {
+    const vaccine = db.collection("P_Vaccination_File").doc(data.id);
     vaccine.get()
     .then((doc) => {
       if (doc.exists) {
@@ -111,15 +168,16 @@ function PetProfileAdmin() {
     }).catch((error) => {
       console.log("Error getting document:", error);
     });
-  }, [location.state, editPetProfile]);
+  }, [data]);
+
   function handleRemove(e) {
     // Delete the document from Firestore
     db.collection('Pets_Profile')
-    .doc(editPetProfile.id)
+    .doc(data.id)
     .delete()
 
     // Delete the image from Storage
-    const photoRef = storage.ref().child(`Pet/${editPetProfile.id}`);
+    const photoRef = storage.ref().child(`Pet/${data.id}`);
     photoRef.delete()
     .then(() => {
       toast.success("Pet Profile Deleted Successfully!");
@@ -190,12 +248,12 @@ function PetProfileAdmin() {
     (vaccineData.batchVaccine !== "" && vaccineData.batchVaccine !== null) &&
     (vaccineData.nextVaccine !== "" && vaccineData.nextVaccine !== null) &&
     (vaccineData.vetNameVaccine !== "" && vaccineData.vetNameVaccine !== null)) {
-      const vaccId = editPetProfile.id;
+      const vaccId = data.id;
       console.log(exist);
       // // Save the pet data to Firestore
       if(exist){
         // Get the document reference
-        const docRef = db.collection("P_Vaccination_File").doc(editPetProfile.id);
+        const docRef = db.collection("P_Vaccination_File").doc(data.id);
 
         // Get the current document data
         docRef.get().then((doc) => {
@@ -246,9 +304,9 @@ function PetProfileAdmin() {
 
       }else{
         db.collection("P_Vaccination_File")
-        .doc(editPetProfile.id.toString())
+        .doc(data.id.toString())
         .set({
-          P_IDNumber: editPetProfile.id.toString(),
+          P_IDNumber: data.id.toString(),
           V_IDNumber: [vaccineData.idVaccine],
           V_BatchNumber: [vaccineData.batchVaccine],
           V_Date: [vaccineData.dateVaccine],
@@ -286,7 +344,7 @@ function PetProfileAdmin() {
   }
  
   function deleteVaccine(index){
-    const docRef = db.collection("P_Vaccination_File").doc(editPetProfile.id.toString());
+    const docRef = db.collection("P_Vaccination_File").doc(data.id.toString());
     docRef.get().then((doc) => {
       if (doc.exists) {
         const V_BatchNumber = doc.data().V_BatchNumber;
@@ -346,7 +404,7 @@ function PetProfileAdmin() {
             <Col>
               <Row className='orange'>
                 <Col xs="auto"></Col>
-                  <img className='picture' src={editPetProfile.url} alt="picture"/>
+                  <img className='picture' src={data.url} alt="picture"/>
                 <Col>
                   <Row><Col className='center'><div className='petName'>{editPetProfile.name}</div></Col></Row>
                   <Row><Col className='center'><div className='petId'>{editPetProfile.id}</div></Col></Row>
@@ -462,17 +520,16 @@ function PetProfileAdmin() {
               hide = {() => setShowDeleteModal(false)}
               remover = {handleRemove}
           />
-          <EditAdminPets 
+          <EditAdminPets
               showmodal1 = {showEditModal}
               hidemodal1 = {() => setShowEditModal(false)}
-              // showmodal1handler = {onClickEditLeaveType}
               editPetProfile = {editPetProfile}
               setEditPetProfile = {setEditPetProfile}
           />
           <EditVaccine
             showmodal1 = {showEditVaccineModal}
             hidemodal1 = {() => setShowEditVaccineModal(false)}
-            editPetProfile = {editPetProfile}
+            editPetProfile = {data}
             vaccineId = {vaccineId}
             vaccineInfo = {vaccineInfo}
             setVaccineInfo = {setVaccineInfo}

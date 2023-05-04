@@ -12,6 +12,12 @@ import 'firebase/compat/firestore';
 import { toast } from 'react-toastify';
 
 function EditAdminPets(props) {
+  const editPetProfile = props.editPetProfile;
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [owner, setOwner] = useState([]);
+  const [lguAccount, setLguAccount] = useState([]);
+
+
   const ownerTarget = useRef(null);
   const [ownerShowTooltip, setOwnerShowTooltip] = useState(false);
   const nameTarget = useRef(null);
@@ -39,50 +45,38 @@ function EditAdminPets(props) {
   const registerTarget = useRef(null);
   const [registerShowTooltip, setRegisterShowTooltip] = useState(false);
 
-  // const refreshPage = () => {
-  //   window.location.reload();
-  // }
-  const editPetProfile = props.editPetProfile;
-  const [profileCollection, setProfileCollection] = useState("PetLovers_Profile");
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [owner, setOwner] = useState([]);
-  const [lguAccount, setLguAccount] = useState([]);
- 
-  
   useEffect(() => {
-    
-    if(props.editPetProfile.status === "Adoption" || props.editPetProfile.status === "Sale"){
-      setProfileCollection("PetSellerorAdoption_Profile");
+    let profileCollection = "";
+    if (editPetProfile.status === "Adoption" || editPetProfile.status === "Sale") {
+      profileCollection = "PetSellerorAdoption_Profile";
+    } else if (editPetProfile.status === "Owned") {
+      profileCollection = "PetLovers_Profile";
     }
-
-    if(props.editPetProfile.status === "Owned"){
-      setProfileCollection("PetLovers_Profile");
-    }
-    const owner = db.collection(profileCollection);
-    const lguAccount = db.collection("LGU_Profile");
-   
-    owner.get()
-    .then((querySnapshot) => {
-      const documents = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setOwner(documents);
-    });
-    lguAccount.get()
-    .then((querySnapshot) => {
-      const documents = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setLguAccount(documents);
-    });
   
-  }, [props.editPetProfile, profileCollection]);
+    if (profileCollection) {
+      const owner = db.collection(profileCollection);
+      const lguAccount = db.collection("LGU_Profile");
+  
+      owner.get().then((querySnapshot) => {
+        const documents = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setOwner(documents);
+      });
+      lguAccount.get().then((querySnapshot) => {
+        const documents = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setLguAccount(documents);
+      });
+    }
+  }, [editPetProfile]);
+  
 
   function handleFileSelect(event) {
     setSelectedFile(event.target.files[0]);
   }
-  function handle(e) {
+  function handleEdit(e) {
     let editedPetProfile = { ...editPetProfile };
-    console.log(editedPetProfile);
     editedPetProfile[e.target.id] = e.target.value;
     props.setEditPetProfile(editedPetProfile);
-}
+  }
 
   const handleSaveChanges = () => {
     if(editPetProfile.owner === "" || editPetProfile.owner === null){
@@ -157,11 +151,6 @@ function EditAdminPets(props) {
       setRegisterShowTooltip(false);
     }
 
-    // if(selectedFile === null){
-    //   setProfileShowTooltip(true);
-    // }else{
-    //   setProfileShowTooltip(false);
-    // }
 
     
     
@@ -177,48 +166,46 @@ function EditAdminPets(props) {
     (editPetProfile.registerType !== "" && editPetProfile.registerType !== null) &&
     (editPetProfile.registerLocation !== "" && editPetProfile.registerLocation !== null) &&
     (editPetProfile.breed !== "" && editPetProfile.breed !== null)){
-
+      console.log(editPetProfile);
       const storageRef = storage.ref();
       const fileRef = storageRef.child(`Pet/${editPetProfile.id}`);
-      fileRef.put(selectedFile).then(() => {
-        console.log('File uploaded successfully');
-      });
-
-      
-      // Update the pet data to Firestore
-      db.collection("Pets_Profile")
-      .doc(editPetProfile.id)
-      .update({
-        P_PetOwner: editPetProfile.owner,
-        P_Name: editPetProfile.name,
-        P_Species: editPetProfile.species,
-        P_Gender: editPetProfile.gender,
-        P_Color: editPetProfile.color ,
-        P_Age: editPetProfile.age,
-        P_Neutering: editPetProfile.neutering,
-        P_Breed: editPetProfile.breed,
-        P_Status: editPetProfile.status,
-        P_RegisterType: editPetProfile.registerType,
-        P_LGUAccount: editPetProfile.lguAccount,
-        P_RegisteredLocation: editPetProfile.registerLocation
-      })
-      .then(() => {
-        toast.success("Pet Profile Added Successfully!");
-        alert("Pet Profile Added Successfully!");
-        // setTimeout(() => refreshPage(), 1000);
-
-        // Close the modal
-        props.hidemodal1();
-        console.log("success");
-      })
-      .catch((error) => {
-        toast.error("Error adding pet to Firestore: ");
-        console.log(error)
-      });
+      if(selectedFile !== null){
+        fileRef.put(selectedFile).then(() => {
+          console.log('File uploaded successfully');
+        });
+      }
+        // Update the pet data to Firestore
+        db.collection("Pets_Profile")
+        .doc(editPetProfile.id)
+        .update({
+          P_PetOwner: editPetProfile.owner,
+          P_Name: editPetProfile.name,
+          P_Species: editPetProfile.species,
+          P_Gender: editPetProfile.gender,
+          P_Color: editPetProfile.color ,
+          P_Age: editPetProfile.age,
+          P_Neutering: editPetProfile.neutering,
+          P_Breed: editPetProfile.breed,
+          P_Status: editPetProfile.status,
+          P_RegisterType: editPetProfile.registerType,
+          P_LGUAccount: editPetProfile.lguAccount,
+          P_RegisteredLocation: editPetProfile.registerLocation
+        })
+        .then(() => {
+          toast.success("Pet Profile Added Successfully!");
+          alert("Pet Profile Added Successfully!");
+          window.location.reload();
+          props.hidemodal1();
+          console.log("success");
+        })
+        .catch((error) => {
+          toast.error("Error adding pet to Firestore: ");
+          console.log(error)
+        });
+     
     }
   
   };
-
   return (
     <div> 
        <Modal show={props.showmodal1} onHide={props.hidemodal1} centered className='modal-lg'>
@@ -228,14 +215,14 @@ function EditAdminPets(props) {
           <Modal.Body>
             <Row>
               <Col>
-                  <Form.Label ref={statusTarget} className="h6" htmlFor="name">Status<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={statusTarget} className="h6">Status<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Select 
                       aria-label="Default select example" 
                       name="status" 
                       id="status" 
                       defaultValue={props.editPetProfile?props.editPetProfile.status:""} 
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     >
                       <option value="">Select Status</option>
                       <option value="Adoption">For Adoption</option>
@@ -252,14 +239,14 @@ function EditAdminPets(props) {
                   </InputGroup>
                 </Col>
                 <Col>
-                  <Form.Label ref={ownerTarget} className="h6" htmlFor="name">Pet Owner<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={ownerTarget} className="h6">Pet Owner<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Select 
                       aria-label="Default select example"
                       name="owner" 
                       id="owner" 
                       defaultValue={props.editPetProfile?props.editPetProfile.owner:""} 
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     >
                       <option value="">Select Owner</option>
                       {owner.map((doc) => (
@@ -281,15 +268,15 @@ function EditAdminPets(props) {
             </Row>
             <Row>
                 <Col>
-                  <Form.Label ref={nameTarget} className="h6" htmlFor="name">Pet Name<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={nameTarget} className="h6">Pet Name<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Control
                       type="text" 
                       name="name"
                       id="name"
                       className="form-control mb-2"
-                      defaultValue={props.editPetProfile?props.editPetProfile.name:""}
-                      onChange={(e) => handle(e)}
+                      value={props.editPetProfile?props.editPetProfile.name:""}
+                      onChange={(e) => handleEdit(e)}
                     />
                     <Overlay target={nameTarget.current} show={nameShowTooltip} placement="right">
                       {(props) => (
@@ -301,14 +288,14 @@ function EditAdminPets(props) {
                   </InputGroup>
                 </Col>
                 <Col>
-                  <Form.Label ref={genderTarget} className="h6" htmlFor="name">Gender<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={genderTarget} className="h6">Gender<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Select 
                       aria-label="Default select example" 
                       name="gender" 
                       id="gender" 
                       defaultValue={props.editPetProfile?props.editPetProfile.gender:""} 
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     >
                       <option value="">Select Gender</option>
                       <option value="Male">Male</option>
@@ -326,14 +313,14 @@ function EditAdminPets(props) {
             </Row>
             <Row>
                 <Col>
-                  <Form.Label ref={speciesTarget} className="h6" htmlFor="name">Species<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={speciesTarget} className="h6">Species<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Select 
                       aria-label="Default select example" 
                       name="species" 
                       id="species" 
                       defaultValue={props.editPetProfile?props.editPetProfile.species:""} 
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     >
                       <option value="">Select Species</option>
                       <option value="Feline">Feline (Cat)</option>
@@ -349,14 +336,14 @@ function EditAdminPets(props) {
                   </InputGroup>
                 </Col>
                 <Col>
-                  <Form.Label ref={neutringTarget} className="h6" htmlFor="name">Is Pet already Neutered or Castrated?<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={neutringTarget} className="h6">Is Pet already Neutered or Castrated?<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Select 
                       aria-label="Default select example" 
                       name="neutering" 
                       id="neutering" 
                       defaultValue={props.editPetProfile?props.editPetProfile.neutering:""} 
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     >
                       <option value="">Select</option>
                       <option value="Neutered">Yes</option>
@@ -374,7 +361,7 @@ function EditAdminPets(props) {
             </Row>
             <Row>
                 <Col>
-                  <Form.Label ref={breedTarget} className="h6" htmlFor="name">Breed<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={breedTarget} className="h6">Breed<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Control
                       type="text" 
@@ -382,7 +369,7 @@ function EditAdminPets(props) {
                       id="breed"
                       className="form-control mb-2"
                       defaultValue={props.editPetProfile?props.editPetProfile.breed:""}
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     />
                     <Overlay target={breedTarget.current} show={breedShowTooltip} placement="right">
                       {(props) => (
@@ -394,7 +381,7 @@ function EditAdminPets(props) {
                   </InputGroup>
                 </Col>
                 <Col>
-                  <Form.Label ref={colorTarget} className="h6" htmlFor="name">Color<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={colorTarget} className="h6">Color<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Control
                       type="text" 
@@ -402,7 +389,7 @@ function EditAdminPets(props) {
                       id="color"
                       className="form-control mb-2"
                       defaultValue={props.editPetProfile?props.editPetProfile.color:""}
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     />
                     <Overlay target={colorTarget.current} show={colorShowTooltip} placement="right">
                       {(props) => (
@@ -416,14 +403,14 @@ function EditAdminPets(props) {
             </Row>
             <Row>
                 <Col>
-                  <Form.Label ref={lguTarget} className="h6" htmlFor="name">LGU Accounts<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={lguTarget} className="h6">LGU Accounts<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Select 
                       aria-label="Default select example" 
                       name="lguAccount" 
                       id="lguAccount" 
                       defaultValue={props.editPetProfile?props.editPetProfile.lguAccount:""} 
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     >
                     <option value="">Select Lgu Account</option>
                      {lguAccount.map((doc) => (
@@ -442,14 +429,14 @@ function EditAdminPets(props) {
                   </InputGroup>
                 </Col>
                 <Col>
-                  <Form.Label ref={typeTarget} className="h6" htmlFor="name">Register Type<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={typeTarget} className="h6">Register Type<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Select 
                       aria-label="Default select example" 
                       name="registerType" 
                       id="registerType" 
                       defaultValue={props.editPetProfile?props.editPetProfile.registerType:""} 
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     >
                       <option value="">Select</option>
                       <option value="Perpetual">Perpetual</option>
@@ -467,7 +454,7 @@ function EditAdminPets(props) {
             </Row>
             <Row>
               <Col>
-                <Form.Label ref={ageTarget} className="h6" htmlFor="name">Age<span className='red'> *</span></Form.Label>
+                <Form.Label ref={ageTarget} className="h6">Age<span className='red'> *</span></Form.Label>
                 <InputGroup className='mb-3'>
                   <Form.Control
                     type="number" 
@@ -476,7 +463,7 @@ function EditAdminPets(props) {
                     placeholder=""
                     className="form-control mb-2"
                     defaultValue={props.editPetProfile?props.editPetProfile.age:""}
-                    onChange={(e) => handle(e)}
+                    onChange={(e) => handleEdit(e)}
                   />
                   <Overlay target={ageTarget.current} show={ageShowTooltip} placement="right">
                       {(props) => (
@@ -488,14 +475,14 @@ function EditAdminPets(props) {
                   </InputGroup>
               </Col>
               <Col>
-                  <Form.Label ref={registerTarget} className="h6" htmlFor="name">Register Location<span className='red'> *</span></Form.Label>
+                  <Form.Label ref={registerTarget} className="h6">Register Location<span className='red'> *</span></Form.Label>
                   <InputGroup className='mb-3'>
                     <Form.Select 
                       aria-label="Default select example" 
                       name="registerLocation" 
                       id="registerLocation" 
                       defaultValue={props.editPetProfile?props.editPetProfile.registerLocation:""} 
-                      onChange={(e) => handle(e)}
+                      onChange={(e) => handleEdit(e)}
                     >
                     <option value="">Select Register Location</option>
                      {lguAccount.map((doc) => (

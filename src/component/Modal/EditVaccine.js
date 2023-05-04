@@ -27,7 +27,7 @@ function EditVaccine(props) {
     const vetNameTarget = useRef(null);
     const [vetNameShowTooltip, setVetNameShowTooltip] = useState(false);
 
-    const editPetProfile = props.editPetProfile;
+    const editPetProfile = props.editVaccinePetProfile;
     const vaccineId = props.vaccineId;
     const vaccineInfo = props.vaccineInfo;
    

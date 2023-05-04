@@ -202,6 +202,10 @@ function AddAdminPets(props) {
         console.log('File uploaded successfully');
       });
       
+      if (petData.petStatus === "Owned") {
+        const docRef = db.collection("PetLovers_Profile").doc(petData.petOwner);
+        docRef.update({PL_OwnedPets: firebase.firestore.FieldValue.arrayUnion(petData.id)});
+      }
       
       // Save the pet data to Firestore
       db.collection("Pets_Profile")

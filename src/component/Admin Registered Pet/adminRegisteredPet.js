@@ -68,7 +68,7 @@ function AdminRegisteredPet() {
         console.log("Error getting documents: ", error);
       });
   }, []);
-  console.log(allPets);
+ 
   function searchFilter(e) {
     let term = e.target.value.toLowerCase();
     if (term == "") {
@@ -81,7 +81,7 @@ function AdminRegisteredPet() {
       );
     }
   }
-console.log(allPets);
+
 function petFilter(filter) {
    
         if (filter === "all") {

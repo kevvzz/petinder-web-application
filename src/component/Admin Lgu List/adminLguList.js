@@ -1,5 +1,6 @@
 import React, { useState,useEffect } from 'react'
 import {AdminNavbar} from '../Navbar/Navbar';
+import AddLguUser from './AddLguUser';
 import {Row, Col, InputGroup, Form} from 'react-bootstrap'
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
@@ -18,7 +19,7 @@ function AdminLguList() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [filteredOwner, setFilteredOwner] = useState([]);
     
-    function onClickAddOwner() {
+    function onClickAddLgu() {
         setShowAddModal(true);
     }
 
@@ -85,7 +86,7 @@ function AdminLguList() {
                         <Col  xs={2}>
                             <Row>
                                 <a>
-                                    <div className="button-wrapper" onClick={onClickAddOwner}>
+                                    <div className="button-wrapper" onClick={onClickAddLgu}>
                                         <button type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>ADD NEW</button>
                                     </div>
                                 </a>
@@ -110,11 +111,11 @@ function AdminLguList() {
                             </Row>
                         </Col>
                     </Row>
-                    {/* <AddAdminPets
-                        showmodal1 = {showAddModal}
-                        hidemodal1 = {() => setShowAddModal(false)}
-                        showmodal1handler = {onClickAddOwner}
-                    /> */}
+                    <AddLguUser
+                        showmodal = {showAddModal}
+                        hidemodal = {setShowAddModal}
+                        showmodalhandler = {onClickAddLgu}
+                    />
                     <div className="rowCard">
                         {filteredOwner.map((doc) => (
                             <div className="pet-card" key={doc.email} onClick={() => navigate("/admin-lgu-profile", {state: {filteredOwner, doc}} )}>

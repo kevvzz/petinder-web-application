@@ -206,6 +206,11 @@ function AddAdminPets(props) {
         const docRef = db.collection("PetLovers_Profile").doc(petData.petOwner);
         docRef.update({PL_OwnedPets: firebase.firestore.FieldValue.arrayUnion(petData.id)});
       }
+
+      if (petData.petStatus === "Sale" || petData.petStatus === "Adoption") {
+        const docRef = db.collection("PetSellerorAdoption_Profile").doc(petData.petOwner);
+        docRef.update({PSA_OwnedPets: firebase.firestore.FieldValue.arrayUnion(petData.id)});
+      }
       
       // Save the pet data to Firestore
       db.collection("Pets_Profile")

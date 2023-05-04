@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState,useEffect } from 'react'
 import {AdminNavbar} from '../Navbar/Navbar';
 import petRegisterIcon from '../../Assets/pet_registered.png';
 import sellerIcon from '../../Assets/pet_seller.png';
@@ -7,11 +7,38 @@ import lguIcon from '../../Assets/Lgu.png';
 import petPhoto from '../../Assets/chowa.jpg';
 import ownerPhoto from '../../Assets/profile-picture.png'
 import lguPhoto from '../../Assets/lgu-cebu-logo.png';
+
+//Firebase Firestore
+import storage from '../../FirebaseStorage';
+import db from '../../Firebase.js';
 //CSS
 import '../../profile.css';
 import '../../App.css';
 import './adminDashboard.css';
-function adminDashboard() {
+function AdminDashboard() {
+	const [counts, setCounts] = useState({});
+
+	useEffect(() => {
+	
+		const unsubscribeFunctions = [
+		  db.collection("Pets_Profile").onSnapshot((querySnapshot) => {
+			setCounts((prevCounts) => ({ ...prevCounts, collection1: querySnapshot.size }));
+		  }),
+		  db.collection("PetLovers_Profile").onSnapshot((querySnapshot) => {
+			setCounts((prevCounts) => ({ ...prevCounts, collection2: querySnapshot.size }));
+		  }),
+		  db.collection("LGU_Profile").onSnapshot((querySnapshot) => {
+			setCounts((prevCounts) => ({ ...prevCounts, collection3: querySnapshot.size }));
+		  }),
+		  db.collection("PetSellerorAdoption_Profile").onSnapshot((querySnapshot) => {
+			setCounts((prevCounts) => ({ ...prevCounts, collection4: querySnapshot.size }));
+		  }),
+		];
+	
+		return () => {
+		  unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
+		};
+	  }, []);
   return (
     <div className='main-bg'>
         <AdminNavbar/>
@@ -20,7 +47,7 @@ function adminDashboard() {
         <div class="cards">
 				<div class="card-single">
 					<div>
-						<h1>3,058</h1>
+						<h1>{counts.collection1}</h1>
 						<span class="spanName">Registered Pet</span>
 					</div>
 					<div>
@@ -30,7 +57,7 @@ function adminDashboard() {
 
 				<div class="card-single">
 					<div>
-						<h1>20</h1>
+						<h1>{counts.collection4}</h1>
 						<span class="spanName">Pet Seller</span>
 					</div>
 					<div>
@@ -40,7 +67,7 @@ function adminDashboard() {
 
 				<div class="card-single">
 					<div>
-						<h1>1,500</h1>
+						<h1>{counts.collection2}</h1>
 						<span class="spanName">Pet Owner</span>
 					</div>
 					<div>
@@ -50,7 +77,7 @@ function adminDashboard() {
 
 				<div class="card-single">
 					<div>
-						<h1>5</h1>
+						<h1>{counts.collection3}</h1>
 						<span class="spanName">LGUs</span>
 					</div>
 					<div>
@@ -155,4 +182,4 @@ function adminDashboard() {
   )
 }
 
-export default adminDashboard
+export default AdminDashboard

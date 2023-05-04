@@ -46,7 +46,8 @@ function PetProfileAdmin() {
     status: '',
     registerType: '',
     lguAccount: '',
-    registerLocation: ''
+    registerLocation: '',
+    dateRegister: ''
   });
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -130,7 +131,8 @@ function PetProfileAdmin() {
             status: P_Status,
             registerType: P_RegisterType,
             lguAccount: P_LGUAccount,
-            registerLocation: P_RegisteredLocation
+            registerLocation: P_RegisteredLocation,
+            dateRegister: P_DateRegistered,
           });
         } else {
           console.log("No such document!");
@@ -390,6 +392,12 @@ function PetProfileAdmin() {
   });
    
   }
+
+  
+  const date = new Date(editPetProfile.dateRegister.seconds * 1000 + editPetProfile.dateRegister.nanoseconds / 1000000);
+  const dateString = date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric'});
+  console.log(dateString);
+  // const dateString = editPetProfile.dateRegister.toDate().toLocaleString();
   return (
     <div className='main-bg'>
       <AdminNavbar/>
@@ -471,7 +479,7 @@ function PetProfileAdmin() {
                   </Row>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>DATE REGISTERED:</Col>
-                    <Col xs={6}>march</Col>
+                    <Col xs={5}>{dateString}</Col>
                   </Row>
                 </Col>
               </Row>

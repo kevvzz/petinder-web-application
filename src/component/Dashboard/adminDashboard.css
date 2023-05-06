@@ -19,7 +19,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 1rem;
-    margin-top: 1rem;
+    margin: 15px;
 }
 .card-single{
     display: flex;
@@ -64,10 +64,10 @@ table{
     border-collapse: collapse;
 }
 .recent-grid{
-    margin-top: 4vh;
+    margin: 25px;
     display: grid;
     grid-gap: 2rem;
-    grid-template-columns: 67% auto;
+    grid-template-columns: 100% auto;
 }
 .projects-card{
     /* background:#fff; */
@@ -76,6 +76,7 @@ table{
 }
 .card-header,
 .card-body{
+    margin-top: 1rem;
     padding: 1rem;
     border-style: solid;
 }
@@ -86,8 +87,7 @@ table{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgb(255 141 1) !important;
-    border-bottom: 1px solid #f0f0f0;
+    background-color: rgb(224, 169, 100) !important;
 
 }
 .card-header button{
@@ -130,8 +130,8 @@ td{
 .petImage{
     flex: 1; 
     border-radius: 50%; 
-    width: 50%; 
-    height: 50%;
+    width: 30%; 
+    height: 30%;
 }
 .lguImage{
     flex: 1; 

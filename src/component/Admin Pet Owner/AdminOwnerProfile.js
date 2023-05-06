@@ -7,7 +7,9 @@ import picture from '../../Assets/bingo.jpg'
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import john from '../../Assets/pet-owner-profile.jpg'
+
+import DeleteModal from '../Modal/DeleteModal';
+import EditAdminOwner from './EditAdminOwner';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faDog, faCat, faFileCirclePlus} from '@fortawesome/free-solid-svg-icons';
@@ -18,9 +20,101 @@ import { toast } from 'react-toastify';
 import { useNavigate,useLocation} from 'react-router-dom';
 
 function AddAdminPetOwner() {
+    const navigate = useNavigate()
+
     const location = useLocation();
-    console.log(location.state);
     const data = location.state.doc;
+
+    const [ownerProfile, setOwnerProfile] = useState({
+      email: '', 
+      lastName: '',
+      firstName: '',
+      middleName: '', 
+      address: '', 
+      age: '', 
+      birthdate: '', 
+      contact: '', 
+      dateRegister:'', 
+      gender: '', 
+      location: '' 
+    });
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showAddModal, setShowAddModal] = useState(false);
+    
+    function onClickEditOwner() {
+        setShowAddModal(true);
+    }
+    function onClickDeletePet() {
+      setShowDeleteModal(true);
+    }
+    useEffect(() => {
+      const docRef = db.collection("PetLovers_Profile").doc(data.email);
+      docRef.get()
+        .then((doc) => {
+          if (doc.exists) {
+            const owner = doc.data();
+            const { PL_Address,
+            PL_Age,
+            PL_BirthDate,
+            PL_ContactNumber,
+            PL_DateRegistered,
+            PL_FirstName,
+            PL_Gender,
+            PL_LastName,
+            PL_MiddleName,
+            PL_NearbyDVMFLoc,
+            PL_OwnedPets,
+            PL_UserEmail } = owner;
+  
+            setOwnerProfile({ 
+              email: PL_UserEmail, 
+              lastName: PL_LastName,
+              firstName: PL_FirstName,
+              middleName: PL_MiddleName, 
+              address: PL_Address, 
+              age: PL_Age, 
+              birthdate: PL_BirthDate, 
+              contact: PL_ContactNumber, 
+              dateRegister: PL_DateRegistered, 
+              gender: PL_Gender, 
+              location: PL_NearbyDVMFLoc
+            });
+          } else {
+            console.log("No such document!");
+          }
+        })
+        .catch((error) => {
+          console.log("Error getting document:", error);
+        });
+    }, []);
+
+    function handleRemove(e) {
+      // Delete the document from Firestore
+      db.collection('PetLovers_Profile')
+      .doc(data.email)
+      .delete()
+  
+      // Delete the image from Storage
+      const photoRef = storage.ref().child(`PetLover/${data.email}`);
+      photoRef.delete()
+      .then(() => {
+        toast.success("Pet Profile Deleted Successfully!");
+        setShowDeleteModal(false);
+        alert("Pet Profile Deleted Successfully!");
+        navigate("/admin-owner");
+      })
+      .catch((error) => {
+        toast.error("Error deleting pet to Firestore: ");
+        console.log(error)
+      });
+    }
+
+
+    const register = new Date(ownerProfile.dateRegister.seconds * 1000 + ownerProfile.dateRegister.nanoseconds / 1000000);
+    const birth = new Date(ownerProfile.birthdate.seconds * 1000 + ownerProfile.birthdate.nanoseconds / 1000000);
+    const birthString = birth.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric'});
+    const registerString = register.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric'});
   return (
     <div className='main-bg'>
       <AdminNavbar/>
@@ -37,48 +131,48 @@ function AddAdminPetOwner() {
                 <Col xs="auto"></Col>
                   <img className='picture' src={data.url} alt="picture"/>
                 <Col>
-                  <Row><Col className='center'><div className='petName'>{data.name}</div></Col></Row>
+                  <Row><Col className='center'><div className='petName'>{(ownerProfile.firstName+" "+ownerProfile.lastName)}</div></Col></Row>
                 </Col>
               </Row>
               <Row>
                 <Col className='marginTop' xs={3}>
                   <Row className="button-wrapper">
-                    <Col className='center'><button type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>UPDATE</button></Col>
+                    <Col className='center'><button type="button" className="add" onClick={onClickEditOwner}><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>UPDATE</button></Col>
                   </Row>
                   <Row className="button-wrapper">
-                    <Col className='center'><button type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>DELETE</button></Col>
+                    <Col className='center'><button type="button" className="add" onClick={onClickDeletePet}><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>DELETE</button></Col>
                   </Row>
                 </Col>
                 <Col className='mt-4'>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>Address:</Col>
-                    <Col xs={6}>New York</Col>
+                    <Col xs={6}>{ownerProfile.address}</Col>
                   </Row>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>AGE:</Col>
-                    <Col xs={6}>30</Col>
+                    <Col xs={6}>{ownerProfile.age}</Col>
                   </Row>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>BirthDate:</Col>
-                    <Col xs={6}>March 13 2023</Col>
+                    <Col xs={6}>{birthString}</Col>
                   </Row>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>Contact Number:</Col>
-                    <Col xs={6}>09786728371</Col>
+                    <Col xs={6}>{ownerProfile.contact}</Col>
                   </Row>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>Date Registered:</Col>
-                    <Col xs={6}>April 14 2023</Col>
+                    <Col xs={6}>{registerString}</Col>
                   </Row>
                 </Col>
                 <Col className='mt-4'>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>Gender:</Col>
-                    <Col xs={6}>Female</Col>
+                    <Col xs={6}>{ownerProfile.gender}</Col>
                   </Row>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>DVMF Location:</Col>
-                    <Col xs={6}>DVMF Toledo</Col>
+                    <Col xs={6}>{ownerProfile.location}</Col>
                   </Row>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>Owned Pets:</Col>
@@ -86,7 +180,7 @@ function AddAdminPetOwner() {
                   </Row>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>Email Address:</Col>
-                    <Col xs={6}>gennie@email.com</Col>
+                    <Col xs={6}>{ownerProfile.email}</Col>
                   </Row>
                 </Col>
               </Row>
@@ -94,7 +188,20 @@ function AddAdminPetOwner() {
           </Row>
           
         </div>
-        
+        <DeleteModal
+              name = "PET OWNER"
+              show = {showDeleteModal}
+              hide = {() => setShowDeleteModal(false)}
+              remover = {handleRemove}
+          />
+        <EditAdminOwner
+            showmodal = {showAddModal}
+            hidemodal = {setShowAddModal}
+            showmodalhandler = {onClickEditOwner}
+            ownerProfile = {ownerProfile}
+            data = {data}
+            setOwnerProfile = {setOwnerProfile}
+        />
       </div>
     </div>
   

@@ -166,7 +166,7 @@ function EditAdminPets(props) {
     (editPetProfile.registerType !== "" && editPetProfile.registerType !== null) &&
     (editPetProfile.registerLocation !== "" && editPetProfile.registerLocation !== null) &&
     (editPetProfile.breed !== "" && editPetProfile.breed !== null)){
-      console.log(editPetProfile);
+    
       const storageRef = storage.ref();
       const fileRef = storageRef.child(`Pet/${editPetProfile.id}`);
       if(selectedFile !== null){

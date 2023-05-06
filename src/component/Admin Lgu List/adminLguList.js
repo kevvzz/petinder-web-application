@@ -31,13 +31,18 @@ function AdminLguList() {
         querySnapshot.forEach((doc) => {
           const user = doc.data().LGU_UserName;
           const branch = doc.data().LGU_BranchName;
+          const address = doc.data().LGU_Address;
+          const contact = doc.data().LGU_ContactNumber;
+          const dateRegister = doc.data().LGU_DateRegistered;
+          const email = doc.data().LGU_Email;
+
 
           const promise = storage
             .ref()
             .child(`LGU_DVMF/${user}`)
             .getDownloadURL()
             .then((url) => {
-              return { branch,user, url};
+              return { branch,user, url, address, contact, dateRegister, email};
             })
             .catch((error) => {
               console.log(error);

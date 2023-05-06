@@ -11,8 +11,8 @@ import 'firebase/compat/firestore';
 
 import { toast } from 'react-toastify';
 
-
-export default function AddLguUser(props) {
+function EditAdminLgu(props) {
+  const lguProfile = props.lguProfile
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageUpload, setImageUpload] = useState('');
 
@@ -34,24 +34,11 @@ export default function AddLguUser(props) {
   const emailTarget = useRef(null);
   const [emailShowTooltip, setEmailShowTooltip] = useState(false);
 
-  const currentDate = new Date();
-  const timestamp = firebase.firestore.Timestamp.fromDate(currentDate);
-  const password = "123456";
-
-  const [lguAddProfile, setLguAddProfile] = useState({
-    user: '',
-    branch: '',
-    address:'',
-    contact: '',
-    dateRegister: '',
-    email: ''
-  });
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setLguAddProfile({ ...lguAddProfile, [name]: value });
-  };
-
+  function handleEdits(e) {
+    let lgu = { ...lguProfile };
+    lgu[e.target.id] = e.target.value;
+    props.setLguProfile(lgu);
+  }
  
   const uploadImage = async (e) => {
     const file = e.target.files[0];
@@ -59,6 +46,8 @@ export default function AddLguUser(props) {
     const base64 = await convertBase64(file);
     setImageUpload(base64);
   };
+
+  console.log(lguProfile.user);
 
   const convertBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -74,71 +63,64 @@ export default function AddLguUser(props) {
       };
     });
   };
+  
   const handleSaveChanges = () => {
-    if (lguAddProfile.user === "") {
+    if (lguProfile.user === "") {
       setUserShowTooltip(true);
     } else {
       setUserShowTooltip(false);
     }
-    if (lguAddProfile.branch === "") {
+    if (lguProfile.branch === "") {
       setBranchNameShowTooltip(true);
     } else {
       setBranchNameShowTooltip(false);
     }
 
-    if (lguAddProfile.address === "") {
+    if (lguProfile.address === "") {
       setAddressShowTooltip(true);
     } else {
       setAddressShowTooltip(false);
     }
 
-    if (lguAddProfile.contact === "") {
-      setContactShowTooltip(true);
-    } else {
-      setContactShowTooltip(false);
-    }
-
-    if (lguAddProfile.email === "") {
-      setEmailShowTooltip(true);
-    } else {
-      setEmailShowTooltip(false);
-    }
 
 
-    if ((lguAddProfile.email !== "" && lguAddProfile.email !== null) &&
-      (lguAddProfile.user !== "" && lguAddProfile.user !== null) &&
-      (lguAddProfile.branch !== "" && lguAddProfile.branch !== null) &&
-      (lguAddProfile.address !== "" && lguAddProfile.address !== null) &&
-      (lguAddProfile.contact !== "" && lguAddProfile.contact !== null)){
+
+    if ((lguProfile.email !== "" && lguProfile.email !== null) &&
+      (lguProfile.user !== "" && lguProfile.user !== null) &&
+      (lguProfile.branch !== "" && lguProfile.branch !== null) &&
+      (lguProfile.address !== "" && lguProfile.address !== null) &&
+      (lguProfile.contact !== "" && lguProfile.contact !== null)){
 
       const storageRef = storage.ref();
-      const fileRef = storageRef.child(`LGU_DVMF/${lguAddProfile.user.toString()}`);
-      fileRef.put(selectedFile).then(() => {
-        console.log('File uploaded successfully');
-      });
+      const fileRef = storageRef.child(`LGU_DVMF/${lguProfile.user.toString()}`);
+      if (selectedFile !== null) {
+        fileRef.put(selectedFile).then(() => {
+          console.log('File uploaded successfully');
+        });
+      }
       
 
       // Save the pet data to Firestore
       db.collection("LGU_Profile")
-        .doc(lguAddProfile.user.toString())
-        .set({
-          LGU_UserName: lguAddProfile.user,
-          LGU_BranchName: lguAddProfile.branch,
-          LGU_Address: lguAddProfile.address,
-          LGU_ContactNumber: lguAddProfile.contact,
-          LGU_DateRegistered: timestamp,
-          LGU_Email: lguAddProfile.email,
-          LGU_Password: password,
+        .doc(lguProfile.user.toString())
+        .update({
+          LGU_UserName: lguProfile.user,
+          LGU_BranchName: lguProfile.branch,
+          LGU_Address: lguProfile.address,
+          LGU_ContactNumber: lguProfile.contact,
+          // LGU_DateRegistered: timestamp,
+          LGU_Email: lguProfile.email,
+          // LGU_Password: password,
         })
         .then(() => {
-          toast.success("Owner Profile Added Successfully!");
-          alert("Owner Profile Added Successfully!");
+          toast.success("Lgu Profile UpdatedSuccessfully!");
+          alert("Lgu Profile UpdatedSuccessfully!");
           window.location.reload();
           props.hidemodal1();
           console.log("success");
         })
         .catch((error) => {
-          toast.error("Error adding owner to Firestore: ");
+          toast.error("Error adding Lgu to Firestore: ");
           console.log(error)
         });
     }
@@ -156,7 +138,7 @@ export default function AddLguUser(props) {
           className='headerBG'
           closeButton
         >
-          <Modal.Title>ADD LGU USER</Modal.Title>
+          <Modal.Title>EDIT LGU USER</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
@@ -170,8 +152,8 @@ export default function AddLguUser(props) {
                   name='user'
                   id='user'
                   className='mb-2'
-                value={lguAddProfile.user}
-                onChange={handleInputChange}
+                value={lguProfile ? lguProfile.user : ""}
+                onChange={handleEdits}
                 />
                 <Overlay
                 target={userTarget.current}
@@ -195,8 +177,8 @@ export default function AddLguUser(props) {
                   name='email'
                   id='email'
                   className='mb-2'
-                value={lguAddProfile.email}
-                onChange={handleInputChange}
+                value={lguProfile ? lguProfile.email : ""}
+                onChange={handleEdits}
                 />
                 <Overlay
                 target={emailTarget.current}
@@ -221,8 +203,8 @@ export default function AddLguUser(props) {
                   name='branch'
                   id='branch'
                   className='mb-2'
-                value={lguAddProfile.branch}
-                onChange={handleInputChange}
+                value={lguProfile ? lguProfile.branch : ""}
+                onChange={handleEdits}
                 />
                 <Overlay
                 target={branchNameTarget.current}
@@ -248,8 +230,8 @@ export default function AddLguUser(props) {
                   name='address'
                   id='address'
                   className='mb-2'
-                  value={lguAddProfile.address}
-                onChange={handleInputChange}
+                  value={lguProfile ? lguProfile.address : ""}
+                onChange={handleEdits}
                 />
                 <Overlay
                 target={addressTarget.current}
@@ -274,8 +256,8 @@ export default function AddLguUser(props) {
                   name='contact'
                   id='contact'
                   className='mb-2'
-                  value={lguAddProfile.contact}
-                  onChange={handleInputChange}
+                  value={lguProfile ? lguProfile.contact : ""}
+                  onChange={handleEdits}
                 />
                 <Overlay
                 target={contactTarget.current}
@@ -350,3 +332,5 @@ export default function AddLguUser(props) {
     </>
   )
 }
+
+export default EditAdminLgu

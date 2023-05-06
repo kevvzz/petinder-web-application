@@ -34,12 +34,12 @@ function AdminLogin() {
 			.collection("Admin_Profile")
 			.where("A_UserName", "==", adminUserName)
 			.get();
-	  
+			
 		  if (!querySnapshot.empty) {
 			// User with the provided email exists
 			const userDoc = querySnapshot.docs[0];
 			const userData = userDoc.data();
-	  
+			localStorage.setItem('userData', JSON.stringify(userData));
 			// Check if the password is correct
 			if (userData.A_Password === adminPassword) {
 				console.log("Logged in successfully!");

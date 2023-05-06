@@ -40,10 +40,6 @@ function AddAdminPets(props) {
   const registerTarget = useRef(null);
   const [registerShowTooltip, setRegisterShowTooltip] = useState(false);
 
-  // const refreshPage = () => {
-  //   window.location.reload();
-  // }
-
   const [profileCollection, setProfileCollection] = useState("PetLovers_Profile");
   const [selectedFile, setSelectedFile] = useState(null);
   const [owner, setOwner] = useState([]);
@@ -204,12 +200,12 @@ function AddAdminPets(props) {
       
       if (petData.petStatus === "Owned") {
         const docRef = db.collection("PetLovers_Profile").doc(petData.petOwner);
-        docRef.update({PL_OwnedPets: firebase.firestore.FieldValue.arrayUnion(petData.id)});
+        docRef.update({PL_OwnedPets: firebase.firestore.FieldValue.arrayUnion(petData.id.toString())});
       }
 
       if (petData.petStatus === "Sale" || petData.petStatus === "Adoption") {
         const docRef = db.collection("PetSellerorAdoption_Profile").doc(petData.petOwner);
-        docRef.update({PSA_OwnedPets: firebase.firestore.FieldValue.arrayUnion(petData.id)});
+        docRef.update({PSA_OwnedPets: firebase.firestore.FieldValue.arrayUnion(petData.id.toString())});
       }
       
       // Save the pet data to Firestore
@@ -235,8 +231,7 @@ function AddAdminPets(props) {
         .then(() => {
           toast.success("Pet Profile Added Successfully!");
           alert("Pet Profile Added Successfully!");
-          // setTimeout(() => refreshPage(), 1000);
-          // Close the modal
+          window.location.reload();
           props.hidemodal1();
           console.log("success");
         })

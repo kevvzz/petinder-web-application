@@ -182,7 +182,7 @@ function petFilter(filter) {
                             <a>
                                 <img src={doc.url} alt="profile"/>
                                 <div>
-                                    <h4 className='name-pet'><center><b>{doc.name}</b></center></h4> 
+                                    <h4 className='name-transform'><center><b>{doc.name}</b></center></h4> 
                                 </div>
                             </a>   
                         </div>

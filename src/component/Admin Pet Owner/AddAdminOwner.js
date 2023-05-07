@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { toast } from 'react-toastify';
+import {ToastContainer, toast } from 'react-toastify';
 
 function AddAdminOwner(props) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -186,10 +186,10 @@ function AddAdminOwner(props) {
         })
         .then(() => {
           toast.success("Owner Profile Added Successfully!");
-          alert("Owner Profile Added Successfully!");
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000); 
           props.hidemodal1();
-          console.log("success");
         })
         .catch((error) => {
           toast.error("Error adding owner to Firestore: ");
@@ -201,6 +201,7 @@ function AddAdminOwner(props) {
   };
   return (
     <>
+      <ToastContainer/>
       <Modal
         show={props.showmodal}
         onHide={handClose}

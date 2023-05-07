@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 
 function AddAdminSeller(props) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -186,8 +186,9 @@ function AddAdminSeller(props) {
         })
         .then(() => {
           toast.success("Seller Profile Added Successfully!");
-          alert("Seller Profile Added Successfully!");
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload(); 
+          }, 1000); 
           props.hidemodal1();
           console.log("success");
         })
@@ -201,6 +202,7 @@ function AddAdminSeller(props) {
   };
   return (
     <>
+    <ToastContainer/>
       <Modal
         show={props.showmodal}
         onHide={handClose}

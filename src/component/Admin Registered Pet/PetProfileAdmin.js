@@ -184,8 +184,9 @@ function PetProfileAdmin() {
     .then(() => {
       toast.success("Pet Profile Deleted Successfully!");
       setShowDeleteModal(false);
-      alert("Pet Profile Deleted Successfully!");
-      navigate("/admin-register");
+      setTimeout(() => {
+        navigate("/admin-register");
+      }, 2000); 
       console.log("success");
     })
     .catch((error) => {
@@ -289,8 +290,9 @@ function PetProfileAdmin() {
               V_Weight
             }).then(() => {
               toast.success("New Pet Vaccine Added Successfully!");
-              alert("New Pet Vaccine Added Successfully!");
-              window.location.reload();
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000); 
               setShowExist(true)
               setShowVaccineModal(false)
               console.log("success");
@@ -320,8 +322,9 @@ function PetProfileAdmin() {
         })
         .then(() => {
           toast.success("Pet Vaccine Added Successfully!");
-          alert("Pet Vaccine Added Successfully!");
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000); 
           setShowExist(true)
           setShowVaccineModal(false)
           console.log("success");

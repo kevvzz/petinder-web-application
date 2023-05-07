@@ -4,7 +4,6 @@ import {Row, Col, InputGroup, Form} from 'react-bootstrap'
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
-
 import AddLguPets from './AddLguPets';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -13,11 +12,11 @@ import { faMagnifyingGlass, faDog, faCat, faFileCirclePlus} from '@fortawesome/f
 //CSS
 import '../../profile.css';
 import '../../App.css';
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
-    
 function LguRegisteredPet() {
+    const userData = JSON.parse(localStorage.getItem('lguData'));
+    console.log(userData);
     const navigate = useNavigate()
     const [allPets, setAllPets] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
@@ -27,64 +26,66 @@ function LguRegisteredPet() {
     }
 
     useEffect(() => {
-    db.collection("Pets_Profile")
-      .get()
-      .then((querySnapshot) => {
-        const promises = [];
-        querySnapshot.forEach((doc) => {
-          const id = doc.data().P_IDNumber;
-          const name = doc.data().P_Name;
-          const species = doc.data().P_Species;
-          const age = doc.data().P_Age;
-          const breed = doc.data().P_Breed;
-          const color = doc.data().P_Color;
-          const dateRegister = doc.data().P_DateRegistered;
-          const gender = doc.data().P_Gender;
-          const lguAccount = doc.data().P_LGUAccount;
-          const neutering = doc.data().P_Neutering;
-          const owner = doc.data().P_PetOwner;
-          const registerType = doc.data().P_RegisterType;
-          const registerLocation = doc.data().P_RegisteredLocation;
-          const status = doc.data().P_Status;
-
-          const promise = storage
-            .ref()
-            .child(`Pet/${id}`)
-            .getDownloadURL()
-            .then((url) => {
-              return { id, name, url, species, age, breed, color, dateRegister, gender, lguAccount, neutering, owner, registerType, registerLocation, status};
-            })
-            .catch((error) => {
-              console.log(error);
-              return null;
+        db.collection("Pets_Profile")
+          .get()
+          .then((querySnapshot) => {
+            const promises = [];
+            querySnapshot.forEach((doc) => {
+              const id = doc.data().P_IDNumber;
+              const name = doc.data().P_Name;
+              const species = doc.data().P_Species;
+              const age = doc.data().P_Age;
+              const breed = doc.data().P_Breed;
+              const color = doc.data().P_Color;
+              const dateRegister = doc.data().P_DateRegistered;
+              const gender = doc.data().P_Gender;
+              const lguAccount = doc.data().P_LGUAccount;
+              const neutering = doc.data().P_Neutering;
+              const owner = doc.data().P_PetOwner;
+              const registerType = doc.data().P_RegisterType;
+              const registerLocation = doc.data().P_RegisteredLocation;
+              const status = doc.data().P_Status;
+    
+              if (registerLocation === userData.LGU_BranchName || lguAccount === userData.LGU_UserName) {
+                const promise = storage
+                  .ref()
+                  .child(`Pet/${id}`)
+                  .getDownloadURL()
+                  .then((url) => {
+                    return { id, name, url, species, age, breed, color, dateRegister, gender, lguAccount, neutering, owner, registerType, registerLocation, status};
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    return null;
+                  });
+      
+                promises.push(promise);
+              }
             });
-
-          promises.push(promise);
-        });
-
-        Promise.all(promises).then((data) => {
-          setAllPets(data.filter((item) => item !== null));
-          setFilteredPets(data.filter((item) => item !== null));
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-  }, []);
-
+      
+            Promise.all(promises).then((data) => {
+              setAllPets(data.filter((item) => item !== null));
+              setFilteredPets(data.filter((item) => item !== null));
+            });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
+      }, []);
+ 
   function searchFilter(e) {
     let term = e.target.value.toLowerCase();
     if (term == "") {
       setFilteredPets(allPets);
     } else {
       setFilteredPets(
-        allPets.filter(
-          (pet) => pet.pets.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
+        filteredPets.filter(
+          (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
         )
       );
     }
   }
-console.log(allPets);
+
 function petFilter(filter) {
    
         if (filter === "all") {
@@ -104,6 +105,7 @@ function petFilter(filter) {
   return (
     <div className='main-bg'>
         <LguNavbar/>
+        <ToastContainer/>
         <div className="main-content">
             
             <header>
@@ -185,7 +187,7 @@ function petFilter(filter) {
                             <a>
                                 <img src={doc.url} alt="profile"/>
                                 <div>
-                                    <h4><center><b>{doc.name}</b></center></h4> 
+                                    <h4 className='name-transform'><center><b>{doc.name}</b></center></h4> 
                                 </div>
                             </a>   
                         </div>

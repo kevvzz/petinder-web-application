@@ -9,7 +9,7 @@ import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 
 
-import { toast } from 'react-toastify';
+import {ToastContainer, toast } from 'react-toastify';
 
 function EditVaccine(props) {
     const dateTarget = useRef(null);
@@ -27,17 +27,15 @@ function EditVaccine(props) {
     const vetNameTarget = useRef(null);
     const [vetNameShowTooltip, setVetNameShowTooltip] = useState(false);
 
-    const editPetProfile = props.editVaccinePetProfile;
+    const editPetProfile = props.editPetProfile;
     const vaccineId = props.vaccineId;
     const vaccineInfo = props.vaccineInfo;
    
     function handle(e) {
       let vaccineInformation = { ...vaccineInfo };
       vaccineInformation[e.target.id][vaccineId] = e.target.value;
-      console.log(vaccineInformation)
       props.setVaccineInfo(vaccineInformation);
   }
-  
   const handleEditVaccine = () =>{
     if(vaccineInfo.date[vaccineId] === ""){
       setDateShowTooltip(true);
@@ -118,8 +116,9 @@ function EditVaccine(props) {
               V_Weight
         }).then(() => {
           toast.success("Pet Vaccine Updated Succesfully");
-          alert("Pet Vaccine Updated Succesfully");
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000); 
           props.hidemodal1();
         })
         .catch((error) => {
@@ -134,6 +133,7 @@ function EditVaccine(props) {
     
   return (
     <div>
+    <ToastContainer/>
         <Modal show={props.showmodal1} onHide={props.hidemodal1} centered className='modal-lg'>
           <Modal.Header className='headerBG' closeButton>
             <Modal.Title>EDIT VACCINE</Modal.Title>

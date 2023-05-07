@@ -1,14 +1,82 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react';
+import { Modal, Row, Col, Form, InputGroup, Button, Figure } from 'react-bootstrap'
 import {LguNavbar} from '../Navbar/Navbar';
-import {Row, Col} from 'react-bootstrap'
-// import 'bootstrap/dist/css/bootstrap.css';
+import Overlay from 'react-bootstrap/Overlay';
+import Tooltip from 'react-bootstrap/Tooltip';
+import 'bootstrap/dist/css/bootstrap.min.css';
+//Firebase Firestore
+import storage from '../../FirebaseStorage';
+import db from '../../Firebase.js';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
+import { ToastContainer, toast } from 'react-toastify';
 //CSS
 import '../../ManageSettings.css';
 import '../../App.css';
+import { useNavigate,useLocation} from 'react-router-dom';
 function LguManageSettings() {
+    const userData = JSON.parse(localStorage.getItem('lguData'));
+    console.log(userData);
+    const [settings, setSettings] = useState({
+        contact: '',
+        email: '',
+        old: '',
+        new:'',
+        confirm:''
+    });
+    const [newSettings, setNewSettings] = useState({
+        contact: '',
+        email: '',
+        old: '',
+        new:'',
+        confirm:''
+    });
+
     const [showDiv1, setShowDiv1] = useState(true);
     const [showDiv2, setShowDiv2] = useState(false);
+
+    const contactTarget = useRef(null);
+    const [contactShowTooltip, setContactShowTooltip] = useState(false);
+    const emailTarget = useRef(null);
+    const [emailShowTooltip, setEmailShowTooltip] = useState(false);
+
+    const oldTarget = useRef(null);
+    const [oldShowTooltip, setOldShowTooltip] = useState(false);
+    const newTarget = useRef(null);
+    const [newShowTooltip, setNewShowTooltip] = useState(false);
+    const confirmTarget = useRef(null);
+    const [confirmShowTooltip, setConfirmShowTooltip] = useState(false);
+    
+    // useEffect(() => {
+    //     const docRef = db.collection("LGU_Profile").doc(userData.A_IDNumber);
+    //     docRef.get()
+    //       .then((doc) => {
+    //         if (doc.exists) {
+    //           const set = doc.data()
+    //           const {
+    //             A_Email,
+    //             A_Password,
+    //             A_UserName,} = set;
+    
+    //           setNewSettings({ 
+    //             email: A_Email,
+    //             old: A_Password,
+    //             user: A_UserName
+    //           });
+    //         } else {
+    //           console.log("No such document!");
+    //         }
+    //       })
+    //       .catch((error) => {
+    //         console.log("Error getting document:", error);
+    //       });
+    //   }, []);
+    
+    const handleEdits = (event) => {
+        const { name, value } = event.target;
+        setSettings({ ...settings, [name]: value });
+      };
 
     function handleButtonClick1() {
         setShowDiv1(true);
@@ -18,11 +86,100 @@ function LguManageSettings() {
       function handleButtonClick2() {
         setShowDiv1(false);
         setShowDiv2(true);
+    }
+    const handleSaveChanges = () => {
+    //     if (settings.user === "") {
+    //       setUserShowTooltip(true);
+    //     } else {
+    //       setUserShowTooltip(false);
+    //     }
+    //     if (settings.email === "") {
+    //       setEmailShowTooltip(true);
+    //     } else {
+    //       setEmailShowTooltip(false);
+    //     }
+    
+    
+    //     if ((settings.email !== "" && settings.email !== null) &&
+    //       (settings.user !== "" && settings.user !== null)){
+       
+    //     //   Save the pet data to Firestore
+    //       db.collection("LGU_Profile")
+    //         .doc(userData.A_IDNumber)
+    //         .update({
+    //           A_UserName: settings.user,
+    //           A_Email: settings.email,
+    //         })
+    //         .then(() => {
+    //             toast.success("Settings Profile Updated Successfully!");
+    //             setTimeout(() => {
+    //                 window.location.reload();
+    //             }, 2000);
+                
+    //           console.log("success");
+    //         })
+    //         .catch((error) => {
+    //           toast.error("Error adding Lgu to Firestore: ");
+    //           console.log(error)
+    //         });
+    //     }
+      }
+    //   console.log(settings)
+      const handlePasswordChanges = () => {
+    //     if (settings.old === "") {
+    //       setOldShowTooltip(true);
+    //     } else {
+    //       setOldShowTooltip(false);
+    //     }
+    //     if (settings.new === "") {
+    //       setNewShowTooltip(true);
+    //     } else {
+    //       setNewShowTooltip(false);
+    //     }
+    //     if (settings.confirm === "") {
+    //         setConfirmShowTooltip(true);
+    //       } else {
+    //         setConfirmShowTooltip(false);
+    //       }
+    
+          
+    //     if ((settings.old !== "" && settings.old !== null) &&
+    //         (settings.confirm !== "" && settings.confirm !== null) &&
+    //         (settings.new !== "" && settings.new !== null)){
+
+    //         if(newSettings.old.toString() === settings.old){
+    //             if(settings.new === settings.confirm){
+    //                  //   Save the pet data to Firestore
+    //                  db.collection("LGU_Profile")
+    //                  .doc(userData.A_IDNumber)
+    //                  .update({
+    //                      A_Password: settings.new,
+    //                  })
+    //                  .then(() => {
+    //                      toast.success("Password Updated Successfully!");
+    //                      setTimeout(() => {
+    //                          window.location.reload();
+    //                      }, 2000);
+                         
+    //                  })
+    //                  .catch((error) => {
+    //                      toast.error("Error adding Lgu to Firestore: ");
+    //                  });
+    //             }else{
+    //                 toast.error("New and Confirm Password Does Not Match!!");
+    //             }
+    //         } else {
+    //             toast.error("Current Password Does Not Match!!");
+    //         }
+            
+            
+    //     }
       }
   return (
     
     <div className='main-bg'>
         <LguNavbar/>
+        <ToastContainer/>
         <div className="main-content">
             
             <header>
@@ -44,57 +201,77 @@ function LguManageSettings() {
                 
                 <div  class="row-settings body">
                     <div style={{ display: showDiv1 ? 'block' : 'none' }} class="col-settings update" id="updateDiv">
-                        <div class="col-settings-add">
-                            <label for="email"><b>First Name</b></label>
+                        <Row>
+                            <Form.Label className='h6'>Contact Number<span className='red' ref={contactTarget}> *</span></Form.Label>
+                            <Form.Control type="text" name='contact' id='contact' className='mb-2' onChange={handleEdits}/>
+                            <Overlay target={contactTarget.current} show={contactShowTooltip} placement="right">
+                                {(props) => (
+                                    <Tooltip id="overlay-example" {...props}>
+                                    Empty Contact
+                                    </Tooltip>
+                                )}
+                            </Overlay>
+                        </Row>
+                        <Row>
+                            <Form.Label className='h6'>Email<span className='red' ref={emailTarget}> *</span></Form.Label>
+                            <Form.Control type="text" name='email' id='email' className='mb-2' onChange={handleEdits}/>
+                            <Overlay target={emailTarget.current} show={emailShowTooltip} placement="right">
+                                {(props) => (
+                                    <Tooltip id="overlay-example" {...props}>
+                                    Empty Email
+                                    </Tooltip>
+                                )}
+                            </Overlay>
+                        </Row>
+                        
+                        <div className='d-flex button-wrapper center'>
+                            <Button onClick={handleSaveChanges}>
+                            Save Changes
+                            </Button>
                         </div>
-                        <div class="col-settings-add">
-                            <input type="text" placeholder="Enter Firstname" name="firstname" id="firstname" required/>
-                        </div>
-                        <div class="col-settings-add">
-                            <label for="email"><b>Last Name</b></label>
-                        </div>
-                        <div class="col-settings-add">
-                            <input type="text" placeholder="Enter Lastname" name="lastname" id="lastname" required/>
-                        </div>
-                        <div class="col-settings-add">
-                            <label for="email"><b>Email</b></label>
-                        </div>
-                        <div class="col-settings-add">
-                            <input type="text" placeholder="Enter Email" name="email" id="email" required/>
-                        </div><div class="col-settings-add">
-                            <label for="email"><b>Contact Number</b></label>
-                        </div>
-                        <div class="col-settings-add">
-                            <input type="text" placeholder="Enter Contact Number" name="contact" id="contact" required/>
-                        </div>
-
-                        <div className='btn-wrapper'>
-                            <button className='settingsBtn'>Submit</button>
-                        </div>	
-                    </div>
+                    </div>	
+                
 
                     <div style={{ display: showDiv2 ? 'block' : 'none' }} class="col-settings change">
-                        <div class="col-settings-add">
-                            <label for="email"><b>Current Password</b></label>
-                        </div>
-                        <div class="col-settings-add">
-                            <input type="text" placeholder="Enter Username" name="current" id="current" required/>
-                        </div>
-                        <div class="col-settings-add">
-                            <label for="email"><b>New Password</b></label>
-                        </div>
-                        <div class="col-settings-add">
-                            <input type="text" placeholder="Enter Password" name="new" id="new" required/>
-                        </div><div class="col-settings-add">
-                            <label for="email"><b>Confirm New Password</b></label>
-                        </div>
-                        <div class="col-settings-add">
-                            <input type="text" placeholder="Enter Confirm Password" name="confirmNew" id="confirmNew" required/>
-                        </div>
+                        <Row>
+                            <Form.Label className='h6'>Current Password<span className='red' ref={oldTarget}> *</span></Form.Label>
+                            <Form.Control type="text" name='old' id='old' className='mb-2' onChange={handleEdits}/>
+                            <Overlay target={oldTarget.current} show={oldShowTooltip} placement="right">
+                                {(props) => (
+                                    <Tooltip id="overlay-example" {...props}>
+                                    Empty Current Password
+                                    </Tooltip>
+                                )}
+                            </Overlay>
+                        </Row>
+                        <Row>
+                            <Form.Label className='h6'>New Password<span className='red' ref={newTarget}> *</span></Form.Label>
+                            <Form.Control type="text" name='new' id='new' className='mb-2' onChange={handleEdits}/>
+                            <Overlay target={newTarget.current} show={newShowTooltip} placement="right">
+                                {(props) => (
+                                    <Tooltip id="overlay-example" {...props}>
+                                    Empty New Password
+                                    </Tooltip>
+                                )}
+                            </Overlay>
+                        </Row>
+                        <Row>
+                            <Form.Label className='h6'>Confirm Password<span className='red' ref={confirmTarget}> *</span></Form.Label>
+                            <Form.Control type="text" name='confirm' id='confirm' className='mb-2' onChange={handleEdits}/>
+                            <Overlay target={confirmTarget.current} show={confirmShowTooltip} placement="right">
+                                {(props) => (
+                                    <Tooltip id="overlay-example" {...props}>
+                                    Empty Confirm Password
+                                    </Tooltip>
+                                )}
+                            </Overlay>
+                        </Row>
 
-                        <div className='btn-wrapper'>
-                            <button className='settingsBtn'>Submit</button>
-                        </div>	
+                        <div className='d-flex button-wrapper center'>
+                            <Button onClick={handlePasswordChanges}>
+                            Save Changes
+                            </Button>
+                        </div>
                     </div>
                     
 

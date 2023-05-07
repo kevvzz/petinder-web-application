@@ -12,7 +12,7 @@ import { faMagnifyingGlass, faDog, faCat, faFileCirclePlus} from '@fortawesome/f
 //CSS
 import '../../profile.css';
 import '../../App.css';
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 function AdminRegisteredPet() {
     const navigate = useNavigate()
@@ -101,6 +101,7 @@ function petFilter(filter) {
   return (
     <div className='main-bg'>
         <AdminNavbar/>
+        <ToastContainer/>
         <div className="main-content">
             
             <header>

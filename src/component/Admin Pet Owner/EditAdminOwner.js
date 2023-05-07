@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 
 function EditAdminOwner(props) {
   const ownerProfile = props.ownerProfile
@@ -207,8 +207,9 @@ if (regex.test(ownerDate)) {
                     PL_UserEmail: ownerProfile.email
                   }).then(() => {
                     toast.success("Owner Profile Updated Successfully!");
-                    alert("Owner Profile Updated Successfully!");
-                    window.location.reload();
+                    setTimeout(() => {
+                      window.location.reload(); 
+                    }, 1000);
                     props.hidemodal1();
                     console.log("success");
                   }).catch((error) => {
@@ -243,8 +244,9 @@ if (regex.test(ownerDate)) {
             PL_UserEmail: ownerProfile.email
           }).then(() => {
             toast.success("Owner Profile Updated Successfully!");
-            alert("Owner Profile Updated Successfully!");
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000); 
             props.hidemodal1();
             console.log("success");
           }).catch((error) => {
@@ -261,6 +263,7 @@ if (regex.test(ownerDate)) {
   
   return (
     <>
+      <ToastContainer/>
       <Modal
         show={props.showmodal}
         onHide={handClose}

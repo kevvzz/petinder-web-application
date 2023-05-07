@@ -38,17 +38,15 @@ function LguLogin() {
 		  if (!querySnapshot.empty) {
 			// User with the provided email exists
 			const userDoc = querySnapshot.docs[0];
-			const userData = userDoc.data();
-	  
+			const lguData = userDoc.data();
+			localStorage.setItem('lguData', JSON.stringify(lguData));
 			// Check if the password is correct
-			if (userData.LGU_Password === lguPassword) {
+			if (lguData.LGU_Password === lguPassword) {
 				console.log("Logged in successfully!");
 				toast.success("Correct Password");
 				setTimeout(() => {
 					navigate("/lgu-register"); 
 				  }, 2000); 
-				
-			  
 			} else {
 				console.error("Invalid password!");
 				toast.error("Incorrect Password");
@@ -62,8 +60,6 @@ function LguLogin() {
 		  toast.error("Error Login");
 		}
 	  };
-	  
-	  
   return (
     <div class="lgu-container">
 		<ToastContainer />
@@ -79,7 +75,6 @@ function LguLogin() {
 			<div class="lgu-fold">
 				<div class="lgu-form">
 					<form class="form-box">
-						
 						<div class="form-input">
 							<span><FontAwesomeIcon className='glass' icon={faEnvelope}/></span>
 							<input onChange={handleUserNameChange} type="username" name="username" id="username" placeholder="Username" tabindex="10" required/>
@@ -93,8 +88,6 @@ function LguLogin() {
 						<div class="col-12 px-0 text-center">
 							<button onClick={handleLogin} type="button" class="btn mb-3">Login</button>
 						</div>
-
-						
 					</form>
 				</div>
 			</div>

@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 
 function EditAdminPets(props) {
   const editPetProfile = props.editPetProfile;
@@ -193,7 +193,6 @@ function EditAdminPets(props) {
         })
         .then(() => {
           toast.success("Pet Profile Added Successfully!");
-          alert("Pet Profile Added Successfully!");
           window.location.reload();
           props.hidemodal1();
           console.log("success");
@@ -207,7 +206,8 @@ function EditAdminPets(props) {
   
   };
   return (
-    <div> 
+    <div>
+        <ToastContainer/> 
        <Modal show={props.showmodal1} onHide={props.hidemodal1} centered className='modal-lg'>
           <Modal.Header className='headerBG' closeButton>
             <Modal.Title>UPDATE PETS</Modal.Title>

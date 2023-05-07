@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 
 function EditAdminSeller(props) {
   const sellerProfile = props.sellerProfile
@@ -202,8 +202,9 @@ if (regex.test(sellerDate)) {
         })
         .then(() => {
           toast.success("Seller Profile Added Successfully!");
-          alert("Seller Profile Updated Successfully!");
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000); 
           props.hidemodal1();
           console.log("success");
         })
@@ -217,6 +218,7 @@ if (regex.test(sellerDate)) {
   };
   return (
     <>
+      <ToastContainer/>
       <Modal
         show={props.showmodal}
         onHide={handClose}

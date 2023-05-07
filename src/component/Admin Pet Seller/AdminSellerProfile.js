@@ -18,7 +18,7 @@ import { faMagnifyingGlass, faDog, faCat, faFileCirclePlus} from '@fortawesome/f
 //CSS
 import '../../profile.css';
 import '../../App.css';
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 import { useNavigate,useLocation} from 'react-router-dom';
 
 function AdminSellerProfile() {
@@ -106,8 +106,9 @@ function AdminSellerProfile() {
       .then(() => {
         toast.success("Pet Profile Deleted Successfully!");
         setShowDeleteModal(false);
-        alert("Pet Profile Deleted Successfully!");
-        navigate("/admin-seller");
+        setTimeout(() => {
+					navigate("/admin-seller"); 
+				}, 2000); 
         console.log("success");
       })
       .catch((error) => {
@@ -124,6 +125,7 @@ function AdminSellerProfile() {
   return (
     <div className='main-bg'>
       <AdminNavbar/>
+      <ToastContainer/>
       <div className="main-content">
         <header>
             <h1>

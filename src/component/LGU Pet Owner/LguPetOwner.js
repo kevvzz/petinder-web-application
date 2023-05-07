@@ -6,13 +6,14 @@ import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import AddLguOwner from './AddLguOwner';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faFileCirclePlus} from '@fortawesome/free-solid-svg-icons';
 //CSS
 import '../../profile.css';
 import '../../App.css';
-import { useNavigate} from 'react-router-dom';
-  
+import { useNavigate } from 'react-router-dom';
 function LguPetOwner() {
   const navigate = useNavigate()
     const [allOwner, setAllOwner] = useState([]);
@@ -22,6 +23,7 @@ function LguPetOwner() {
     function onClickAddOwner() {
         setShowAddModal(true);
     }
+    
 
     useEffect(() => {
     db.collection("PetLovers_Profile")
@@ -30,14 +32,23 @@ function LguPetOwner() {
         const promises = [];
         querySnapshot.forEach((doc) => {
           const email = doc.data().PL_UserEmail;
-          const name = (doc.data().PL_FirstName +" "+ doc.data().PL_LastName);
+          const firstName = doc.data().PL_FirstName;
+          const lastName = doc.data().PL_LastName;
+          const middleName = doc.data().PL_MiddleName;
+          const address = doc.data().PL_Address;
+          const age = doc.data().PL_Age;
+          const birthdate = doc.data().PL_BirthDate;
+          const contact = doc.data().PL_ContactNumber;
+          const dateRegister = doc.data().PL_DateRegistered;
+          const gender = doc.data().PL_Gender;
+          const location = doc.data().PL_NearbyDVMFLoc;
 
           const promise = storage
             .ref()
             .child(`PetLover/${email}`)
             .getDownloadURL()
             .then((url) => {
-              return { email, name, url};
+              return { email, firstName,lastName, url, middleName, address, age, birthdate, contact, dateRegister, gender, location};
             })
             .catch((error) => {
               console.log(error);
@@ -57,7 +68,6 @@ function LguPetOwner() {
       });
   }, []);
 
-  console.log(allOwner);
 
   function searchFilter(e) {
     let term = e.target.value.toLowerCase();
@@ -111,24 +121,24 @@ function LguPetOwner() {
                       </Row>
                   </Col>
               </Row>
-              {/* <AddAdminPets
-                  showmodal1 = {showAddModal}
-                  hidemodal1 = {() => setShowAddModal(false)}
-                  showmodal1handler = {onClickAddOwner}
-              /> */}
+              <AddLguOwner
+                  showmodal = {showAddModal}
+                  hidemodal = {setShowAddModal}
+                  showmodalhandler = {onClickAddOwner}
+              />
               <div className="rowCard">
                   {filteredOwner.map((doc) => (
                       <div className="pet-card" key={doc.email} onClick={() => navigate("/lgu-owner-profile", {state: {filteredOwner, doc}} )}>
                           <a>
                               <img src={doc.url} alt="profile"/>
                               <div>
-                                  <h4><center><b>{doc.name}</b></center></h4> 
+                                  <h4 className='name-transform'><center><b>{(doc.firstName+" "+ doc.lastName)}</b></center></h4> 
                               </div>
                           </a>   
                       </div>
                   ))}
               </div>
-            </div>
+          </div>	
         </div>
     </div>	
   )

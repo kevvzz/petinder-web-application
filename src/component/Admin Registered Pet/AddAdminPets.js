@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 
 function AddAdminPets(props) {
 
@@ -230,8 +230,9 @@ function AddAdminPets(props) {
         })
         .then(() => {
           toast.success("Pet Profile Added Successfully!");
-          alert("Pet Profile Added Successfully!");
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000); 
           props.hidemodal1();
           console.log("success");
         })
@@ -245,6 +246,7 @@ function AddAdminPets(props) {
   };
   return (
     <div>
+    <ToastContainer/>
       <Modal show={props.showmodal1} onHide={props.hidemodal1} centered className='modal-lg'>
         <Modal.Header className='headerBG' closeButton>
           <Modal.Title>ADD PETS</Modal.Title>

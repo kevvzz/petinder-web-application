@@ -12,7 +12,6 @@ import { faMagnifyingGlass, faFileCirclePlus} from '@fortawesome/free-solid-svg-
 import '../../profile.css';
 import '../../App.css';
 import { useNavigate } from 'react-router-dom';
-import AddAdminOwner from '../Admin Pet Owner/AddAdminOwner';
 
 import AddAdminSeller from './AddAdminSeller';
   

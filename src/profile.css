@@ -176,6 +176,9 @@
 .marginTop{
     margin-top: 10vh;
 }
+.marginLeft{
+    margin-left: 20vw;
+}
 .petName{
     color: white;
     font-size: 5vw;

@@ -143,7 +143,7 @@ function EditAdminLgu(props) {
         <Modal.Body>
           <Row>
             <Col xs={5}>
-              <Row>
+              {/* <Row>
                 <Form.Label
                   className='h6'
                 >UserName<span className='red' ref={userTarget}> *</span></Form.Label>
@@ -166,7 +166,7 @@ function EditAdminLgu(props) {
                     </Tooltip>
                   )}
                 </Overlay>
-              </Row>
+              </Row> */}
               <Row>
                 <Form.Label
                   ref={emailTarget}
@@ -193,7 +193,7 @@ function EditAdminLgu(props) {
                 </Overlay>
               </Row>
 
-              <Row>
+              {/* <Row>
                 <Form.Label
                   ref={branchNameTarget}
                   className='h6'
@@ -218,7 +218,7 @@ function EditAdminLgu(props) {
                   )}
                 </Overlay>
 
-              </Row>
+              </Row> */}
 
               <Row>
                 <Form.Label
@@ -245,7 +245,8 @@ function EditAdminLgu(props) {
                   )}
                 </Overlay>
               </Row>
-
+            </Col>
+            <Col>     
               <Row>
                 <Form.Label
                   ref={contactTarget}
@@ -271,9 +272,6 @@ function EditAdminLgu(props) {
                   )}
                 </Overlay>
               </Row>
-            </Col>
-
-            <Col>
               <Row>
                 <Col>
                   <Form.Label

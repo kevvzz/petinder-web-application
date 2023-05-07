@@ -120,7 +120,7 @@ export default function AddLguUser(props) {
 
       // Save the pet data to Firestore
       db.collection("LGU_Profile")
-        .doc(lguAddProfile.user.toString())
+        .doc(lguAddProfile.branch.toString())
         .set({
           LGU_UserName: lguAddProfile.user,
           LGU_BranchName: lguAddProfile.branch,

@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { ToastContainer,toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 function EditAdminOwner(props) {
   const ownerProfile = props.ownerProfile
@@ -49,9 +49,17 @@ function EditAdminOwner(props) {
 
   function handleEdits(e) {
     let owner = { ...ownerProfile };
-    owner[e.target.id] = e.target.value;
+    const regex = /^\d{4}-\d{2}-\d{2}$/; // regular expression to match the format yyyy-mm-dd
+    let value = e.target.value
+
+    if (regex.test(value)) {
+      value = firebase.firestore.Timestamp.fromDate(new Date(value));
+    }
+
+    owner[e.target.id] = value;
     props.setOwnerProfile(owner);
   }
+  
   const uploadImage = async (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
@@ -77,20 +85,20 @@ function EditAdminOwner(props) {
   let ownerDate = ownerProfile.birthdate;
 
   const regex = /^\d{4}-\d{2}-\d{2}$/; // regular expression to match the format yyyy-mm-dd
-if (regex.test(ownerDate)) {
-  ownerDate = firebase.firestore.Timestamp.fromDate(new Date(ownerProfile.birthdate)); 
-}
+  if (regex.test(ownerDate)) {
+    ownerDate = firebase.firestore.Timestamp.fromDate(new Date(ownerProfile.birthdate));
+  }
 
   const birth = new Date(ownerProfile.birthdate.seconds * 1000 + ownerProfile.birthdate.nanoseconds / 1000000);
-  const birthString = birth.toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric'});
+  const birthString = birth.toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
   const getFormattedDate = (date) => {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
-      return `${year}-${month}-${day}`;
+    return `${year}-${month}-${day}`;
   }
   const formatedDate = getFormattedDate(new Date(birthString));
-  
+
   console.log(data.email);
   console.log(ownerProfile.email);
 
@@ -173,97 +181,93 @@ if (regex.test(ownerDate)) {
       (ownerProfile.dateRegister !== "" && ownerProfile.dateRegister !== null) &&
       (ownerProfile.gender !== "" && ownerProfile.gender !== null) &&
       (ownerProfile.location !== "" && ownerProfile.location !== null)) {
-        
-        if (data.email !== ownerProfile.email) {
-          const firestore = firebase.firestore();
-          const oldDocRef = firestore.collection('PetLovers_Profile').doc(data.email);
-          const newDocRef = firestore.collection('PetLovers_Profile').doc(ownerProfile.email);
-        
-          oldDocRef.get().then((doc) => {
-            if (doc.exists) {
-              newDocRef.set(doc.data()).then(() => {
-                oldDocRef.delete().then(() => {
-                  const storageRef = storage.ref();
-                  const oldFileRef = storageRef.child(`PetLover/${data.email.toString()}`);
-                  const newFileRef = storageRef.child(`PetLover/${ownerProfile.email.toString()}`);
-                  
-                  // Rename the file
-                  oldFileRef.renameTo(newFileRef).then(() => {
-                    console.log('File renamed successfully');
-                  }).catch((error) => {
-                    console.error('Error renaming file:', error);
-                  });
-        
-                  db.collection("PetLovers_Profile").doc(ownerProfile.email).update({
-                    PL_Address: ownerProfile.address,
-                    PL_Age: ownerProfile.age,
-                    PL_BirthDate: ownerDate,
-                    PL_ContactNumber: ownerProfile.contact,
-                    PL_FirstName: ownerProfile.firstName,
-                    PL_Gender: ownerProfile.gender,
-                    PL_LastName: ownerProfile.lastName,
-                    PL_MiddleName: ownerProfile.middleName,
-                    PL_NearbyDVMFLoc: ownerProfile.location,
-                    PL_UserEmail: ownerProfile.email
-                  }).then(() => {
-                    toast.success("Owner Profile Updated Successfully!");
-                    setTimeout(() => {
-                      window.location.reload(); 
-                    }, 1000);
-                    props.hidemodal1();
-                    console.log("success");
-                  }).catch((error) => {
-                    toast.error("Error adding owner to Firestore: ");
-                    console.log(error);
-                  });
+
+      if (data.email !== ownerProfile.email) {
+        const firestore = firebase.firestore();
+        const oldDocRef = firestore.collection('PetLovers_Profile').doc(data.email);
+        const newDocRef = firestore.collection('PetLovers_Profile').doc(ownerProfile.email);
+
+        oldDocRef.get().then((doc) => {
+          if (doc.exists) {
+            newDocRef.set(doc.data()).then(() => {
+              oldDocRef.delete().then(() => {
+                const storageRef = storage.ref();
+                const oldFileRef = storageRef.child(`PetLover/${data.email.toString()}`);
+                const newFileRef = storageRef.child(`PetLover/${ownerProfile.email.toString()}`);
+
+                // Rename the file
+                oldFileRef.renameTo(newFileRef).then(() => {
+                  console.log('File renamed successfully');
+                }).catch((error) => {
+                  console.error('Error renaming file:', error);
+                });
+
+                db.collection("PetLovers_Profile").doc(ownerProfile.email).update({
+                  PL_Address: ownerProfile.address,
+                  PL_Age: ownerProfile.age,
+                  PL_BirthDate: ownerDate,
+                  PL_ContactNumber: ownerProfile.contact,
+                  PL_FirstName: ownerProfile.firstName,
+                  PL_Gender: ownerProfile.gender,
+                  PL_LastName: ownerProfile.lastName,
+                  PL_MiddleName: ownerProfile.middleName,
+                  PL_NearbyDVMFLoc: ownerProfile.location,
+                  PL_UserEmail: ownerProfile.email
+                }).then(() => {
+                  toast.success("Owner Profile Updated Successfully!");
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1000);
+                  props.hidemodal1();
+                  console.log("success");
+                }).catch((error) => {
+                  toast.error("Error adding owner to Firestore: ");
+                  console.log(error);
                 });
               });
-            }
-          });
-        } else {
-          const storageRef = storage.ref();
-          const fileRef = storageRef.child(`PetLover/${ownerProfile.email.toString()}`);
-          if (selectedFile !== null) {
-            fileRef.put(selectedFile).then(() => {
-              console.log('File uploaded successfully');
             });
           }
-        
-          // Save the pet data to Firestore
-          db.collection("PetLovers_Profile").doc(ownerProfile.email.toString()).update({
-            PL_Address: ownerProfile.address,
-            PL_Age: ownerProfile.age,
-            PL_BirthDate: ownerDate,
-            PL_ContactNumber: ownerProfile.contact,
-            // PL_DateRegistered: ownerProfile.dateRegister,
-            PL_FirstName: ownerProfile.firstName,
-            PL_Gender: ownerProfile.gender,
-            PL_LastName: ownerProfile.lastName,
-            PL_MiddleName: ownerProfile.middleName,
-            PL_NearbyDVMFLoc: ownerProfile.location,
-            PL_UserEmail: ownerProfile.email
-          }).then(() => {
-            toast.success("Owner Profile Updated Successfully!");
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000); 
-            props.hidemodal1();
-            console.log("success");
-          }).catch((error) => {
-            toast.error("Error adding owner to Firestore: ");
-            console.log(error);
+        });
+      } else {
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child(`PetLover/${ownerProfile.email.toString()}`);
+        if (selectedFile !== null) {
+          fileRef.put(selectedFile).then(() => {
+            console.log('File uploaded successfully');
           });
         }
-      
 
-     
+        // Save the pet data to Firestore
+        db.collection("PetLovers_Profile").doc(ownerProfile.email.toString()).update({
+          PL_Address: ownerProfile.address,
+          PL_Age: ownerProfile.age,
+          PL_BirthDate: ownerDate,
+          PL_ContactNumber: ownerProfile.contact,
+          // PL_DateRegistered: ownerProfile.dateRegister,
+          PL_FirstName: ownerProfile.firstName,
+          PL_Gender: ownerProfile.gender,
+          PL_LastName: ownerProfile.lastName,
+          PL_MiddleName: ownerProfile.middleName,
+          PL_NearbyDVMFLoc: ownerProfile.location,
+          PL_UserEmail: ownerProfile.email
+        }).then(() => {
+          toast.success("Owner Profile Updated Successfully!");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          props.hidemodal1();
+          console.log("success");
+        }).catch((error) => {
+          toast.error("Error adding owner to Firestore: ");
+          console.log(error);
+        });
+      }
     }
   };
-  
-  
+
   return (
     <>
-      <ToastContainer/>
+      <ToastContainer />
       <Modal
         show={props.showmodal}
         onHide={handClose}
@@ -463,7 +467,8 @@ if (regex.test(ownerDate)) {
                   name='birthdate'
                   id='birthdate'
                   className='mb-2'
-                  value={ownerProfile ? formatedDate: ""}
+                  value={ownerProfile ? formatedDate : ""}
+                  // value={value}
                   onChange={handleEdits}
                 />
                 <Overlay

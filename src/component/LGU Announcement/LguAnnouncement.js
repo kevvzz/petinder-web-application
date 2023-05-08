@@ -22,7 +22,7 @@ function LguAnnouncement() {
     const [allPets, setAllPets] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
     const [filteredPets, setFilteredPets] = useState([]);
-    function onClickAddPet() {
+    function onClickAnnouncement() {
         setShowAddModal(true);
     }
 
@@ -118,7 +118,7 @@ function petFilter(filter) {
                 <Row className='bottomSpace'>
                     <Col  xs={2}>
                         <Row>
-                            <div className="button-wrapper" onClick={onClickAddPet}>
+                            <div className="button-wrapper" onClick={onClickAnnouncement}>
                                 <button type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>ADD NEW</button>
                             </div>
                         </Row>
@@ -146,7 +146,7 @@ function petFilter(filter) {
                 <AddAnnouncement
                     showmodal1 = {showAddModal}
                     hidemodal1 = {() => setShowAddModal(false)}
-                    showmodal1handler = {onClickAddPet}
+                    showmodal1handler = {onClickAnnouncement}
                 />
                 {/* <div className="rowCard">
                     {filteredPets.map((doc) => (

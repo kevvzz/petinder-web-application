@@ -10,6 +10,7 @@ import {AdminNavbar} from '../Navbar/Navbar';
 import DeleteModal from '../Modal/DeleteModal';
 import EditAdminPets from './EditAdminPets';
 import EditVaccine from '../Modal/EditVaccine';
+import GenerateQRModal from '../Modal/GenerateQRModal';
 
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
@@ -20,7 +21,7 @@ import 'firebase/compat/firestore';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faFileCirclePlus} from '@fortawesome/free-solid-svg-icons';
+import {faFileCirclePlus, faQrcode} from '@fortawesome/free-solid-svg-icons';
 //CSS
 import '../../profile.css';
 import '../../App.css';
@@ -54,6 +55,7 @@ function PetProfileAdmin() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showVaccineModal, setShowVaccineModal] = useState(false);
   const [showEditVaccineModal, setShowEditVaccineModal] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
   const [exist, setShowExist] = useState(false);
   const [vaccineInfo, setVaccineInfo] = useState("");
   const [vaccineId, setVaccineId] = useState("");
@@ -67,6 +69,9 @@ function PetProfileAdmin() {
   }
   function onClickVaccinePet() {
     setShowVaccineModal(true);
+  }
+  function onClickQrCode() {
+    setShowQrModal(true);
   }
 
   const dateTarget = useRef(null);
@@ -432,6 +437,9 @@ function PetProfileAdmin() {
                   <Row className="button-wrapper">
                     <Col className='center'><button onClick={onClickVaccinePet} type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>ADD VACCINE</button></Col>
                   </Row>
+                  <Row className="button-wrapper">
+                    <Col className='center'><button onClick={onClickQrCode} type="button" className="add"><FontAwesomeIcon icon={faQrcode}/><span> </span>QR CODE</button></Col>
+                  </Row>
                 </Col>
                 <Col className='mt-4'>
                   <Row className="button-wrapper mb-2">
@@ -545,9 +553,11 @@ function PetProfileAdmin() {
             vaccineInfo = {vaccineInfo}
             setVaccineInfo = {setVaccineInfo}
           />
-            
+          <GenerateQRModal
+            showmodal = {showQrModal}
+            hidemodal = {() => setShowQrModal(false)}
+          />
         </div>
-        
       </div>
       <Modal show={showVaccineModal} onHide={() => setShowVaccineModal(false)} centered className='modal-lg'>
           <Modal.Header className='headerBG' closeButton>

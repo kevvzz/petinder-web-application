@@ -19,90 +19,57 @@ function LguAnnouncement() {
     const userData = JSON.parse(localStorage.getItem('lguData'));
     console.log(userData);
     const navigate = useNavigate()
-    const [allPets, setAllPets] = useState([]);
+    const [lguAnnounce, setLguAnnounce] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [filteredPets, setFilteredPets] = useState([]);
+    const [filteredAnnounce, setFilteredAnnounce] = useState([]);
     function onClickAnnouncement() {
         setShowAddModal(true);
     }
 
-    useEffect(() => {
-        db.collection("Pets_Profile")
-          .get()
-          .then((querySnapshot) => {
-            const promises = [];
-            querySnapshot.forEach((doc) => {
-              const id = doc.data().P_IDNumber;
-              const name = doc.data().P_Name;
-              const species = doc.data().P_Species;
-              const age = doc.data().P_Age;
-              const breed = doc.data().P_Breed;
-              const color = doc.data().P_Color;
-              const dateRegister = doc.data().P_DateRegistered;
-              const gender = doc.data().P_Gender;
-              const lguAccount = doc.data().P_LGUAccount;
-              const neutering = doc.data().P_Neutering;
-              const owner = doc.data().P_PetOwner;
-              const registerType = doc.data().P_RegisterType;
-              const registerLocation = doc.data().P_RegisteredLocation;
-              const status = doc.data().P_Status;
     
-              if (registerLocation === userData.LGU_BranchName || lguAccount === userData.LGU_UserName) {
-                const promise = storage
-                  .ref()
-                  .child(`Pet/${id}`)
-                  .getDownloadURL()
-                  .then((url) => {
-                    return { id, name, url, species, age, breed, color, dateRegister, gender, lguAccount, neutering, owner, registerType, registerLocation, status};
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                    return null;
-                  });
-      
-                promises.push(promise);
-              }
-            });
-      
-            Promise.all(promises).then((data) => {
-              setAllPets(data.filter((item) => item !== null));
-              setFilteredPets(data.filter((item) => item !== null));
-            });
-          })
-          .catch((error) => {
-            console.log("Error getting documents: ", error);
-          });
-      }, []);
+useEffect(() => {
+  const docRef = db.collection("LGU_Announcements")
+  docRef.get()
+    .then((querySnapshot) => {
+      const announcements = [];
+      querySnapshot.forEach((doc) => {
+        const announcement = doc.data();
+        const { Ann_DateSent, Ann_IDNumber, Ann_Message, Ann_Receiver, Ann_Sender, Ann_Title } = announcement;
+
+        announcements.push({ 
+          id: Ann_IDNumber,
+          date: Ann_DateSent,
+          message: Ann_Message,
+          receiver: Ann_Receiver,
+          sender: Ann_Sender,
+          title: Ann_Title,
+        });
+      });
+      setLguAnnounce(announcements);
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+    });
+}, []);
  
-  function searchFilter(e) {
-    let term = e.target.value.toLowerCase();
-    if (term == "") {
-      setFilteredPets(allPets);
-    } else {
-      setFilteredPets(
-        filteredPets.filter(
-          (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
-        )
-      );
-    }
+  // function searchFilter(e) {
+  //   let term = e.target.value.toLowerCase();
+  //   if (term == "") {
+  //     setFilteredPets(allPets);
+  //   } else {
+  //     setFilteredPets(
+  //       filteredPets.filter(
+  //         (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
+  //       )
+  //     );
+  //   }
+  // }
+  function convertTimestamp(stamp) {
+    const date = new Date(stamp.seconds * 1000 + stamp.nanoseconds / 1000000);
+    const dateString = date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric'});
+
+    return dateString;
   }
-
-function petFilter(filter) {
-   
-        if (filter === "all") {
-            setFilteredPets(allPets);
-
-        } else if(filter === "Canine"){
-
-            setFilteredPets(allPets.filter(pet => pet.species === filter));
-        }else if(filter === "Feline"){
-
-            setFilteredPets(allPets.filter(pet => pet.species === filter));
-        } else {
-            toast.error("error pets");
-        }
-}
-
   return (
     <div className='main-bg'>
         <LguNavbar/>
@@ -137,7 +104,7 @@ function petFilter(filter) {
                                 name="term"
                                 id="term"
                                 required
-                                onChange={(e) => searchFilter(e)}
+                                // onChange={(e) => searchFilter(e)}
                                 />
                             </InputGroup>
                         </Row>
@@ -147,34 +114,35 @@ function petFilter(filter) {
                     showmodal1 = {showAddModal}
                     hidemodal1 = {() => setShowAddModal(false)}
                     showmodal1handler = {onClickAnnouncement}
+                    userData = {userData}
                 />
-                {/* <div className="rowCard">
-                    {filteredPets.map((doc) => (
-                    
+                <div className="row">
+                    {lguAnnounce.map((doc) => (
+                      <div class='col-lg-4 col-md-6 mb-4'>
+                        <div class="card-body">
+                          <Card.Text>
+                            <Row>
+                              {/* <Col xs={4}>
+                                <Row>
+                                  <img className='petImage' src={lguPhoto} alt="" />
+                                </Row>
+                              </Col> */}
+                              <Col>
+                                <Row>
+                                  <h6 class="fw-bold center">{doc.receiver}</h6>
+                                </Row>
+                                <Row>
+                                  {doc.title}
+                                </Row>
+                                <Row>
+                                  Date Added: {convertTimestamp(doc.date)}
+                                </Row>
+                              </Col>
+                            </Row>
+                          </Card.Text>
+                        </div>
+                      </div>
                     ))}
-                </div> */}
-                <div class="row">
-                  <div class='col-lg-4 col-md-6 mb-4'>
-                    <div class="card-body">
-                      <Card.Text>
-                        <Row>
-                          <Col xs={4}>
-                            <Row>
-                              <img className='petImage' src={lguPhoto} alt="" />
-                            </Row>
-                          </Col>
-                          <Col>
-                            <Row>
-                              <h6 class="fw-bold">LGU-DVMF TALISAY</h6>
-                            </Row>
-                            <Row>
-                              <p>Date Registered: February 10, 2023 </p>
-                            </Row>
-                          </Col>
-                        </Row>
-                      </Card.Text>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>	

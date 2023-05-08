@@ -107,6 +107,10 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
   }
+  .announce{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
   .pet-card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);
     -webkit-transform: scale(1.2);

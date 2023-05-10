@@ -11,8 +11,8 @@ import 'firebase/compat/firestore';
 
 import { ToastContainer,toast } from 'react-toastify';
 
-import { useQuill } from 'react-quilljs';
-import 'quill/dist/quill.snow.css';
+// import { useQuill } from 'react-quilljs';
+// import 'quill/dist/quill.snow.css';
 
 function AddAnnouncement(props) {
     const announcementData = props.userData

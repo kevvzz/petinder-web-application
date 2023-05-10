@@ -558,7 +558,6 @@ function PetProfileAdmin() {
             showmodal={showQrModal}
             hidemodal={() => setShowQrModal(false)}
             editPetProfile={editPetProfile}
-            setEditPetProfile={setEditPetProfile}
           />
         </div>
       </div>

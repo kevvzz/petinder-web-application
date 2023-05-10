@@ -130,8 +130,10 @@ td{
 .petImage{
     flex: 1; 
     border-radius: 50%; 
-    width: 30%; 
-    height: 30%;
+    width: 100%;
+   height: auto;
+   aspect-ratio: 3/2;
+   object-fit: contain;
 }
 .lguImage{
     flex: 1; 

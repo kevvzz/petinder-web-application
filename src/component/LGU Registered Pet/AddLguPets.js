@@ -12,7 +12,7 @@ import 'firebase/compat/firestore';
 import { ToastContainer,toast } from 'react-toastify';
 
 function AddLguPets(props) {
- 
+  const userData = JSON.parse(localStorage.getItem('lguData'));
   const ownerTarget = useRef(null);
   const [ownerShowTooltip, setOwnerShowTooltip] = useState(false);
   const nameTarget = useRef(null);
@@ -33,17 +33,12 @@ function AddLguPets(props) {
   const [statusShowTooltip, setStatusShowTooltip] = useState(false);
   const profileTarget = useRef(null);
   const [profileShowTooltip, setProfileShowTooltip] = useState(false);
-  const lguTarget = useRef(null);
-  const [lguShowTooltip, setLguShowTooltip] = useState(false);
   const typeTarget = useRef(null);
   const [typeShowTooltip, setTypeShowTooltip] = useState(false);
-  const registerTarget = useRef(null);
-  const [registerShowTooltip, setRegisterShowTooltip] = useState(false);
 
   const [profileCollection, setProfileCollection] = useState("PetLovers_Profile");
   const [selectedFile, setSelectedFile] = useState(null);
   const [owner, setOwner] = useState([]);
-  const [lguAccount, setLguAccount] = useState([]);
   const currentDate = new Date();
   const timestamp = firebase.firestore.Timestamp.fromDate(currentDate);
 
@@ -58,9 +53,7 @@ function AddLguPets(props) {
     petNeutering: '',
     petBreed: '',
     petStatus: '',
-    petLgu: '',
-    petType: '',
-    petRegister: ''
+    petType: ''
   });
 
   useEffect(() => {
@@ -73,20 +66,11 @@ function AddLguPets(props) {
       setProfileCollection("PetLovers_Profile");
     }
     const owner = db.collection(profileCollection);
-    const lguAccount = db.collection("LGU_Profile");
-
-
     owner.get()
       .then((querySnapshot) => {
         const documents = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setOwner(documents);
       });
-    lguAccount.get()
-      .then((querySnapshot) => {
-        const documents = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setLguAccount(documents);
-      });
-
 
   }, [petData.petStatus, profileCollection]);
 
@@ -152,12 +136,6 @@ function AddLguPets(props) {
       setBreedShowTooltip(false);
     }
 
-    if (petData.petLgu === "") {
-      setLguShowTooltip(true);
-    } else {
-      setLguShowTooltip(false);
-    }
-
     if (petData.petType === "") {
       setTypeShowTooltip(true);
     } else {
@@ -170,12 +148,6 @@ function AddLguPets(props) {
       setProfileShowTooltip(false);
     }
 
-    if (petData.petRegister === "") {
-      setRegisterShowTooltip(true);
-    } else {
-      setRegisterShowTooltip(false);
-    }
-
 
 
     if ((petData.petOwner !== "" && petData.petOwner !== null) &&
@@ -186,9 +158,7 @@ function AddLguPets(props) {
       (petData.petAge !== "" && petData.petAge !== null) &&
       (petData.petNeutering !== "" && petData.petNeutering !== null) &&
       (petData.petStatus !== "" && petData.petStatus !== null) &&
-      (petData.petLgu !== "" && petData.petLgu !== null) &&
       (petData.petType !== "" && petData.petType !== null) &&
-      (petData.petRegister !== "" && petData.petRegister !== null) &&
       (selectedFile !== null) &&
       (petData.petBreed !== "" && petData.petBreed !== null)) {
 
@@ -225,8 +195,8 @@ function AddLguPets(props) {
           P_DateRegistered: timestamp,
           P_NumberofLikes: 0,
           P_RegisterType: petData.petType,
-          P_LGUAccount: petData.petLgu,
-          P_RegisteredLocation: petData.petRegister
+          P_LGUAccount: userData.LGU_UserName,
+          P_RegisteredLocation: userData.LGU_BranchName
         })
         .then(() => {
           toast.success("Pet Profile Added Successfully!");
@@ -441,32 +411,6 @@ function AddLguPets(props) {
           </Row>
           <Row>
             <Col>
-              <Form.Label ref={lguTarget} className="h6" htmlFor="name">LGU Accounts<span className='red'> *</span></Form.Label>
-              <InputGroup className='mb-3'>
-                <Form.Select
-                  aria-label="Default select example"
-                  name="petLgu"
-                  id="petLgu"
-                  value={petData.petLgu}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select Lgu Account</option>
-                  {lguAccount.map((doc) => (
-                    <option key={doc.id} value={doc.LGU_UserName}>
-                      {doc.LGU_UserName}
-                    </option>
-                  ))}
-                </Form.Select>
-                <Overlay target={lguTarget.current} show={lguShowTooltip} placement="right">
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty LGU Accounts
-                    </Tooltip>
-                  )}
-                </Overlay>
-              </InputGroup>
-            </Col>
-            <Col>
               <Form.Label ref={typeTarget} className="h6" htmlFor="name">Register Type<span className='red'> *</span></Form.Label>
               <InputGroup className='mb-3'>
                 <Form.Select
@@ -489,8 +433,6 @@ function AddLguPets(props) {
                 </Overlay>
               </InputGroup>
             </Col>
-          </Row>
-          <Row>
             <Col>
               <Form.Label ref={ageTarget} className="h6" htmlFor="name">Age<span className='red'> *</span></Form.Label>
               <InputGroup className='mb-3'>
@@ -507,32 +449,6 @@ function AddLguPets(props) {
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
                       Empty Pet Name
-                    </Tooltip>
-                  )}
-                </Overlay>
-              </InputGroup>
-            </Col>
-            <Col>
-              <Form.Label ref={registerTarget} className="h6" htmlFor="name">Register Location<span className='red'> *</span></Form.Label>
-              <InputGroup className='mb-3'>
-                <Form.Select
-                  aria-label="Default select example"
-                  name="petRegister"
-                  id="petRegister"
-                  value={petData.petRegister}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select Register Location</option>
-                  {lguAccount.map((doc) => (
-                    <option key={doc.id} value={doc.LGU_BranchName}>
-                      {doc.LGU_BranchName}
-                    </option>
-                  ))}
-                </Form.Select>
-                <Overlay target={registerTarget.current} show={registerShowTooltip} placement="right">
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty Register Location
                     </Tooltip>
                   )}
                 </Overlay>

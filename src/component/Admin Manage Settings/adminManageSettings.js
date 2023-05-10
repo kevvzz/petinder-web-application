@@ -234,7 +234,7 @@ function AdminManageSettings() {
                     <div style={{ display: showDiv2 ? 'block' : 'none' }} class="col-settings change">
                         <Row>
                             <Form.Label className='h6'>Current Password<span className='red' ref={oldTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='old' id='old' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="password" name='old' id='old' className='mb-2' onChange={handleEdits}/>
                             <Overlay target={oldTarget.current} show={oldShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>
@@ -245,7 +245,7 @@ function AdminManageSettings() {
                         </Row>
                         <Row>
                             <Form.Label className='h6'>New Password<span className='red' ref={newTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='new' id='new' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="password" name='new' id='new' className='mb-2' onChange={handleEdits}/>
                             <Overlay target={newTarget.current} show={newShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>
@@ -256,7 +256,7 @@ function AdminManageSettings() {
                         </Row>
                         <Row>
                             <Form.Label className='h6'>Confirm Password<span className='red' ref={confirmTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='confirm' id='confirm' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="password" name='confirm' id='confirm' className='mb-2' onChange={handleEdits}/>
                             <Overlay target={confirmTarget.current} show={confirmShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>

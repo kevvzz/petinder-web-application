@@ -16,6 +16,7 @@ import '../../App.css';
 import { useNavigate } from 'react-router-dom';
 function LguPetOwner() {
   const navigate = useNavigate()
+    const userData = JSON.parse(localStorage.getItem('lguData'));
     const [allOwner, setAllOwner] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
     const [filteredOwner, setFilteredOwner] = useState([]);
@@ -43,7 +44,8 @@ function LguPetOwner() {
           const gender = doc.data().PL_Gender;
           const location = doc.data().PL_NearbyDVMFLoc;
 
-          const promise = storage
+          if (location === userData.LGU_BranchName){
+            const promise = storage
             .ref()
             .child(`PetLover/${email}`)
             .getDownloadURL()
@@ -56,6 +58,9 @@ function LguPetOwner() {
             });
 
           promises.push(promise);
+
+          }
+      
         });
 
         Promise.all(promises).then((data) => {

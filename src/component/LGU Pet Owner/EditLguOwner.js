@@ -384,7 +384,7 @@ function EditLguOwner(props) {
                     className='h6'
                   >Age<span className='red' ref={ageTarget}> *</span></Form.Label>
                   <Form.Control
-                    type="text"
+                    type="number"
                     name='age'
                     id='age'
                     className='mb-2'
@@ -483,7 +483,9 @@ function EditLguOwner(props) {
                     className='h6'
                   >Contact Number<span className='red' ref={contactTarget}> *</span></Form.Label>
                   <Form.Control
-                    type="text"
+                    type="number"
+                    min={11}
+                    max={11}
                     name='contact'
                     id='contact'
                     className='mb-2'

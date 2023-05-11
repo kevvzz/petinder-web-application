@@ -377,14 +377,18 @@ function AddLguSeller(props) {
                 <Form.Label
                   className='h6'
                 >Gender<span className='red' ref={genderTarget}> *</span></Form.Label>
-                <Form.Control
-                  type="text"
-                  name='gender'
-                  id='gender'
+                <Form.Select
+                  aria-label="Default select example"
+                  name="gender"
+                  id="gender"
                   className='mb-2'
                   value={sellerAddProfile.gender}
                   onChange={handleInputChange}
-                />
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Adoption">Male</option>
+                  <option value="Sale">Female</option>
+                </Form.Select>
                 <Overlay
                   target={genderTarget.current}
                   show={genderShowTooltip}

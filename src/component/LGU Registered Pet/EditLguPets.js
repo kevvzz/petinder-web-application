@@ -247,6 +247,7 @@ function EditLguPets(props) {
                         id="owner" 
                         defaultValue={props.editPetProfile?props.editPetProfile.owner:""} 
                         onChange={(e) => handleEdit(e)}
+                        disabled={!props.editPetProfile.status}
                       >
                         <option value="">Select Owner</option>
                         {owner.map((doc) => (

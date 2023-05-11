@@ -48,7 +48,14 @@ function EditAdminSeller(props) {
 
   function handleEdits(e) {
     let seller = { ...sellerProfile };
-    seller[e.target.id] = e.target.value;
+    const regex = /^\d{4}-\d{2}-\d{2}$/; // regular expression to match the format yyyy-mm-dd
+    let value = e.target.value
+
+    if (regex.test(value)) {
+      value = firebase.firestore.Timestamp.fromDate(new Date(value));
+    }
+
+    seller[e.target.id] = value;
     props.setSellerProfile(seller);
   }
   const uploadImage = async (e) => {

@@ -257,6 +257,7 @@ function AddLguPets(props) {
                   id="petOwner"
                   value={petData.petOwner}
                   onChange={handleInputChange}
+                  disabled={!petData.petStatus}
                 >
                   <option value="">Select Owner</option>
                   {owner.map((doc) => (

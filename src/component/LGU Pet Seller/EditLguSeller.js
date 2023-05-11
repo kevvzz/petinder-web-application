@@ -48,7 +48,14 @@ function EditLguSeller(props) {
 
   function handleEdits(e) {
     let seller = { ...sellerProfile };
-    seller[e.target.id] = e.target.value;
+    const regex = /^\d{4}-\d{2}-\d{2}$/; // regular expression to match the format yyyy-mm-dd
+    let value = e.target.value
+
+    if (regex.test(value)) {
+      value = firebase.firestore.Timestamp.fromDate(new Date(value));
+    }
+
+    seller[e.target.id] = value;
     props.setSellerProfile(seller);
   }
   const uploadImage = async (e) => {
@@ -362,14 +369,18 @@ function EditLguSeller(props) {
                 <Form.Label
                   className='h6'
                 >Gender<span className='red' ref={genderTarget}> *</span></Form.Label>
-                <Form.Control
-                  type="text"
-                  name='gender'
-                  id='gender'
+                 <Form.Select
+                  aria-label="Default select example"
+                  name="gender"
+                  id="gender"
                   className='mb-2'
                   value={sellerProfile ? sellerProfile.gender : ""}
                   onChange={handleEdits}
-                />
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Adoption">Male</option>
+                  <option value="Sale">Female</option>
+                </Form.Select>
                 <Overlay
                   target={genderTarget.current}
                   show={genderShowTooltip}

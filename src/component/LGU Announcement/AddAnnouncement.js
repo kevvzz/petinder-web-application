@@ -43,80 +43,42 @@ function AddAnnouncement(props) {
 
   console.log(announcement);
 
-  const notify = () => {
+  const notify = (collection, location) => {
 
     const db = firebase.firestore();
-    
-    const devicesCollection = db.collection("PetLovers_Profile").where("PL_NearbyDVMFLoc", "==", announcementData.LGU_BranchName);
+    const devicesCollection = db.collection(collection).where(location, "==", announcementData.LGU_BranchName);
     console.log("announcementData.LGU_BranchName" + announcementData.LGU_BranchName);
-    
+
     // Send message to all devices
     devicesCollection.get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         const deviceToken = doc.data().RegistrationToken;
-        
-       
-          console.log('Registration token:', deviceToken);
-          
-          // Send the notification
-          fetch('https://fcm.googleapis.com/fcm/send', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'key=AAAAp19aKsI:APA91bHq0SsZEdxRkUqsy5GHubUld5HFz95vioS7VOvusbbbLvrpDuKuk0bDawVA_8sGyPQTt5PZ-fCxPtH_TKsPiaD1EtiBoivS72kKZ2FHpZFZ_9E6ljcQlYxzRxlV5hBmXO5X2urs'
+
+        console.log('Registration token:', deviceToken);
+
+        // Send the notification
+        fetch('https://fcm.googleapis.com/fcm/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'key=AAAAp19aKsI:APA91bHq0SsZEdxRkUqsy5GHubUld5HFz95vioS7VOvusbbbLvrpDuKuk0bDawVA_8sGyPQTt5PZ-fCxPtH_TKsPiaD1EtiBoivS72kKZ2FHpZFZ_9E6ljcQlYxzRxlV5hBmXO5X2urs'
+          },
+          body: JSON.stringify({
+            notification: {
+              title: announcementData.LGU_UserName + ": " + announcement.title,
+              body: announcement.message
             },
-            body: JSON.stringify({
-              notification: {
-                title: announcementData.LGU_UserName + ": "+announcement.title,
-                body: announcement.message
-              },
-              to: deviceToken
-            })
-          }).then((response) => {
-            console.log('Notification sent:', response);
-          }).catch((error) => {
-            console.error('Error sending notification:', error);
-          });
-       
-        })
+            to: deviceToken
+          })
+        }).then((response) => {
+          console.log('Notification sent:', response);
+        }).catch((error) => {
+          console.error('Error sending notification:', error);
+        });
+
+      })
 
     });
-    
-    const devicesCollection2 = db.collection("PetSellerorAdoption_Profile").where("PSA_NearbyDVMFLoc", "==", announcementData.LGU_BranchName);
-    
-    // Send message to all devices
-    devicesCollection2.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        const deviceToken = doc.data().RegistrationToken;
-        
-        
-          console.log('Registration token:', deviceToken);
-          
-          // Send the notification
-          fetch('https://fcm.googleapis.com/fcm/send', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'key=AAAAp19aKsI:APA91bHq0SsZEdxRkUqsy5GHubUld5HFz95vioS7VOvusbbbLvrpDuKuk0bDawVA_8sGyPQTt5PZ-fCxPtH_TKsPiaD1EtiBoivS72kKZ2FHpZFZ_9E6ljcQlYxzRxlV5hBmXO5X2urs'
-            },
-            body: JSON.stringify({
-              notification: {
-                title: announcementData.LGU_UserName + ": "+announcement.title,
-                body: announcement.message
-              },
-              to: deviceToken
-            })
-          }).then((response) => {
-            console.log('Notification sent:', response);
-          }).catch((error) => {
-            console.error('Error sending notification:', error);
-          });
-       
-        })
-    });
-    
-
-    
   }
 
   const handleSaveChanges = () => {
@@ -146,9 +108,10 @@ function AddAnnouncement(props) {
           Ann_Title: announcement.title,
         })
         .then(() => {
-          notify();
+          notify("PetLovers_Profile", "PL_NearbyDVMFLoc");
+          notify("PetSellerorAdoption_Profile", "PSA_NearbyDVMFLoc");
           toast.success("LGU Announcement Added Successfully!");
-          
+
           setTimeout(() => {
             window.location.reload();
           }, 2000);

@@ -79,9 +79,11 @@ table{
     margin-top: 1rem;
     padding: 1rem;
     border-style: solid;
-}
-.card-body{
     background: #fff;
+}
+.card-body:hover{
+    background-color: rgb(255 141 1);
+    cursor: pointer;
 }
 .card-header{
     display: flex;

@@ -79,11 +79,6 @@ function EditLguPets(props) {
     }
   
     const handleSaveChanges = () => {
-      if(editPetProfile.owner === "" || editPetProfile.owner === null){
-        setOwnerShowTooltip(true);
-      }else{
-        setOwnerShowTooltip(false);
-      }
   
       if(editPetProfile.name === "" || editPetProfile.name === null){
         setNameShowTooltip(true);
@@ -120,12 +115,6 @@ function EditLguPets(props) {
       }else{
         setNeutringShowTooltip(false);
       }
-  
-      if(editPetProfile.status === "" || editPetProfile.status === null){
-        setStatusShowTooltip(true);
-      }else{
-        setStatusShowTooltip(false);
-      }
      
       if(editPetProfile.breed === "" || editPetProfile.breed === null){
         setBreedShowTooltip(true);
@@ -154,14 +143,12 @@ function EditLguPets(props) {
   
       
       
-      if((editPetProfile.owner !== "" && editPetProfile.owner !== null) && 
-      (editPetProfile.name !== "" && editPetProfile.name !== null) && 
+      if((editPetProfile.name !== "" && editPetProfile.name !== null) && 
       (editPetProfile.species !== "" && editPetProfile.species !== null) &&
       (editPetProfile.gender !== "" && editPetProfile.gender !== null) &&
       (editPetProfile.color !== "" && editPetProfile.color !== null) &&
       (editPetProfile.age !== "" && editPetProfile.age !== null) &&
       (editPetProfile.neutering !== "" && editPetProfile.neutering !== null) &&
-      (editPetProfile.status !== "" && editPetProfile.status !== null) &&
       (editPetProfile.lguAccount !== "" && editPetProfile.lguAccount !== null) &&
       (editPetProfile.registerType !== "" && editPetProfile.registerType !== null) &&
       (editPetProfile.registerLocation !== "" && editPetProfile.registerLocation !== null) &&
@@ -178,7 +165,7 @@ function EditLguPets(props) {
           db.collection("Pets_Profile")
           .doc(editPetProfile.id)
           .update({
-            P_PetOwner: editPetProfile.owner,
+            // P_PetOwner: editPetProfile.owner,
             P_Name: editPetProfile.name,
             P_Species: editPetProfile.species,
             P_Gender: editPetProfile.gender,
@@ -186,7 +173,7 @@ function EditLguPets(props) {
             P_Age: editPetProfile.age,
             P_Neutering: editPetProfile.neutering,
             P_Breed: editPetProfile.breed,
-            P_Status: editPetProfile.status,
+            // P_Status: editPetProfile.status,
             P_RegisterType: editPetProfile.registerType,
             P_LGUAccount: editPetProfile.lguAccount,
             P_RegisteredLocation: editPetProfile.registerLocation
@@ -214,7 +201,7 @@ function EditLguPets(props) {
             </Modal.Header>
             <Modal.Body>
               <Row>
-                <Col>
+                {/* <Col>
                     <Form.Label ref={statusTarget} className="h6">Status<span className='red'> *</span></Form.Label>
                     <InputGroup className='mb-3'>
                       <Form.Select 
@@ -265,7 +252,7 @@ function EditLguPets(props) {
                         )}
                       </Overlay>
                     </InputGroup>
-                  </Col>
+                  </Col> */}
               </Row>
               <Row>
                   <Col>

@@ -1,10 +1,11 @@
 import React, { useState,useEffect } from 'react'
 import {LguNavbar} from '../Navbar/Navbar';
-import {Row, Col, InputGroup, Form, Card} from 'react-bootstrap'
+import {Row, Col, InputGroup, Form, Card, Modal} from 'react-bootstrap'
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import AddAnnouncement from './AddAnnouncement';
+import ViewAnnouncement from './ViewAnnouncement';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import lguPhoto from '../../Assets/lgu-cebu-logo.png';
 
@@ -21,11 +22,22 @@ function LguAnnouncement() {
     const navigate = useNavigate()
     const [lguAnnounce, setLguAnnounce] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showViewModal, setShowViewModal] = useState(false);
     const [filteredAnnounce, setFilteredAnnounce] = useState([]);
+
     function onClickAnnouncement() {
         setShowAddModal(true);
     }
+    function onClickViewAnnouncement() {
+      setShowViewModal(true);
+  }
 
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+    onClickViewAnnouncement();
+  };
     
 useEffect(() => {
   const docRef = db.collection("LGU_Announcements")
@@ -116,9 +128,14 @@ useEffect(() => {
                     showmodal1handler = {onClickAnnouncement}
                     userData = {userData}
                 />
+                <ViewAnnouncement
+                    showmodal = {showViewModal}
+                    hidemodal = {() => setShowViewModal(false)}
+                    lguAnnounce = {selectedItem}
+                />
                 <div className="row">
                     {lguAnnounce.map((doc) => (
-                      <div class='col-lg-4 col-md-6 mb-4'>
+                      <div class='col-lg-4 col-md-6 mb-4' onClick={() => handleItemClick(doc)}>
                         <div class="card-body">
                           <Card.Text>
                             <Row>

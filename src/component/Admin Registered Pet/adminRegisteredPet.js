@@ -4,7 +4,6 @@ import {Row, Col, InputGroup, Form} from 'react-bootstrap'
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
-import AddAdminPets from './AddAdminPets';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -170,13 +169,6 @@ function AdminRegisteredPet() {
             </header>
             <div className="container">
                 <Row className='bottomSpace'>
-                    <Col  xs={2}>
-                        <Row>
-                            <div className="button-wrapper" onClick={onClickAddPet}>
-                                <button type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>ADD NEW</button>
-                            </div>
-                        </Row>
-                    </Col>
                     <Col>
                         <Row>
                             <InputGroup className="search-employee">
@@ -293,11 +285,6 @@ function AdminRegisteredPet() {
                         </Row>
                     </Col>
                 </Row>
-                <AddAdminPets
-                    showmodal1 = {showAddModal}
-                    hidemodal1 = {() => setShowAddModal(false)}
-                    showmodal1handler = {onClickAddPet}
-                />
                 <div className="rowCard">
                     {filteredPets.map((doc) => (
                         <div className="pet-card" key={doc.id} onClick={() => navigate("/admin-pet-profile", {state: {filteredPets, doc}} )}>

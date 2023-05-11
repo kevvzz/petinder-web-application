@@ -22,6 +22,8 @@ import AdminLguProfile from './component/Admin Lgu List/adminLguProfile.js';
 import LguPetProfile from './component/LGU Registered Pet/LguPetProfile.js';
 import LguPetOwnerProfile from './component/LGU Pet Owner/LguPetOwnerProfile.js';
 import LguPetSellerProfile from './component/LGU Pet Seller/LguPetSellerProfile.js';
+import LguLostPetProfile from './component/LGU Lost Pet/LguLostPetProfile.js';
+import ViewAnnouncement from './component/LGU Announcement/ViewAnnouncement.js';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import './App.css';
 
@@ -52,6 +54,8 @@ function App() {
         <Route path='/lgu-pet-profile' element={<LguPetProfile/>}/>
         <Route path='/lgu-owner-profile' element={<LguPetOwnerProfile/>}/>
         <Route path='/lgu-seller-profile' element={<LguPetSellerProfile/>}/>
+        <Route path='/lgu-lost-pet-profile' element={<LguLostPetProfile/>}/>
+        <Route path='/lgu-view-announcement' element={<ViewAnnouncement/>}/>
       </Routes>
     </Router>
   );

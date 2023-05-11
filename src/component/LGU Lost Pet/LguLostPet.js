@@ -179,7 +179,7 @@ function petFilter(filter) {
                 </Row>
                 <div className="rowCard">
                     {filteredPets.map((doc) => (
-                        <div className="pet-card" key={doc.id} onClick={() => navigate("/lgu-pet-profile", {state: {filteredPets, doc}} )}>
+                        <div className="pet-card" key={doc.id} onClick={() => navigate("/lgu-lost-pet-profile", {state: {filteredPets, doc}} )}>
                             <a>
                                 <img src={doc.url} alt="profile"/>
                                 <div>

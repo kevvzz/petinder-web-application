@@ -99,10 +99,6 @@ function EditAdminOwner(props) {
   }
   const formatedDate = getFormattedDate(new Date(birthString));
 
-  console.log(data.email);
-  console.log(ownerProfile.email);
-
-
   const handleSaveChanges = () => {
     if (ownerProfile.email === "") {
       setEmailShowTooltip(true);

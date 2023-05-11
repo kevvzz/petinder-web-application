@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { ToastContainer,toast } from 'react-toastify';
@@ -47,6 +48,7 @@ function AddLguSeller(props) {
     const timestamp = firebase.firestore.Timestamp.fromDate(currentDate);
   
     const [sellerAddProfile, setAddSellerProfile] = useState({
+      password : "123456",
       email: '', 
       lastName: '',
       firstName: '',
@@ -158,47 +160,73 @@ function AddLguSeller(props) {
         (sellerAddProfile.gender !== "" && sellerAddProfile.gender !== null) &&
         (sellerAddProfile.location !== "" && sellerAddProfile.location !== null) &&
         (imageUpload !== null && imageUpload !== "")){
-  
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child(`PetSellerOrAdoption/${sellerAddProfile.email.toString()}`);
-        fileRef.put(selectedFile).then(() => {
-          console.log('File uploaded successfully');
-        });
         
-        const birthdate = sellerAddProfile.birthdate; 
-        const birthTimestamp = firebase.firestore.Timestamp.fromDate(new Date(birthdate)); 
-  
-        // Save the pet data to Firestore
-        db.collection("PetSellerorAdoption_Profile")
-          .doc(sellerAddProfile.email.toString())
-          .set({
-            PSA_Address: sellerAddProfile.address,
-            PSA_Age: sellerAddProfile.age,
-            PSA_BirthDate: birthTimestamp,
-            PSA_ContactNumber: sellerAddProfile.contact,
-            PSA_DateRegistered: timestamp,
-            PSA_FirstName: sellerAddProfile.firstName,
-            PSA_Gender: sellerAddProfile.gender,
-            PSA_LastName: sellerAddProfile.lastName,
-            PSA_MiddleName: sellerAddProfile.middleName,
-            PSA_NearbyDVMFLoc: sellerAddProfile.location,
-            PSA_UserEmail: sellerAddProfile.email
-          })
-          .then(() => {
-            toast.success("Seller Profile Added Successfully!");
-            setTimeout(() => {
-              window.location.reload(); 
-            }, 1000); 
-            props.hidemodal1();
-            console.log("success");
+          db.collection("PetSellerorAdoption_Profile")
+          .where("PSA_UserEmail", "==", sellerAddProfile.email.toString())
+          .get()
+          .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+              // The email already exists, handle accordingly
+              toast.error("This email is already in use.");
+              return;
+            }
+            console.log(sellerAddProfile.email)
+            console.log(sellerAddProfile.password)
+            firebase.auth().createUserWithEmailAndPassword(sellerAddProfile.email, sellerAddProfile.password)
+                  .then((userCredential) => {
+                    // Signed in
+                    var user = userCredential.user;
+                    console.log(user);
+            
+                    const storageRef = storage.ref();
+                    const fileRef = storageRef.child(`PetSellerOrAdoption/${sellerAddProfile.email.toString()}`);
+                    fileRef.put(selectedFile).then(() => {
+                      console.log('File uploaded successfully');
+                    });
+                    
+                    const birthdate = sellerAddProfile.birthdate; 
+                    const birthTimestamp = firebase.firestore.Timestamp.fromDate(new Date(birthdate)); 
+              
+                    // Save the pet data to Firestore
+                    db.collection("PetSellerorAdoption_Profile")
+                      .doc(sellerAddProfile.email.toString())
+                      .set({
+                        PSA_Address: sellerAddProfile.address,
+                        PSA_Age: sellerAddProfile.age,
+                        PSA_BirthDate: birthTimestamp,
+                        PSA_ContactNumber: sellerAddProfile.contact,
+                        PSA_DateRegistered: timestamp,
+                        PSA_FirstName: sellerAddProfile.firstName,
+                        PSA_Gender: sellerAddProfile.gender,
+                        PSA_LastName: sellerAddProfile.lastName,
+                        PSA_MiddleName: sellerAddProfile.middleName,
+                        PSA_NearbyDVMFLoc: sellerAddProfile.location,
+                        PSA_UserEmail: sellerAddProfile.email
+                      })
+                      .then(() => {
+                        toast.success("Seller Profile Added Successfully!");
+                        setTimeout(() => {
+                          window.location.reload(); 
+                        }, 1000); 
+                        props.hidemodal();
+                        console.log("success");
+                      })
+                      .catch((error) => {
+                        toast.error("Error adding seller to Firestore: ");
+                        console.log(error)
+                      });
+                  })
+                  .catch((error) => {
+                    console.error('Error creating user:', error);    
+                  });
           })
           .catch((error) => {
-            toast.error("Error adding seller to Firestore: ");
-            console.log(error)
-          });
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+
+          }); 
       }
-  
-  
     };
     return (
       <>

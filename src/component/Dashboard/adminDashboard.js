@@ -318,7 +318,7 @@ function AdminDashboard() {
 
 							{/* //card here */}
 							<div class="row">
-								{max3Owner.map((doc) => (	
+								{max3Pets.map((doc) => (	
 									<div class='col-lg-4 col-md-6 mb-4'>
 										<div class="card-body">
 											<Card.Text>
@@ -351,7 +351,7 @@ function AdminDashboard() {
 
 							{/* //card here */}
 							<div class="row">
-								{max3Pets.map((doc) => (	
+								{max3Owner.map((doc) => (	
 									<div class='col-lg-4 col-md-6 mb-4'>
 										<div class="card-body">
 											<Card.Text>
@@ -363,7 +363,7 @@ function AdminDashboard() {
 													</Col>
 													<Col>
 														<Row>
-															<h6 class="fw-bold">{doc.name}</h6>
+															<h6 class="fw-bold">{(doc.firstName + " "+ doc.lastName)}</h6>
 														</Row>
 														<Row>
 															<p>{convertTimeStamp(doc.dateRegister)}</p>
@@ -396,7 +396,7 @@ function AdminDashboard() {
 													</Col>
 													<Col>
 														<Row>
-															<h6 class="fw-bold">{doc.name}</h6>
+															<h6 class="fw-bold">{(doc.firstName + " "+ doc.lastName)}</h6>
 														</Row>
 														<Row>
 															<p>{convertTimeStamp(doc.dateRegister)}</p>

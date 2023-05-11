@@ -7,11 +7,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import {ToastContainer, toast } from 'react-toastify';
 
 function AddLguOwner(props) {
+    const userData = JSON.parse(localStorage.getItem('lguData'));
+    console.log(userData)
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageUpload, setImageUpload] = useState('');
   
@@ -26,8 +29,7 @@ function AddLguOwner(props) {
     const [lastNameShowTooltip, setLastNameShowTooltip] = useState(false);
     const firstNameTarget = useRef(null);
     const [firstNameShowTooltip, setFirstNameShowTooltip] = useState(false);
-    const middleNameTarget = useRef(null);
-    const [middleNameShowTooltip, setMiddleNameShowTooltip] = useState(false);
+    
     const addressTarget = useRef(null);
     const [addressShowTooltip, setAddressShowTooltip] = useState(false);
     const ageTarget = useRef(null);
@@ -38,8 +40,7 @@ function AddLguOwner(props) {
     const [contactShowTooltip, setContactShowTooltip] = useState(false);
     const genderTarget = useRef(null);
     const [genderShowTooltip, setGenderShowTooltip] = useState(false);
-    const locationTarget = useRef(null);
-    const [locationShowTooltip, setLocationShowTooltip] = useState(false);
+    
     const profileTarget = useRef(null);
     const [profileShowTooltip, setProfileShowTooltip] = useState(false);
   
@@ -47,6 +48,7 @@ function AddLguOwner(props) {
     const timestamp = firebase.firestore.Timestamp.fromDate(currentDate);
   
     const [ownerAddProfile, setAddOwnerProfile] = useState({
+      password : "123456",
       email: '', 
       lastName: '',
       firstName: '',
@@ -55,8 +57,7 @@ function AddLguOwner(props) {
       age: '', 
       birthdate: '', 
       contact: '', 
-      gender: '', 
-      location: '' 
+      gender: ''
     });
   
     const handleInputChange = (event) => {
@@ -85,7 +86,7 @@ function AddLguOwner(props) {
         };
       });
     };
-   
+    
     const handleSaveChanges = () => {
       if (ownerAddProfile.email === "") {
         setEmailShowTooltip(true);
@@ -102,12 +103,6 @@ function AddLguOwner(props) {
         setFirstNameShowTooltip(true);
       } else {
         setFirstNameShowTooltip(false);
-      }
-  
-      if (ownerAddProfile.middleName === "") {
-        setMiddleNameShowTooltip(true);
-      } else {
-        setMiddleNameShowTooltip(false);
       }
   
       if (ownerAddProfile.address === "") {
@@ -140,61 +135,85 @@ function AddLguOwner(props) {
         setGenderShowTooltip(false);
       }
   
-      if (ownerAddProfile.location === "") {
-        setLocationShowTooltip(true);
-      } else {
-        setLocationShowTooltip(false);
-      }
-  
   
       if ((ownerAddProfile.email !== "" && ownerAddProfile.email !== null) &&
         (ownerAddProfile.lastName !== "" && ownerAddProfile.lastName !== null) &&
         (ownerAddProfile.firstName !== "" && ownerAddProfile.firstName !== null) &&
-        (ownerAddProfile.middleName !== "" && ownerAddProfile.middleName !== null) &&
         (ownerAddProfile.address !== "" && ownerAddProfile.address !== null) &&
         (ownerAddProfile.age !== "" && ownerAddProfile.age !== null) &&
         (ownerAddProfile.birthdate !== "" && ownerAddProfile.birthdate !== null) &&
         (ownerAddProfile.contact !== "" && ownerAddProfile.contact !== null) &&
         (ownerAddProfile.gender !== "" && ownerAddProfile.gender !== null) &&
-        (ownerAddProfile.location !== "" && ownerAddProfile.location !== null) &&
         (imageUpload !== null && imageUpload !== "")){
-  
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child(`PetLover/${ownerAddProfile.email.toString()}`);
-        fileRef.put(selectedFile).then(() => {
-          console.log('File uploaded successfully');
-        });
-        
-        const birthdate = ownerAddProfile.birthdate; 
-        const birthTimestamp = firebase.firestore.Timestamp.fromDate(new Date(birthdate)); 
-  
-        // Save the pet data to Firestore
-        db.collection("PetLovers_Profile")
-          .doc(ownerAddProfile.email.toString())
-          .set({
-            PL_Address: ownerAddProfile.address,
-            PL_Age: ownerAddProfile.age,
-            PL_BirthDate: birthTimestamp,
-            PL_ContactNumber: ownerAddProfile.contact,
-            PL_DateRegistered: timestamp,
-            PL_FirstName: ownerAddProfile.firstName,
-            PL_Gender: ownerAddProfile.gender,
-            PL_LastName: ownerAddProfile.lastName,
-            PL_MiddleName: ownerAddProfile.middleName,
-            PL_NearbyDVMFLoc: ownerAddProfile.location,
-            PL_UserEmail: ownerAddProfile.email
-          })
-          .then(() => {
-            toast.success("Owner Profile Added Successfully!");
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000); 
-            props.hidemodal1();
+          db.collection("PetLovers_Profile")
+          .where("PL_UserEmail", "==", ownerAddProfile.email.toString())
+          .get()
+          .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+              // The email already exists, handle accordingly
+              toast.error("This email is already in use.");
+              return;
+            }
+            
+            firebase.auth().createUserWithEmailAndPassword(ownerAddProfile.email, ownerAddProfile.password)
+                  .then((userCredential) => {
+                    // Signed in
+                    var user = userCredential.user;
+                    console.log(user);
+            
+                    const storageRef = storage.ref();
+                    const fileRef = storageRef.child(`PetLover/${ownerAddProfile.email.toString()}`);
+                    fileRef.put(selectedFile).then(() => {
+                      console.log('File uploaded successfully');
+                    });
+                    
+                    const birthdate = ownerAddProfile.birthdate; 
+                    const birthTimestamp = firebase.firestore.Timestamp.fromDate(new Date(birthdate)); 
+            
+                    // Save the pet data to Firestore
+                    db.collection("PetLovers_Profile")
+                      .doc(ownerAddProfile.email.toString())
+                      .set({
+                        PL_Address: ownerAddProfile.address,
+                        PL_Age: ownerAddProfile.age,
+                        PL_BirthDate: birthTimestamp,
+                        PL_ContactNumber: ownerAddProfile.contact,
+                        PL_DateRegistered: timestamp,
+                        PL_FirstName: ownerAddProfile.firstName,
+                        PL_Gender: ownerAddProfile.gender,
+                        PL_LastName: ownerAddProfile.lastName,
+                        PL_MiddleName: ownerAddProfile.middleName,
+                        PL_NearbyDVMFLoc: userData.LGU_BranchName,
+                        PL_UserEmail: ownerAddProfile.email
+                      })
+                      .then(() => {
+                        toast.success("Owner Profile Added Successfully!");
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 1000); 
+                        props.hidemodal1();
+                      })
+                      .catch((error) => {
+                        toast.error(error);
+                        console.log(error)
+                      });
+                  })
+                  .catch((error) => {
+                    // var errorCode = error.code;
+                    // var errorMessage = error.message;
+                    // console.log(errorCode, errorMessage);
+                    console.error('Error creating user:', error);
+                    // Handle error
+                  });
           })
           .catch((error) => {
-            toast.error(error);
-            console.log(error)
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+            // Handle error
           });
+
+          
       }
   
   
@@ -269,7 +288,7 @@ function AddLguOwner(props) {
                 <Row>
                   <Form.Label
                     className='h6'
-                  >Middle Name<span className='red' ref={middleNameTarget}> *</span></Form.Label>
+                  >Middle Name</Form.Label>
                   <Form.Control
                     type="text"
                     name='middleName'
@@ -278,18 +297,6 @@ function AddLguOwner(props) {
                   value={ownerAddProfile.middleName}
                   onChange={handleInputChange}
                   />
-                  <Overlay
-                  target={middleNameTarget.current}
-                  show={middleNameShowTooltip}
-                  placement="right"
-                  >
-                    {(props) => (
-                      <Tooltip id="overlay-example" {...props}>
-                        Empty Middle Name
-                      </Tooltip>
-                    )}
-                  </Overlay>
-  
                 </Row>
   
                 <Row>
@@ -342,28 +349,30 @@ function AddLguOwner(props) {
                   </Overlay>
                 </Row>
                 <Row>
-                  <Form.Label
-                    className='h6'
-                  >Gender<span className='red' ref={genderTarget}> *</span></Form.Label>
-                  <Form.Control
-                    type="text"
-                    name='gender'
-                    id='gender'
-                    className='mb-2'
-                  value={ownerAddProfile.gender}
-                  onChange={handleInputChange}
-                  />
-                  <Overlay
-                  target={genderTarget.current}
-                  show={genderShowTooltip}
-                  placement="right"
-                  >
-                    {(props) => (
-                      <Tooltip id="overlay-example" {...props}>
-                        Empty Gender
-                      </Tooltip>
-                    )}
-                  </Overlay>
+                  <Form.Label 
+                  ref={genderTarget} 
+                  className="h6"
+                  >Gender<span className='red'> *</span></Form.Label>
+                  <InputGroup className='mb-3'>
+                    <Form.Select
+                      aria-label="Default select example"
+                      name="gender"
+                      id="gender"
+                      value={ownerAddProfile.gender}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </Form.Select>
+                    <Overlay target={genderTarget.current} show={genderShowTooltip} placement="right">
+                      {(props) => (
+                        <Tooltip id="overlay-example" {...props}>
+                          Empty Pet Gender
+                        </Tooltip>
+                      )}
+                    </Overlay>
+                  </InputGroup>
                 </Row>
               </Col>
               <Col xs={1}></Col>        
@@ -436,30 +445,6 @@ function AddLguOwner(props) {
                     {(props) => (
                       <Tooltip id="overlay-example" {...props}>
                         Empty Contact Number
-                      </Tooltip>
-                    )}
-                  </Overlay>
-                </Row>
-                <Row>
-                  <Form.Label
-                    className='h6'
-                  >Nearest DVMF Location<span className='red' ref={locationTarget}> *</span></Form.Label>
-                  <Form.Control
-                    type="text"
-                    name='location'
-                    id='location'
-                    className='mb-2'
-                  value={ownerAddProfile.location}
-                  onChange={handleInputChange}
-                  />
-                  <Overlay
-                  target={locationTarget.current}
-                  show={locationShowTooltip}
-                  placement="right"
-                  >
-                    {(props) => (
-                      <Tooltip id="overlay-example" {...props}>
-                        Empty DVMF Location
                       </Tooltip>
                     )}
                   </Overlay>

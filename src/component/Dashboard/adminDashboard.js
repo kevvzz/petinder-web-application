@@ -16,8 +16,13 @@ import db from '../../Firebase.js';
 import '../../profile.css';
 import '../../App.css';
 import './adminDashboard.css';
+
 function AdminDashboard() {
 	const [counts, setCounts] = useState({});
+	const [allSeller, setAllSeller] = useState([]);
+	const [allPets, setAllPets] = useState([]);
+	const [allLgu, setAllLgu] = useState([]);
+	const [allOwner, setAllOwner] = useState([]);
 
 	useEffect(() => {
 
@@ -40,6 +45,190 @@ function AdminDashboard() {
 			unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
 		};
 	}, []);
+
+	useEffect(() => {
+        db.collection("Pets_Profile")
+			.orderBy('P_DateRegistered', 'desc')
+        	.get()
+        	.then((querySnapshot) => {
+				const promises = [];
+				querySnapshot.forEach((doc) => {
+				const id = doc.data().P_IDNumber;
+				const name = doc.data().P_Name;
+				const species = doc.data().P_Species;
+				const age = doc.data().P_Age;
+				const breed = doc.data().P_Breed;
+				const color = doc.data().P_Color;
+				const dateRegister = doc.data().P_DateRegistered;
+				const gender = doc.data().P_Gender;
+				const lguAccount = doc.data().P_LGUAccount;
+				const neutering = doc.data().P_Neutering;
+				const owner = doc.data().P_PetOwner;
+				const registerType = doc.data().P_RegisterType;
+				const registerLocation = doc.data().P_RegisteredLocation;
+				const status = doc.data().P_Status;
+    
+
+                const promise = storage
+                  .ref()
+                  .child(`Pet/${id}`)
+                  .getDownloadURL()
+                  .then((url) => {
+                    return { id, name, url, species, age, breed, color, dateRegister, gender, lguAccount, neutering, owner, registerType, registerLocation, status};
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    return null;
+                  });
+      
+                promises.push(promise);
+              
+            });
+      
+            Promise.all(promises).then((data) => {
+              setAllPets(data.filter((item) => item !== null));
+            });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
+    }, []);
+
+	useEffect(() => {
+		db.collection("LGU_Profile")
+		  .orderBy('LGU_DateRegistered', 'desc')
+		  .get()
+		  .then((querySnapshot) => {
+			const promises = [];
+			querySnapshot.forEach((doc) => {
+			  const user = doc.data().LGU_UserName;
+			  const branch = doc.data().LGU_BranchName;
+			  const address = doc.data().LGU_Address;
+			  const contact = doc.data().LGU_ContactNumber;
+			  const dateRegister = doc.data().LGU_DateRegistered;
+			  const email = doc.data().LGU_Email;
+	
+	
+			  const promise = storage
+				.ref()
+				.child(`LGU_DVMF/${user}`)
+				.getDownloadURL()
+				.then((url) => {
+				  return { branch,user, url, address, contact, dateRegister, email};
+				})
+				.catch((error) => {
+				  console.log(error);
+				  return null;
+				});
+	
+			  promises.push(promise);
+			});
+	
+			Promise.all(promises).then((data) => {
+			  setAllLgu(data.filter((item) => item !== null));
+			});
+		  })
+		  .catch((error) => {
+			console.log("Error getting documents: ", error);
+		  });
+	  }, []);
+
+	  useEffect(() => {
+		db.collection("PetLovers_Profile")
+		  .orderBy('PL_DateRegistered', 'desc')
+		  .get()
+		  .then((querySnapshot) => {
+			const promises = [];
+			querySnapshot.forEach((doc) => {
+			  const email = doc.data().PL_UserEmail;
+			  const firstName = doc.data().PL_FirstName;
+			  const lastName = doc.data().PL_LastName;
+			  const middleName = doc.data().PL_MiddleName;
+			  const address = doc.data().PL_Address;
+			  const age = doc.data().PL_Age;
+			  const birthdate = doc.data().PL_BirthDate;
+			  const contact = doc.data().PL_ContactNumber;
+			  const dateRegister = doc.data().PL_DateRegistered;
+			  const gender = doc.data().PL_Gender;
+			  const location = doc.data().PL_NearbyDVMFLoc;
+	
+			  const promise = storage
+				.ref()
+				.child(`PetLover/${email}`)
+				.getDownloadURL()
+				.then((url) => {
+				  return { email, firstName,lastName, url, middleName, address, age, birthdate, contact, dateRegister, gender, location};
+				})
+				.catch((error) => {
+				  console.log(error);
+				  return null;
+				});
+	
+			  promises.push(promise);
+			});
+	
+			Promise.all(promises).then((data) => {
+			  setAllOwner(data.filter((item) => item !== null));
+			});
+		  })
+		  .catch((error) => {
+			console.log("Error getting documents: ", error);
+		  });
+	  }, []);
+
+	  useEffect(() => {
+		db.collection("PetSellerorAdoption_Profile")
+		  .get()
+		  .then((querySnapshot) => {
+			const promises = [];
+			querySnapshot.forEach((doc) => {
+			  const email = doc.data().PSA_UserEmail;
+			  const firstName = doc.data().PSA_FirstName;
+			  const lastName = doc.data().PSA_LastName;
+			  const middleName = doc.data().PSA_MiddleName;
+			  const address = doc.data().PSA_Address;
+			  const age = doc.data().PSA_Age;
+			  const birthdate = doc.data().PSA_BirthDate;
+			  const contact = doc.data().PSA_ContactNumber;
+			  const dateRegister = doc.data().PSA_DateRegistered;
+			  const gender = doc.data().PSA_Gender;
+			  const location = doc.data().PSA_NearbyDVMFLoc;
+	  
+			  const promise = storage
+				.ref()
+				.child(`PetSellerOrAdoption/${email}`)
+				.getDownloadURL()
+				.then((url) => {
+				  return { email, firstName,lastName, url, middleName, address, age, birthdate, contact, dateRegister, gender, location};
+				})
+				.catch((error) => {
+				  console.log(error);
+				  return null;
+				});
+	  
+			  promises.push(promise);
+			});
+	  
+			Promise.all(promises).then((data) => {
+			  setAllSeller(data.filter((item) => item !== null));
+			});
+		  })
+		  .catch((error) => {
+			console.log("Error getting documents: ", error);
+		  });
+	  }, []);
+
+	  	const max3Seller = allSeller.slice(0, 3);
+	  	const max3Owner = allOwner.slice(0, 3);
+		const max3Lgu = allLgu.slice(0, 3);
+		const max3Pets = allPets.slice(0, 3);
+
+
+	function convertTimeStamp(newDate){
+        const date = new Date(newDate.seconds * 1000 + newDate.nanoseconds / 1000000);
+        const dateString = date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric'});
+        return dateString;
+    }
 	return (
 		<div className='main-bg'>
 			<AdminNavbar />
@@ -92,447 +281,136 @@ function AdminDashboard() {
 						<div class="projects-card">
 							<div class="card-header">
 								<h3>NEW LGU USERS</h3>
-								<button>See all <span><i class="fa-solid fa-arrow-right"></i></span></button>
 							</div>
 
 							{/* //card here */}
 							<div class="row">
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={lguPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">LGU-DVMF TALISAY</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
+								{max3Lgu.map((doc) => (	
+									<div class='col-lg-4 col-md-6 mb-4'>
+										<div class="card-body">
+											<Card.Text>
+												<Row>
+													<Col xs={3}>
+														<Row>
+														<img className='petImage' src={doc.url} alt="" />
+														</Row>
+													</Col>
+													<Col>
+														<Row>
+															<h6 class="fw-bold">{doc.user}</h6>
+														</Row>
+														<Row>
+															<p>{convertTimeStamp(doc.dateRegister)}</p>
+														</Row>
+													</Col>
+												</Row>
+											</Card.Text>
+										</div>
 									</div>
-								</div>
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={lguPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">LGU-DVMF CEBU</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
-									</div>
-								</div>
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={lguPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">LGU-DVMF MANDAUE</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
-									</div>
-								</div>
-
+								))}
 							</div>
 						</div>
 
 						<div class="projects-card">
 							<div class="card-header">
-								<h3>NEW REGITERED PETS</h3>
-								<button>See all <span><i class="fa-solid fa-arrow-right"></i></span></button>
+								<h3>NEW REGISTERED PETS</h3>
 							</div>
 
 							{/* //card here */}
 							<div class="row">
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-													<img img className='petImage' src={petPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CHOWA</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
+								{max3Owner.map((doc) => (	
+									<div class='col-lg-4 col-md-6 mb-4'>
+										<div class="card-body">
+											<Card.Text>
+												<Row>
+													<Col xs={3}>
+														<Row>
+															<img className='petImage' src={doc.url} alt="" />
+														</Row>
+													</Col>
+													<Col>
+														<Row>
+															<h6 class="fw-bold">{doc.name}</h6>
+														</Row>
+														<Row>
+															<p>{convertTimeStamp(doc.dateRegister)}</p>
+														</Row>
+													</Col>
+												</Row>
+											</Card.Text>
+										</div>
 									</div>
-								</div>
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img img className='petImage' src={petPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CHOWA</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
-									</div>
-								</div>
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img img className='petImage' src={petPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CHOWA</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
-									</div>
-								</div>
-
+								))}
 							</div>
 						</div>
 
 						<div class="projects-card">
 							<div class="card-header">
 								<h3>NEW PET OWNERS</h3>
-								<button>See all <span><i class="fa-solid fa-arrow-right"></i></span></button>
 							</div>
 
 							{/* //card here */}
 							<div class="row">
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={ownerPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CLARK</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
+								{max3Pets.map((doc) => (	
+									<div class='col-lg-4 col-md-6 mb-4'>
+										<div class="card-body">
+											<Card.Text>
+												<Row>
+													<Col xs={3}>
+														<Row>
+														<img className='petImage' src={doc.url} alt="" />
+														</Row>
+													</Col>
+													<Col>
+														<Row>
+															<h6 class="fw-bold">{doc.name}</h6>
+														</Row>
+														<Row>
+															<p>{convertTimeStamp(doc.dateRegister)}</p>
+														</Row>
+													</Col>
+												</Row>
+											</Card.Text>
+										</div>
 									</div>
-								</div>
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={ownerPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CLARK</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
-									</div>
-								</div>
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={ownerPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CLARK</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
-									</div>
-								</div>
-
+								))}
 							</div>
 						</div>
 
 						<div class="projects-card">
 							<div class="card-header">
 								<h3>NEW PET SELLER</h3>
-								<button>See all <span><i class="fa-solid fa-arrow-right"></i></span></button>
 							</div>
 
 							{/* //card here */}
 							<div class="row">
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={ownerPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CLARK</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
+								{max3Seller.map((doc) => (	
+									<div class='col-lg-4 col-md-6 mb-4'>
+										<div class="card-body">
+											<Card.Text>
+												<Row>
+													<Col xs={3}>
+														<Row>
+														<img className='petImage' src={doc.url} alt="" />
+														</Row>
+													</Col>
+													<Col>
+														<Row>
+															<h6 class="fw-bold">{doc.name}</h6>
+														</Row>
+														<Row>
+															<p>{convertTimeStamp(doc.dateRegister)}</p>
+														</Row>
+													</Col>
+												</Row>
+											</Card.Text>
+										</div>
 									</div>
-								</div>
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={ownerPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CLARK</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
-									</div>
-								</div>
-								<div class='col-lg-4 col-md-6 mb-4'>
-									<div class="card-body">
-										<Card.Text>
-											<Row>
-												<Col xs={4}>
-													<Row>
-														<img className='petImage' src={ownerPhoto} alt="" />
-													</Row>
-												</Col>
-												<Col>
-													<Row>
-														<h6 class="fw-bold">CLARK</h6>
-													</Row>
-													<Row>
-														<p>Date Registered: February 10, 2023 </p>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Text>
-									</div>
-								</div>
+								))}
 							</div>
 						</div>
 					</div>
-
-					{/* <table width="100%">
-									<thead>
-										<tr>
-											<td>Profile Picture</td>
-											<td>Anounements</td>
-											<td>Date</td>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<img className='petImage' src={lguPhoto} alt="" />
-											<td>
-												<div class="customer-info">
-													<h5>Free Vaccine</h5>
-												</div>
-											</td>
-											<td>
-												<div class="customer-info">
-													<h6>February 10, 2023</h6>
-												</div>
-											</td>
-										</tr>
-									</tbody> 
-								</table> */}
-
-					{/* <div class="projects-card">
-							<div class="card-header">
-								<h3>Newly Registered Pet</h3>
-							</div>
-							<div class="card-body">
-								<table width="100%">
-									<thead>
-										<tr>
-											<td>Profile Picture</td>
-											<td>Pet Name</td>
-											<td>Date Registered</td>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td><img img className='petImage' src={petPhoto} alt="" /></td>
-											<td>
-												<div class="customer-info">
-													<h4>Chowa</h4>
-												</div>
-											</td>
-											<td>
-												<div class="customer-info">
-													<h6>February 10, 2023</h6>
-												</div>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div class="projects-card">
-							<div class="card-header">
-								<h3>New Pet Owner</h3>
-							</div>
-							<div class="card-body">
-								<table width="100%">
-									<thead>
-										<tr>
-											<td>Profile Picture</td>
-											<td>Pet Owner Name</td>
-											<td>Date Registered</td>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td><img className='petImage' src={ownerPhoto} alt="" /></td>
-											<td>
-												<div class="customer-info">
-													<h4>Clark</h4>
-												</div>
-											</td>
-											<td>
-												<div class="customer-info">
-													<h6>January 14, 2022</h6>
-												</div>
-											</td>
-										</tr>
-
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div class="projects-card">
-							<div class="card-header">
-								<h3>New Pet Seller</h3>
-							</div>
-							<div class="card-body">
-								<table width="100%">
-									<thead>
-										<tr>
-											<td>Profile Picture</td>
-											<td>Pet Seller Name</td>
-											<td>Date Registered</td>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td><img className='petImage' src={ownerPhoto} alt="" /></td>
-											<td>
-												<div class="customer-info">
-													<h4>Clark</h4>
-												</div>
-											</td>
-											<td>
-												<div class="customer-info">
-													<h6>January 14, 2022</h6>
-												</div>
-											</td>
-										</tr>
-
-									</tbody>
-								</table>
-							</div>
-						</div> */}
 				</div>
-
-				{/* <div class="customers">
-						<div class="project-card">
-							<div class="card-header">
-								<h3>LGU-DVMF<br></br>New Clients</h3>
-								<button>See all <span><i class="fa-solid fa-arrow-right"></i></span></button>
-							</div>
-							<div class="card-body">
-								<div class="customer">
-									<div class="customer-table">
-										<img className='lguImage' src={lguPhoto} alt="" />
-										<div class="customer-info">
-											<h5>LGU-DVMF TALISAY</h5>
-											<p>Date Registered: </p>
-											<p>February 10, 2023</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div> */}
 			</div>
 		</div>
 	)

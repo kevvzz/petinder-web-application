@@ -50,7 +50,7 @@ function LguPetProfile() {
     registerLocation: '',
     dateRegister: ''
   });
-
+  console.log(data);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showVaccineModal, setShowVaccineModal] = useState(false);
@@ -307,9 +307,7 @@ function LguPetProfile() {
         }
 
         );
-
-
-      } else {
+      }else{
         db.collection("P_Vaccination_File")
           .doc(data.id.toString())
           .set({

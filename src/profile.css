@@ -72,8 +72,12 @@
 	transition:.5s;
 	margin-bottom:10px;
 }
+.dropdown-padding{
+    margin-left: 0.5%;
+    margin-right: 0.5%;
+}
 .bottomSpace{
-    margin-bottom: 4vh;
+    margin-bottom: 2vh;
     padding-top: 4vh;
 }  
 .border{

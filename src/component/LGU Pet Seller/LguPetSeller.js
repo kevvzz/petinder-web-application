@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import AddLguSeller from './AddLguSeller';
  
 function LguPetSeller() {
+  const userData = JSON.parse(localStorage.getItem('lguData'));
   const navigate = useNavigate()
   const [allSeller, setAllSeller] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -44,7 +45,9 @@ function LguPetSeller() {
         const gender = doc.data().PSA_Gender;
         const location = doc.data().PSA_NearbyDVMFLoc;
 
-        const promise = storage
+
+        if (location === userData.LGU_BranchName){
+          const promise = storage
           .ref()
           .child(`PetSellerOrAdoption/${email}`)
           .getDownloadURL()
@@ -57,6 +60,7 @@ function LguPetSeller() {
           });
 
         promises.push(promise);
+        }
       });
 
       Promise.all(promises).then((data) => {

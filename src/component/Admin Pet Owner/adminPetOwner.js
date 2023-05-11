@@ -92,8 +92,8 @@ function AdminPetOwner() {
                 </h1>
             </header>
             <div className="container">
-              <Row className='bottomSpace'>
-                  <Col  xs={2}>
+              <Row className='bottomSpace center'>
+                  {/* <Col  xs={2}>
                       <Row>
                           <a>
                               <div className="button-wrapper" onClick={onClickAddOwner}>
@@ -101,8 +101,8 @@ function AdminPetOwner() {
                               </div>
                           </a>
                       </Row>
-                  </Col>
-                  <Col xs={7}>
+                  </Col> */}
+                  <Col>
                       <Row>
                           <InputGroup className="search-employee">
                           <InputGroup.Text className='icon-part'><FontAwesomeIcon className='glass' icon={faMagnifyingGlass}/></InputGroup.Text>

@@ -48,30 +48,30 @@ function LguManageSettings() {
     const confirmTarget = useRef(null);
     const [confirmShowTooltip, setConfirmShowTooltip] = useState(false);
     
-    // useEffect(() => {
-    //     const docRef = db.collection("LGU_Profile").doc(userData.A_IDNumber);
-    //     docRef.get()
-    //       .then((doc) => {
-    //         if (doc.exists) {
-    //           const set = doc.data()
-    //           const {
-    //             A_Email,
-    //             A_Password,
-    //             A_UserName,} = set;
+    useEffect(() => {
+        const docRef = db.collection("LGU_Profile").doc(userData.LGU_UserName);
+        docRef.get()
+          .then((doc) => {
+            if (doc.exists) {
+              const set = doc.data()
+              const {
+                LGU_Email,
+                LGU_Password,
+                LGU_ContactNumber,} = set;
     
-    //           setNewSettings({ 
-    //             email: A_Email,
-    //             old: A_Password,
-    //             user: A_UserName
-    //           });
-    //         } else {
-    //           console.log("No such document!");
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log("Error getting document:", error);
-    //       });
-    //   }, []);
+              setNewSettings({ 
+                email: LGU_Email,
+                old: LGU_Password,
+                contact: LGU_ContactNumber
+              });
+            } else {
+              console.log("No such document!");
+            }
+          })
+          .catch((error) => {
+            console.log("Error getting document:", error);
+          });
+      }, []);
     
     const handleEdits = (event) => {
         const { name, value } = event.target;
@@ -88,92 +88,92 @@ function LguManageSettings() {
         setShowDiv2(true);
     }
     const handleSaveChanges = () => {
-    //     if (settings.user === "") {
-    //       setUserShowTooltip(true);
-    //     } else {
-    //       setUserShowTooltip(false);
-    //     }
-    //     if (settings.email === "") {
-    //       setEmailShowTooltip(true);
-    //     } else {
-    //       setEmailShowTooltip(false);
-    //     }
+        if (settings.contact === "") {
+          setContactShowTooltip(true);
+        } else {
+          setContactShowTooltip(false);
+        }
+        if (settings.email === "") {
+          setEmailShowTooltip(true);
+        } else {
+          setEmailShowTooltip(false);
+        }
     
     
-    //     if ((settings.email !== "" && settings.email !== null) &&
-    //       (settings.user !== "" && settings.user !== null)){
+        if ((settings.email !== "" && settings.email !== null) &&
+          (settings.contact !== "" && settings.contact !== null)){
        
-    //     //   Save the pet data to Firestore
-    //       db.collection("LGU_Profile")
-    //         .doc(userData.A_IDNumber)
-    //         .update({
-    //           A_UserName: settings.user,
-    //           A_Email: settings.email,
-    //         })
-    //         .then(() => {
-    //             toast.success("Settings Profile Updated Successfully!");
-    //             setTimeout(() => {
-    //                 window.location.reload();
-    //             }, 2000);
+        //   Save the pet data to Firestore
+          db.collection("LGU_Profile")
+            .doc(userData.LGU_UserName)
+            .update({
+              LGU_ContactNumber: settings.contact,
+              LGU_Email: settings.email,
+            })
+            .then(() => {
+                toast.success("Settings LGU Profile Updated Successfully!");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
                 
-    //           console.log("success");
-    //         })
-    //         .catch((error) => {
-    //           toast.error("Error adding Lgu to Firestore: ");
-    //           console.log(error)
-    //         });
-    //     }
+              console.log("success");
+            })
+            .catch((error) => {
+              toast.error("Error adding Lgu to Firestore: ");
+              console.log(error)
+            });
+        }
       }
     //   console.log(settings)
       const handlePasswordChanges = () => {
-    //     if (settings.old === "") {
-    //       setOldShowTooltip(true);
-    //     } else {
-    //       setOldShowTooltip(false);
-    //     }
-    //     if (settings.new === "") {
-    //       setNewShowTooltip(true);
-    //     } else {
-    //       setNewShowTooltip(false);
-    //     }
-    //     if (settings.confirm === "") {
-    //         setConfirmShowTooltip(true);
-    //       } else {
-    //         setConfirmShowTooltip(false);
-    //       }
+        if (settings.old === "") {
+          setOldShowTooltip(true);
+        } else {
+          setOldShowTooltip(false);
+        }
+        if (settings.new === "") {
+          setNewShowTooltip(true);
+        } else {
+          setNewShowTooltip(false);
+        }
+        if (settings.confirm === "") {
+            setConfirmShowTooltip(true);
+          } else {
+            setConfirmShowTooltip(false);
+          }
     
           
-    //     if ((settings.old !== "" && settings.old !== null) &&
-    //         (settings.confirm !== "" && settings.confirm !== null) &&
-    //         (settings.new !== "" && settings.new !== null)){
+        if ((settings.old !== "" && settings.old !== null) &&
+            (settings.confirm !== "" && settings.confirm !== null) &&
+            (settings.new !== "" && settings.new !== null)){
 
-    //         if(newSettings.old.toString() === settings.old){
-    //             if(settings.new === settings.confirm){
-    //                  //   Save the pet data to Firestore
-    //                  db.collection("LGU_Profile")
-    //                  .doc(userData.A_IDNumber)
-    //                  .update({
-    //                      A_Password: settings.new,
-    //                  })
-    //                  .then(() => {
-    //                      toast.success("Password Updated Successfully!");
-    //                      setTimeout(() => {
-    //                          window.location.reload();
-    //                      }, 2000);
+            if(newSettings.old.toString() === settings.old){
+                if(settings.new === settings.confirm){
+                     //   Save the pet data to Firestore
+                     db.collection("LGU_Profile")
+                     .doc(userData.LGU_UserName)
+                     .update({
+                         LGU_Password: settings.new,
+                     })
+                     .then(() => {
+                         toast.success("Password Updated Successfully!");
+                         setTimeout(() => {
+                             window.location.reload();
+                         }, 2000);
                          
-    //                  })
-    //                  .catch((error) => {
-    //                      toast.error("Error adding Lgu to Firestore: ");
-    //                  });
-    //             }else{
-    //                 toast.error("New and Confirm Password Does Not Match!!");
-    //             }
-    //         } else {
-    //             toast.error("Current Password Does Not Match!!");
-    //         }
+                     })
+                     .catch((error) => {
+                         toast.error("Error adding Lgu to Firestore: ");
+                     });
+                }else{
+                    toast.error("New and Confirm Password Does Not Match!!");
+                }
+            } else {
+                toast.error("Current Password Does Not Match!!");
+            }
             
             
-    //     }
+        }
       }
   return (
     
@@ -235,7 +235,7 @@ function LguManageSettings() {
                     <div style={{ display: showDiv2 ? 'block' : 'none' }} class="col-settings change">
                         <Row>
                             <Form.Label className='h6'>Current Password<span className='red' ref={oldTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='old' id='old' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="password" name='old' id='old' className='mb-2' onChange={handleEdits}/>
                             <Overlay target={oldTarget.current} show={oldShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>
@@ -246,7 +246,7 @@ function LguManageSettings() {
                         </Row>
                         <Row>
                             <Form.Label className='h6'>New Password<span className='red' ref={newTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='new' id='new' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="password" name='new' id='new' className='mb-2' onChange={handleEdits}/>
                             <Overlay target={newTarget.current} show={newShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>
@@ -257,7 +257,7 @@ function LguManageSettings() {
                         </Row>
                         <Row>
                             <Form.Label className='h6'>Confirm Password<span className='red' ref={confirmTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='confirm' id='confirm' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="password" name='confirm' id='confirm' className='mb-2' onChange={handleEdits}/>
                             <Overlay target={confirmTarget.current} show={confirmShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>

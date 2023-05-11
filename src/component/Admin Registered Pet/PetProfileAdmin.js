@@ -435,9 +435,9 @@ function PetProfileAdmin() {
                   <Row className="button-wrapper">
                     <Col className='center'><button onClick={onClickDeletePet} type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus} /><span> </span>DELETE</button></Col>
                   </Row>
-                  <Row className="button-wrapper">
-                    <Col className='center'><button onClick={onClickVaccinePet} type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus} /><span> </span>ADD VACCINE</button></Col>
-                  </Row>
+                  {/* <Row className="button-wrapper">
+                    <Col className='center'><button onClick={onClickVaccinePet} type="button" className="add"><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>ADD VACCINE</button></Col>
+                  </Row> */}
                   <Row className="button-wrapper">
                     <Col className='center'><button onClick={onClickQrCode} type="button" className="add"><FontAwesomeIcon icon={faQrcode} /><span> </span>QR CODE</button></Col>
                   </Row>
@@ -495,7 +495,7 @@ function PetProfileAdmin() {
                   </Row>
                 </Col>
               </Row>
-              <div className='vaccine'>Vaccine Information</div>
+              {/* <div className='vaccine'>Vaccine Information</div>
               <Table striped bordered hover>
                 <thead>
                   <tr>
@@ -531,7 +531,7 @@ function PetProfileAdmin() {
                     </>
                   )}
                 </tbody>
-              </Table>
+              </Table> */}
             </Col>
           </Row>
           <DeleteModal
@@ -546,14 +546,14 @@ function PetProfileAdmin() {
             editPetProfile={editPetProfile}
             setEditPetProfile={setEditPetProfile}
           />
-          <EditVaccine
-            showmodal1={showEditVaccineModal}
-            hidemodal1={() => setShowEditVaccineModal(false)}
-            editPetProfile={data}
-            vaccineId={vaccineId}
-            vaccineInfo={vaccineInfo}
-            setVaccineInfo={setVaccineInfo}
-          />
+          {/* <EditVaccine
+            showmodal1 = {showEditVaccineModal}
+            hidemodal1 = {() => setShowEditVaccineModal(false)}
+            editPetProfile = {data}
+            vaccineId = {vaccineId}
+            vaccineInfo = {vaccineInfo}
+            setVaccineInfo = {setVaccineInfo}
+          /> */}
           <GenerateQRModal
             showmodal={showQrModal}
             hidemodal={() => setShowQrModal(false)}

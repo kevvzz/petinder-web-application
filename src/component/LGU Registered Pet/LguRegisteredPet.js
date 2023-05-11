@@ -16,9 +16,14 @@ import { ToastContainer,toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 function LguRegisteredPet() {
     const userData = JSON.parse(localStorage.getItem('lguData'));
-    console.log(userData);
     const navigate = useNavigate()
     const [allPets, setAllPets] = useState([]);
+    const [showInfo, setShowInfo ] = useState({
+        breed:'',
+        type:'',
+        status:'',
+        gender: ''
+    });
     const [showAddModal, setShowAddModal] = useState(false);
     const [filteredPets, setFilteredPets] = useState([]);
     function onClickAddPet() {
@@ -46,7 +51,7 @@ function LguRegisteredPet() {
               const registerLocation = doc.data().P_RegisteredLocation;
               const status = doc.data().P_Status;
     
-              if (registerLocation === userData.LGU_BranchName || lguAccount === userData.LGU_UserName) {
+              if ((registerLocation === userData.LGU_BranchName || lguAccount === userData.LGU_UserName) && status != "Lost") {
                 const promise = storage
                   .ref()
                   .child(`Pet/${id}`)
@@ -71,36 +76,85 @@ function LguRegisteredPet() {
           .catch((error) => {
             console.log("Error getting documents: ", error);
           });
-      }, []);
- 
-  function searchFilter(e) {
-    let term = e.target.value.toLowerCase();
-    if (term == "") {
-      setFilteredPets(allPets);
-    } else {
-      setFilteredPets(
-        filteredPets.filter(
-          (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
-        )
-      );
-    }
-  }
+    }, []);
 
-function petFilter(filter) {
-   
-        if (filter === "all") {
+    function petFilter(filter) {
+          
+        if (filter === "all" || filter === "") {
             setFilteredPets(allPets);
-
-        } else if(filter === "Canine"){
-
-            setFilteredPets(allPets.filter(pet => pet.species === filter));
-        }else if(filter === "Feline"){
-
-            setFilteredPets(allPets.filter(pet => pet.species === filter));
-        } else {
-            toast.error("error pets");
         }
-}
+        
+        if(filter && filter !== "all"){
+            setFilteredPets(allPets.filter(pet => pet.species === filter));
+        }
+    
+    }
+
+    function searchFilter(e) {
+        let term = e.target.value.toLowerCase();
+        if (term == "") {
+          setFilteredPets(allPets);
+        } else {
+          setFilteredPets(
+            filteredPets.filter(
+              (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
+            )
+          );
+        }
+      }
+
+      const handleBreedChange = (event) => {
+        const { name, value } = event.target;
+        setShowInfo({ ...showInfo, [name]: value });
+      
+        if(name === "breed"){
+            filterPets(value, showInfo.gender, showInfo.type, showInfo.status);
+        }
+      };
+      
+      const handleGenderChange = (event) => {
+        const { name, value } = event.target;
+        setShowInfo({ ...showInfo, [name]: value });
+        
+        if(name === "gender"){
+            filterPets(showInfo.breed, value, showInfo.type, showInfo.status);
+        }
+      };
+      
+      const handleTypeChange = (event) => {
+        const { name, value } = event.target;
+        setShowInfo({ ...showInfo, [name]: value });
+
+        if(name === "type"){
+            filterPets(showInfo.breed, showInfo.gender, value, showInfo.status);
+        }
+      };
+      
+      const handleStatusChange = (event) => {
+        const { name, value } = event.target;
+        setShowInfo({ ...showInfo, [name]: value });
+
+        if(name === "status"){
+            filterPets(showInfo.breed, showInfo.gender, showInfo.type, value);
+        }
+      };
+      
+      function filterPets(breedFilter, genderFilter, registerTypeFilter, statusFilter) {
+
+        console.log("Breed: " + breedFilter);
+        console.log("Gender: " + genderFilter);
+        console.log("Type: " + registerTypeFilter);
+        console.log("Status: " + statusFilter);
+        setFilteredPets(
+          allPets.filter((pet) =>
+            (breedFilter ? pet.breed === breedFilter : true) &&
+            (genderFilter ? pet.gender === genderFilter : true) &&
+            (registerTypeFilter ? pet.registerType === registerTypeFilter : true) &&
+            (statusFilter ? pet.status === statusFilter : true)
+          )
+        );
+      }
+      
 
   return (
     <div className='main-bg'>
@@ -122,7 +176,7 @@ function petFilter(filter) {
                             </div>
                         </Row>
                     </Col>
-                    <Col xs={7}>
+                    <Col>
                         <Row>
                             <InputGroup className="search-employee">
                             <InputGroup.Text className='icon-part'><FontAwesomeIcon className='glass' icon={faMagnifyingGlass}/></InputGroup.Text>
@@ -139,6 +193,68 @@ function petFilter(filter) {
                                 onChange={(e) => searchFilter(e)}
                                 />
                             </InputGroup>
+                        </Row>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col className='dropdown-padding'>
+                        <Row>
+                            <Form.Select
+                                name="breed"
+                                id="breed"
+                                value={showInfo.breed}
+                                onChange={handleBreedChange}
+                                >
+                                <option value="">Select Breed</option>
+                                {allPets.map((doc) => (
+                                    <option key={doc.id} value={doc.breed}>
+                                    {doc.breed}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Row>
+                    </Col>
+                    <Col className='dropdown-padding' xs={3}>
+                        <Row>
+                            <Form.Select
+                                name="type"
+                                id="type"
+                                value={showInfo.type}
+                                onChange={handleTypeChange}
+                                >
+                                <option value="">Select Register Type</option>
+                                <option value="Annual">Annual</option>
+                                <option value="Perpetual">Perpetual</option>
+                            </Form.Select>
+                        </Row>
+                    </Col>
+                    <Col className='dropdown-padding'>
+                        <Row>
+                            <Form.Select
+                                name="status"
+                                id="status"
+                                value={showInfo.status}
+                                onChange={handleStatusChange}
+                                >
+                                <option value="">Select Status</option>
+                                <option value="Owned">Owned</option>
+                                <option value="Sale">For Sale</option>
+                                <option value="Adoption">For Adoption</option>
+                            </Form.Select>
+                        </Row>
+                    </Col>
+                    <Col className='dropdown-padding'>
+                        <Row>
+                            <Form.Select
+                                name="gender"
+                                id="gender"
+                                value={showInfo.gender}
+                                onChange={handleGenderChange}
+                                >
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </Form.Select>
                         </Row>
                     </Col>
                     <Col  xs={1}>

@@ -6,7 +6,7 @@ import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import DeleteModal from '../Modal/DeleteModal';
+import DeleteAuthenticate from '../Modal/DeleteAuthenticate';
 import EditLguOwner from './EditLguOwner';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,8 +18,6 @@ import { ToastContainer,toast } from 'react-toastify';
 import { useNavigate,useLocation} from 'react-router-dom';
 
 function LguPetOwnerProfile() {
-  const navigate = useNavigate()
-
     const location = useLocation();
     const data = location.state.doc;
 
@@ -138,29 +136,6 @@ function LguPetOwnerProfile() {
         });
   }, []);
 
-    function handleRemove(e) {
-      // Delete the document from Firestore
-      db.collection('PetLovers_Profile')
-      .doc(data.email)
-      .delete()
-  
-      // Delete the image from Storage
-      const photoRef = storage.ref().child(`PetLover/${data.email}`);
-      photoRef.delete()
-      .then(() => {
-        toast.success("Pet Profile Deleted Successfully!");
-        setShowDeleteModal(false);
-        setTimeout(() => {
-          navigate("/lgu-owner"); 
-        }, 2000); 
-        console.log("success");
-      })
-      .catch((error) => {
-        toast.error("Error deleting pet to Firestore: ");
-        console.log(error)
-      });
-    }
-
 
     const register = new Date(ownerProfile.dateRegister.seconds * 1000 + ownerProfile.dateRegister.nanoseconds / 1000000);
     const birth = new Date(ownerProfile.birthdate.seconds * 1000 + ownerProfile.birthdate.nanoseconds / 1000000);
@@ -259,11 +234,16 @@ function LguPetOwnerProfile() {
           </Row>
           
         </div>
-        <DeleteModal
-              name = "PET OWNER"
+        <DeleteAuthenticate
+              name = {(ownerProfile.firstName+" "+ownerProfile.lastName)}
               show = {showDeleteModal}
               hide = {() => setShowDeleteModal(false)}
-              remover = {handleRemove}
+              // remover = {handleRemove}
+              data = {data}
+              setShowDeleteModal = {setShowDeleteModal}
+              collectionName = "PetLovers_Profile"
+              storageName = "PetLover"
+              navigate = "/lgu-owner"
           />
         <EditLguOwner
             showmodal = {showAddModal}

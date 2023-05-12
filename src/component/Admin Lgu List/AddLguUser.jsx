@@ -153,6 +153,7 @@ export default function AddLguUser(props) {
         onHide={handClose}
         centered
         size='lg'
+        backdrop="static"
       >
         <Modal.Header
           className='headerBG'
@@ -193,7 +194,7 @@ export default function AddLguUser(props) {
                   className='h6'
                 >Email<span className='red'> *</span></Form.Label>
                 <Form.Control
-                  type="text"
+                  type="email"
                   name='email'
                   id='email'
                   className='mb-2'
@@ -275,6 +276,9 @@ export default function AddLguUser(props) {
                   type="text"
                   name='contact'
                   id='contact'
+                  maxLength={11}
+                  max={99999999999}
+                  min={1000000000}
                   className='mb-2'
                   value={lguAddProfile.contact}
                   onChange={handleInputChange}

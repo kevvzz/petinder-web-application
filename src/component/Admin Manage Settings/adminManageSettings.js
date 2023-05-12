@@ -202,7 +202,7 @@ function AdminManageSettings() {
                     <div style={{ display: showDiv1 ? 'block' : 'none' }} class="col-settings update" id="updateDiv">
                         <Row>
                             <Form.Label className='h6'>UserName<span className='red' ref={userTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='user' id='user' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="text" name='user' id='user' className='mb-2' value={userData.A_UserName} onChange={handleEdits}/>
                             <Overlay target={userTarget.current} show={userShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>
@@ -213,7 +213,7 @@ function AdminManageSettings() {
                         </Row>
                         <Row>
                             <Form.Label className='h6'>Email<span className='red' ref={emailTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='email' id='email' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="text" name='email' id='email' className='mb-2' value={userData.A_Email} onChange={handleEdits}/>
                             <Overlay target={emailTarget.current} show={emailShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>

@@ -6,7 +6,7 @@ import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import DeleteModal from '../Modal/DeleteModal';
+import DeleteAuthenticate from '../Modal/DeleteAuthenticate';
 import EditAdminOwner from './EditAdminOwner';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -259,12 +259,17 @@ function AddAdminPetOwner() {
           </Row>
           
         </div>
-        <DeleteModal
-              name = "PET OWNER"
-              show = {showDeleteModal}
-              hide = {() => setShowDeleteModal(false)}
-              remover = {handleRemove}
-          />
+        <DeleteAuthenticate
+            name = {(ownerProfile.firstName+" "+ownerProfile.lastName)}
+            show = {showDeleteModal}
+            hide = {() => setShowDeleteModal(false)}
+            // remover = {handleRemove}
+            data = {data}
+            setShowDeleteModal = {setShowDeleteModal}
+            collectionName = "PetLovers_Profile"
+            storageName = "PetLover"
+            navigate = "/admin-owner"
+        />
         <EditAdminOwner
             showmodal = {showAddModal}
             hidemodal = {setShowAddModal}

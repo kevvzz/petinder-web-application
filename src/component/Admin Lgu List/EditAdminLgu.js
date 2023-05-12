@@ -105,7 +105,7 @@ function EditAdminLgu(props) {
           })
           .then(() => {
             toast.success("Lgu Profile UpdatedSuccessfully!");
-            props.hidemodal1();
+            props.hidemodal();
             console.log("success");
           })
           .catch((error) => {
@@ -133,6 +133,7 @@ function EditAdminLgu(props) {
         onHide={handClose}
         centered
         size='lg'
+        backdrop="static"
       >
         <Modal.Header
           className='headerBG'
@@ -173,7 +174,7 @@ function EditAdminLgu(props) {
                   className='h6'
                 >Email<span className='red'> *</span></Form.Label>
                 <Form.Control
-                  type="text"
+                  type="email"
                   name='email'
                   id='email'
                   className='mb-2'
@@ -256,6 +257,9 @@ function EditAdminLgu(props) {
                   type="text"
                   name='contact'
                   id='contact'
+                  maxLength={11}
+                  max={99999999999}
+                  min={1000000000}
                   className='mb-2'
                   value={lguProfile ? lguProfile.contact : ""}
                   onChange={handleEdits}

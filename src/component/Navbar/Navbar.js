@@ -82,10 +82,14 @@ export function AdminNavbar() {
 };
 
 export function LguNavbar() {
+    const userData = JSON.parse(localStorage.getItem('lguData'));
     const [showManageAccount, setShowManageAccount] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
   return (
     <div className='nav'>
+        <div className='center highlight'>
+            {userData.LGU_BranchName}
+        </div>
         <div className = "logo-wrapper">
             <img src = {logoName} className="logo" alt = 'Logo' />
         </div>
@@ -120,16 +124,16 @@ export function LguNavbar() {
         }
         <NavLink style={{transition: "all .3s"}} to = "/lgu-lost" className={({isActive}) => (isActive ? "navText navText-selected": "navText")}>
             <div>
-                <span style={{fontSize:"20px"}}><FontAwesomeIcon icon={faPaw}/>LOST PET</span>
+                <span style={{fontSize:"18px"}}><FontAwesomeIcon icon={faPaw}/>LOST PET</span>
             </div>
         </NavLink>
         <NavLink style={{transition: "all .3s"}} to = "/lgu-announcement" className={({isActive}) => (isActive ? "navText navText-selected": "navText")}>
             <div>
-                <span style={{fontSize:"20px"}}><FontAwesomeIcon icon={faBullhorn}/>ANNOUNCEMENT</span>
+                <span style={{fontSize:"18px"}}><FontAwesomeIcon icon={faBullhorn}/>ANNOUNCEMENT</span>
             </div>
         </NavLink>
         <div className='navText' onClick={(e) => setShowSettings(!showSettings)}>
-            <span style={{fontSize:"20px"}}><FontAwesomeIcon icon={faSliders}/>SETTINGS<FontAwesomeIcon icon={faCaretDown}/></span>
+            <span style={{fontSize:"18px"}}><FontAwesomeIcon icon={faSliders}/>SETTINGS<FontAwesomeIcon icon={faCaretDown}/></span>
         </div>
 
         {showSettings &&

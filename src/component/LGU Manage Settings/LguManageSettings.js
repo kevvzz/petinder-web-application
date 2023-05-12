@@ -203,7 +203,7 @@ function LguManageSettings() {
                     <div style={{ display: showDiv1 ? 'block' : 'none' }} class="col-settings update" id="updateDiv">
                         <Row>
                             <Form.Label className='h6'>Contact Number<span className='red' ref={contactTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='contact' id='contact' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control value={userData.LGU_ContactNumber} type="text" maxLength={11} max={99999999999} min={1000000000} name='contact' id='contact' className='mb-2' onChange={handleEdits}/>
                             <Overlay target={contactTarget.current} show={contactShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>
@@ -214,7 +214,7 @@ function LguManageSettings() {
                         </Row>
                         <Row>
                             <Form.Label className='h6'>Email<span className='red' ref={emailTarget}> *</span></Form.Label>
-                            <Form.Control type="text" name='email' id='email' className='mb-2' onChange={handleEdits}/>
+                            <Form.Control type="email" name='email' id='email' className='mb-2' value={userData.LGU_Email} onChange={handleEdits}/>
                             <Overlay target={emailTarget.current} show={emailShowTooltip} placement="right">
                                 {(props) => (
                                     <Tooltip id="overlay-example" {...props}>

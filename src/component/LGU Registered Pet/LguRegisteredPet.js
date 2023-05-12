@@ -92,7 +92,7 @@ function LguRegisteredPet() {
 
     function searchFilter(e) {
         let term = e.target.value.toLowerCase();
-        if (term == "") {
+        if (!term) {
           setFilteredPets(allPets);
         } else {
           setFilteredPets(

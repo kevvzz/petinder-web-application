@@ -73,13 +73,17 @@ function LguPetSeller() {
 }, []);
 
 function searchFilter(e) {
-  let term = e.target.value.toLowerCase();
-  if (term == "") {
+  let term = e.target.value;
+  if (!term) {
     setFilteredSeller(allSeller);
   } else {
+    term = term.toLowerCase();
     setFilteredSeller(
       allSeller.filter(
-        (seller) => seller.email.toLowerCase().indexOf(term) !== -1 || seller.name.toLowerCase().indexOf(term) !== -1
+        (seller) => 
+          seller.email.toLowerCase().indexOf(term) !== -1 || 
+          seller.firstName.toLowerCase().indexOf(term) !== -1 || 
+          seller.lastName.toLowerCase().indexOf(term) !== -1
       )
     );
   }

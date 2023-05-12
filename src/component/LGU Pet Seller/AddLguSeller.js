@@ -422,9 +422,12 @@ function AddLguSeller(props) {
                   className='h6'
                 >Contact Number<span className='red' ref={contactTarget}> *</span></Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   name='contact'
                   id='contact'
+                  maxLength={11}
+                  max={99999999999}
+                  min={1000000000}
                   className='mb-2'
                   value={sellerAddProfile.contact}
                   onChange={handleInputChange}

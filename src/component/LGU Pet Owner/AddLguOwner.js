@@ -215,6 +215,7 @@ function AddLguOwner(props) {
         onHide={handClose}
         centered
         size='lg'
+        backdrop="static"
       >
         <Modal.Header
           className='headerBG'
@@ -230,7 +231,7 @@ function AddLguOwner(props) {
                   className='h6'
                 >Email<span className='red' ref={emailTarget}> *</span></Form.Label>
                 <Form.Control
-                  type="text"
+                  type="email"
                   name='email'
                   id='email'
                   className='mb-2'
@@ -422,9 +423,12 @@ function AddLguOwner(props) {
                   className='h6'
                 >Contact Number<span className='red' ref={contactTarget}> *</span></Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   name='contact'
                   id='contact'
+                  maxLength={11}
+                  max={99999999999}
+                  min={1000000000}
                   className='mb-2'
                   value={ownerAddProfile.contact}
                   onChange={handleInputChange}

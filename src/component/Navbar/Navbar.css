@@ -24,7 +24,7 @@
     justify-content: center;
 }
 .logo{
-    max-width: 70%;
+    max-width: 50%;
 }
 .navText, .navText-selected {
     text-transform: uppercase;
@@ -32,7 +32,7 @@
     border-top: 3px solid transparent;
     border-bottom: 3px solid transparent;
     text-decoration: none;
-    margin-bottom: 2vh;
+    margin-bottom: 1vh;
 }
 
 .navText {
@@ -106,4 +106,12 @@
     color: var(--primary-color);
     border-radius: 40px 999em 999em 40px;
     width: 90%;
+}
+.highlight{
+    /* border: black solid; */
+    /* border-radius: 20%; */
+    background-color: #ff8333;
+    margin-top: 3vh;
+    font-weight: bolder;
+    color: white;
 }

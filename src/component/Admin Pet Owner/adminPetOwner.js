@@ -70,13 +70,17 @@ function AdminPetOwner() {
 
 
   function searchFilter(e) {
-    let term = e.target.value.toLowerCase();
-    if (term == "") {
+    let term = e.target.value;
+    if (!term) {
       setFilteredOwner(allOwner);
     } else {
+      term = term.toLowerCase();
       setFilteredOwner(
         allOwner.filter(
-          (owner) => owner.email.toLowerCase().indexOf(term) !== -1 || owner.name.toLowerCase().indexOf(term) !== -1
+          (owner) => 
+            owner.email.toLowerCase().indexOf(term) !== -1 || 
+            owner.firstName.toLowerCase().indexOf(term) !== -1 || 
+            owner.lastName.toLowerCase().indexOf(term) !== -1
         )
       );
     }

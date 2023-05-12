@@ -6,7 +6,7 @@ import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import DeleteModal from '../Modal/DeleteModal';
+import DeleteAuthenticate from '../Modal/DeleteAuthenticate';
 import EditLguSeller from './EditLguSeller';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -259,11 +259,16 @@ return (
           </Row>
         
       </div>
-      <DeleteModal
-            name = "PET SELLER"
+      <DeleteAuthenticate
+            name = {(sellerProfile.firstName+" "+sellerProfile.lastName)}
             show = {showDeleteModal}
             hide = {() => setShowDeleteModal(false)}
-            remover = {handleRemove}
+            // remover = {handleRemove}
+            data = {data}
+            setShowDeleteModal = {setShowDeleteModal}
+            collectionName = "PetSellerorAdoption_Profile"
+            storageName = "PetSellerOrAdoption"
+            navigate = "/lgu-seller"
         />
       <EditLguSeller
           showmodal = {showAddModal}

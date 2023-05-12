@@ -35,6 +35,7 @@ export default function GenerateQRModal(props) {
         onHide={props.hidemodal}
         size='md'
         centered
+        backdrop="static"
       >
         <Modal.Header className='headerBG' closeButton>
           <Modal.Title>QR Code</Modal.Title>

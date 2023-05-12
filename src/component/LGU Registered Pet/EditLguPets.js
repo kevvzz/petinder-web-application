@@ -193,7 +193,7 @@ function EditLguPets(props) {
     return (
       <div>
           <ToastContainer/> 
-         <Modal show={props.showmodal1} onHide={props.hidemodal1} centered className='modal-lg'>
+         <Modal show={props.showmodal1} onHide={props.hidemodal1} centered className='modal-lg' backdrop="static">
             <Modal.Header className='headerBG' closeButton>
               <Modal.Title>UPDATE PETS</Modal.Title>
             </Modal.Header>

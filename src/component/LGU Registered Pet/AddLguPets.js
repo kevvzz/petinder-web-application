@@ -219,7 +219,7 @@ function AddLguPets(props) {
   return (
     <div>
     <ToastContainer/>
-      <Modal show={props.showmodal1} onHide={props.hidemodal1} centered className='modal-lg'>
+      <Modal show={props.showmodal1} onHide={props.hidemodal1} centered className='modal-lg' backdrop="static">
         <Modal.Header className='headerBG' closeButton>
           <Modal.Title>ADD PETS</Modal.Title>
         </Modal.Header>

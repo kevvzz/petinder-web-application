@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef} from 'react';
 import { Modal, Row, Col, Form, InputGroup, Button, Figure } from 'react-bootstrap'
 import Overlay from 'react-bootstrap/Overlay';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -14,7 +14,6 @@ import { ToastContainer, toast } from 'react-toastify';
 
 function AddLguOwner(props) {
   const userData = JSON.parse(localStorage.getItem('lguData'));
-  console.log(userData)
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageUpload, setImageUpload] = useState('');
 
@@ -29,7 +28,6 @@ function AddLguOwner(props) {
   const [lastNameShowTooltip, setLastNameShowTooltip] = useState(false);
   const firstNameTarget = useRef(null);
   const [firstNameShowTooltip, setFirstNameShowTooltip] = useState(false);
-
   const addressTarget = useRef(null);
   const [addressShowTooltip, setAddressShowTooltip] = useState(false);
   const ageTarget = useRef(null);
@@ -40,7 +38,6 @@ function AddLguOwner(props) {
   const [contactShowTooltip, setContactShowTooltip] = useState(false);
   const genderTarget = useRef(null);
   const [genderShowTooltip, setGenderShowTooltip] = useState(false);
-
   const profileTarget = useRef(null);
   const [profileShowTooltip, setProfileShowTooltip] = useState(false);
 
@@ -145,6 +142,7 @@ function AddLguOwner(props) {
       (ownerAddProfile.contact !== "" && ownerAddProfile.contact !== null) &&
       (ownerAddProfile.gender !== "" && ownerAddProfile.gender !== null) &&
       (imageUpload !== null && imageUpload !== "")) {
+
       db.collection("PetLovers_Profile")
         .where("PL_UserEmail", "==", ownerAddProfile.email.toString())
         .get()
@@ -190,7 +188,7 @@ function AddLguOwner(props) {
                   toast.success("Owner Profile Added Successfully!");
                   setTimeout(() => {
                     window.location.reload();
-                  }, 1000);
+                  }, 2000);
                   props.hidemodal1();
                 })
                 .catch((error) => {
@@ -199,24 +197,15 @@ function AddLguOwner(props) {
                 });
             })
             .catch((error) => {
-              // var errorCode = error.code;
-              // var errorMessage = error.message;
-              // console.log(errorCode, errorMessage);
               console.error('Error creating user:', error);
-              // Handle error
             });
         })
         .catch((error) => {
           var errorCode = error.code;
           var errorMessage = error.message;
           console.log(errorCode, errorMessage);
-          // Handle error
         });
-
-
     }
-
-
   };
   return (
     <>
@@ -353,11 +342,11 @@ function AddLguOwner(props) {
                   ref={genderTarget}
                   className="h6"
                 >Gender<span className='red'> *</span></Form.Label>
-                <InputGroup className='mb-3'>
                   <Form.Select
                     aria-label="Default select example"
                     name="gender"
                     id="gender"
+                    className='mb-2'
                     value={ownerAddProfile.gender}
                     onChange={handleInputChange}
                   >
@@ -365,14 +354,17 @@ function AddLguOwner(props) {
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </Form.Select>
-                  <Overlay target={genderTarget.current} show={genderShowTooltip} placement="right">
+                  <Overlay 
+                  target={genderTarget.current} 
+                  show={genderShowTooltip} 
+                  placement="right"
+                  >
                     {(props) => (
                       <Tooltip id="overlay-example" {...props}>
                         Empty Pet Gender
                       </Tooltip>
                     )}
                   </Overlay>
-                </InputGroup>
               </Row>
             </Col>
             <Col xs={1}></Col>

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Row, Col, Form, InputGroup, Button, Figure } from 'react-bootstrap'
+import React, { useState, useRef} from 'react';
+import { Modal, Row, Col, Form, Button, Figure } from 'react-bootstrap'
 import Overlay from 'react-bootstrap/Overlay';
 import Tooltip from 'react-bootstrap/Tooltip';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,14 +21,10 @@ function EditLguSeller(props) {
     setImageUpload('');
   }
 
-  const emailTarget = useRef(null);
-  const [emailShowTooltip, setEmailShowTooltip] = useState(false);
   const lastNameTarget = useRef(null);
   const [lastNameShowTooltip, setLastNameShowTooltip] = useState(false);
   const firstNameTarget = useRef(null);
   const [firstNameShowTooltip, setFirstNameShowTooltip] = useState(false);
-  const middleNameTarget = useRef(null);
-  const [middleNameShowTooltip, setMiddleNameShowTooltip] = useState(false);
   const addressTarget = useRef(null);
   const [addressShowTooltip, setAddressShowTooltip] = useState(false);
   const ageTarget = useRef(null);
@@ -37,8 +33,6 @@ function EditLguSeller(props) {
   const [birthdateShowTooltip, setBirthdateShowTooltip] = useState(false);
   const contactTarget = useRef(null);
   const [contactShowTooltip, setContactShowTooltip] = useState(false);
-  const dateRegisterTarget = useRef(null);
-  const [dateRegisterShowTooltip, setDateRegisterShowTooltip] = useState(false);
   const genderTarget = useRef(null);
   const [genderShowTooltip, setGenderShowTooltip] = useState(false);
   const locationTarget = useRef(null);
@@ -85,10 +79,7 @@ function EditLguSeller(props) {
   const regex = /^\d{4}-\d{2}-\d{2}$/; // regular expression to match the format yyyy-mm-dd
   if (regex.test(sellerDate)) {
     sellerDate = firebase.firestore.Timestamp.fromDate(new Date(sellerProfile.birthdate));
-    console.log("qweqweqwe" + sellerDate);
-    // additional logic here
   }
-  console.log("qweqweqwe" + sellerDate);
 
   const birth = new Date(sellerProfile.birthdate.seconds * 1000 + sellerProfile.birthdate.nanoseconds / 1000000);
   const birthString = birth.toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
@@ -100,13 +91,7 @@ function EditLguSeller(props) {
   }
   const formatedDate = getFormattedDate(new Date(birthString));
 
-
   const handleSaveChanges = () => {
-    if (sellerProfile.email === "") {
-      setEmailShowTooltip(true);
-    } else {
-      setEmailShowTooltip(false);
-    }
     if (sellerProfile.lastName === "") {
       setLastNameShowTooltip(true);
     } else {
@@ -117,12 +102,6 @@ function EditLguSeller(props) {
       setFirstNameShowTooltip(true);
     } else {
       setFirstNameShowTooltip(false);
-    }
-
-    if (sellerProfile.middleName === "") {
-      setMiddleNameShowTooltip(true);
-    } else {
-      setMiddleNameShowTooltip(false);
     }
 
     if (sellerProfile.address === "") {
@@ -149,12 +128,6 @@ function EditLguSeller(props) {
       setContactShowTooltip(false);
     }
 
-    if (sellerProfile.dateRegister === "") {
-      setDateRegisterShowTooltip(true);
-    } else {
-      setDateRegisterShowTooltip(false);
-    }
-
     if (sellerProfile.gender === "") {
       setGenderShowTooltip(true);
     } else {
@@ -168,10 +141,8 @@ function EditLguSeller(props) {
     }
 
 
-    if ((sellerProfile.email !== "" && sellerProfile.email !== null) &&
-      (sellerProfile.lastName !== "" && sellerProfile.lastName !== null) &&
+    if ((sellerProfile.lastName !== "" && sellerProfile.lastName !== null) &&
       (sellerProfile.firstName !== "" && sellerProfile.firstName !== null) &&
-      (sellerProfile.middleName !== "" && sellerProfile.middleName !== null) &&
       (sellerProfile.address !== "" && sellerProfile.address !== null) &&
       (sellerProfile.age !== "" && sellerProfile.age !== null) &&
       (sellerProfile.birthdate !== "" && sellerProfile.birthdate !== null) &&
@@ -179,50 +150,44 @@ function EditLguSeller(props) {
       (sellerProfile.dateRegister !== "" && sellerProfile.dateRegister !== null) &&
       (sellerProfile.gender !== "" && sellerProfile.gender !== null) &&
       (sellerProfile.location !== "" && sellerProfile.location !== null)) {
+  
+        // Save the pet data to Firestore
+        db.collection("PetSellerorAdoption_Profile")
+          .doc(sellerProfile.email.toString())
+          .update({
+            PSA_Address: sellerProfile.address,
+            PSA_Age: sellerProfile.age,
+            PSA_BirthDate: sellerDate,
+            PSA_ContactNumber: sellerProfile.contact,
+            // PSA_DateRegistered: sellerProfile.dateRegister,
+            PSA_FirstName: sellerProfile.firstName,
+            PSA_Gender: sellerProfile.gender,
+            PSA_LastName: sellerProfile.lastName,
+            PSA_MiddleName: sellerProfile.middleName,
+            PSA_NearbyDVMFLoc: sellerProfile.location,
+            PSA_UserEmail: sellerProfile.email
+          }).then(() => {
+            toast.success("Seller Profile Added Successfully!");
+            props.hidemodal();
+            console.log("success");
+          }).catch((error) => {
+            toast.error(error);
+            console.log(error)
+          });
 
-      const storageRef = storage.ref();
-      const fileRef = storageRef.child(`PetSellerOrAdoption/${sellerProfile.email.toString()}`);
-      if (selectedFile !== null) {
-        fileRef.put(selectedFile).then(() => {
-          console.log('File uploaded successfully');
-        });
+          const storageRef = storage.ref();
+          const fileRef = storageRef.child(`PetSellerOrAdoption/${sellerProfile.email.toString()}`);
+          if (selectedFile !== null) {
+            fileRef.put(selectedFile).then(() => {
+              console.log('File uploaded successfully');
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            });
+          }
+        }
       }
-
-      const birthdate = sellerProfile.birthdate;
-      const birthTimestamp = firebase.firestore.Timestamp.fromDate(new Date(birthdate));
-
-      // Save the pet data to Firestore
-      db.collection("PetSellerorAdoption_Profile")
-        .doc(sellerProfile.email.toString())
-        .update({
-          PSA_Address: sellerProfile.address,
-          PSA_Age: sellerProfile.age,
-          PSA_BirthDate: birthTimestamp,
-          PSA_ContactNumber: sellerProfile.contact,
-          // PSA_DateRegistered: sellerProfile.dateRegister,
-          PSA_FirstName: sellerProfile.firstName,
-          PSA_Gender: sellerProfile.gender,
-          PSA_LastName: sellerProfile.lastName,
-          PSA_MiddleName: sellerProfile.middleName,
-          PSA_NearbyDVMFLoc: sellerProfile.location,
-          PSA_UserEmail: sellerProfile.email
-        })
-        .then(() => {
-          toast.success("Seller Profile Added Successfully!");
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-          props.hidemodal1();
-          console.log("success");
-        })
-        .catch((error) => {
-          toast.error("Error updating seller to Firestore: ");
-          console.log(error)
-        });
-    }
-
-
-  };
+      
   return (
     <>
       <ToastContainer />
@@ -244,23 +209,23 @@ function EditLguSeller(props) {
               <Row>
                 <Form.Label
                   className='h6'
-                >Email<span className='red' ref={emailTarget}> *</span></Form.Label>
+                >First Name<span className='red' ref={firstNameTarget}> *</span></Form.Label>
                 <Form.Control
                   type="text"
-                  name='email'
-                  id='email'
+                  name='firstName'
+                  id='firstName'
                   className='mb-2'
-                  value={sellerProfile ? sellerProfile.email : ""}
+                  value={sellerProfile ? sellerProfile.firstName : ""}
                   onChange={handleEdits}
                 />
                 <Overlay
-                  target={emailTarget.current}
-                  show={emailShowTooltip}
+                  target={firstNameTarget.current}
+                  show={firstNameShowTooltip}
                   placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
-                      Empty Email
+                      Empty First Name
                     </Tooltip>
                   )}
                 </Overlay>
@@ -268,32 +233,7 @@ function EditLguSeller(props) {
               <Row>
                 <Form.Label
                   className='h6'
-                >Last Name<span className='red' ref={lastNameTarget}> *</span></Form.Label>
-                <Form.Control
-                  type="text"
-                  name='lastName'
-                  id='lastName'
-                  className='mb-2'
-                  value={sellerProfile ? sellerProfile.lastName : ""}
-                  onChange={handleEdits}
-                />
-                <Overlay
-                  target={lastNameTarget.current}
-                  show={lastNameShowTooltip}
-                  placement="right"
-                >
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty Last Name
-                    </Tooltip>
-                  )}
-                </Overlay>
-              </Row>
-
-              <Row>
-                <Form.Label
-                  className='h6'
-                >Middle Name<span className='red' ref={middleNameTarget}> *</span></Form.Label>
+                >Middle Name</Form.Label>
                 <Form.Control
                   type="text"
                   name='middleName'
@@ -302,18 +242,6 @@ function EditLguSeller(props) {
                   value={sellerProfile ? sellerProfile.middleName : ""}
                   onChange={handleEdits}
                 />
-                <Overlay
-                  target={middleNameTarget.current}
-                  show={middleNameShowTooltip}
-                  placement="right"
-                >
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty Middle Name
-                    </Tooltip>
-                  )}
-                </Overlay>
-
               </Row>
 
               <Row>
@@ -378,8 +306,8 @@ function EditLguSeller(props) {
                   onChange={handleEdits}
                 >
                   <option value="">Select Gender</option>
-                  <option value="Adoption">Male</option>
-                  <option value="Sale">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
                 </Form.Select>
                 <Overlay
                   target={genderTarget.current}
@@ -399,23 +327,23 @@ function EditLguSeller(props) {
               <Row>
                 <Form.Label
                   className='h6'
-                >First Name<span className='red' ref={firstNameTarget}> *</span></Form.Label>
+                >Last Name<span className='red' ref={lastNameTarget}> *</span></Form.Label>
                 <Form.Control
                   type="text"
-                  name='firstName'
-                  id='firstName'
+                  name='lastName'
+                  id='lastName'
                   className='mb-2'
-                  value={sellerProfile ? sellerProfile.firstName : ""}
+                  value={sellerProfile ? sellerProfile.lastName : ""}
                   onChange={handleEdits}
                 />
                 <Overlay
-                  target={firstNameTarget.current}
-                  show={firstNameShowTooltip}
+                  target={lastNameTarget.current}
+                  show={lastNameShowTooltip}
                   placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
-                      Empty First Name
+                      Empty Last Name
                     </Tooltip>
                   )}
                 </Overlay>

@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 
 function EditAdminLgu(props) {
   const lguProfile = props.lguProfile
@@ -89,45 +89,45 @@ function EditAdminLgu(props) {
       (lguProfile.user !== "" && lguProfile.user !== null) &&
       (lguProfile.branch !== "" && lguProfile.branch !== null) &&
       (lguProfile.address !== "" && lguProfile.address !== null) &&
-      (lguProfile.contact !== "" && lguProfile.contact !== null)){
+      (lguProfile.contact !== "" && lguProfile.contact !== null)){      
 
-      const storageRef = storage.ref();
-      const fileRef = storageRef.child(`LGU_DVMF/${lguProfile.user.toString()}`);
-      if (selectedFile !== null) {
-        fileRef.put(selectedFile).then(() => {
-          console.log('File uploaded successfully');
-        });
+        // Save the pet data to Firestore
+        db.collection("LGU_Profile")
+          .doc(lguProfile.user.toString())
+          .update({
+            LGU_UserName: lguProfile.user,
+            LGU_BranchName: lguProfile.branch,
+            LGU_Address: lguProfile.address,
+            LGU_ContactNumber: lguProfile.contact,
+            // LGU_DateRegistered: timestamp,
+            LGU_Email: lguProfile.email,
+            // LGU_Password: password,
+          })
+          .then(() => {
+            toast.success("Lgu Profile UpdatedSuccessfully!");
+            props.hidemodal1();
+            console.log("success");
+          })
+          .catch((error) => {
+            toast.error("Error adding Lgu to Firestore: ");
+            console.log(error)
+          });
+          const storageRef = storage.ref();
+          const fileRef = storageRef.child(`LGU_DVMF/${lguProfile.user.toString()}`);
+          if (selectedFile !== null) {
+            fileRef.put(selectedFile).then(() => {
+              console.log('File uploaded successfully');
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000); 
+            });
+          }
+        }
       }
-      
-
-      // Save the pet data to Firestore
-      db.collection("LGU_Profile")
-        .doc(lguProfile.user.toString())
-        .update({
-          LGU_UserName: lguProfile.user,
-          LGU_BranchName: lguProfile.branch,
-          LGU_Address: lguProfile.address,
-          LGU_ContactNumber: lguProfile.contact,
-          // LGU_DateRegistered: timestamp,
-          LGU_Email: lguProfile.email,
-          // LGU_Password: password,
-        })
-        .then(() => {
-          toast.success("Lgu Profile UpdatedSuccessfully!");
-          alert("Lgu Profile UpdatedSuccessfully!");
-          window.location.reload();
-          props.hidemodal1();
-          console.log("success");
-        })
-        .catch((error) => {
-          toast.error("Error adding Lgu to Firestore: ");
-          console.log(error)
-        });
-    }
-  }
 
   return (
     <>
+      <ToastContainer/>
       <Modal
         show={props.showmodal}
         onHide={handClose}

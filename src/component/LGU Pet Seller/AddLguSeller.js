@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef} from 'react';
 import { Modal, Row, Col, Form, InputGroup, Button, Figure } from 'react-bootstrap'
 import Overlay from 'react-bootstrap/Overlay';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -13,11 +13,9 @@ import 'firebase/compat/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 
 function AddLguSeller(props) {
+  const userData = JSON.parse(localStorage.getItem('lguData'));
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageUpload, setImageUpload] = useState('');
-
-  const userData = JSON.parse(localStorage.getItem('lguData'));
-  const userName = userData.LGU_BranchName
 
   const handClose = () => {
     props.hidemodal(false);
@@ -30,8 +28,6 @@ function AddLguSeller(props) {
   const [lastNameShowTooltip, setLastNameShowTooltip] = useState(false);
   const firstNameTarget = useRef(null);
   const [firstNameShowTooltip, setFirstNameShowTooltip] = useState(false);
-  const middleNameTarget = useRef(null);
-  const [middleNameShowTooltip, setMiddleNameShowTooltip] = useState(false);
   const addressTarget = useRef(null);
   const [addressShowTooltip, setAddressShowTooltip] = useState(false);
   const ageTarget = useRef(null);
@@ -42,8 +38,6 @@ function AddLguSeller(props) {
   const [contactShowTooltip, setContactShowTooltip] = useState(false);
   const genderTarget = useRef(null);
   const [genderShowTooltip, setGenderShowTooltip] = useState(false);
-  const locationTarget = useRef(null);
-  const [locationShowTooltip, setLocationShowTooltip] = useState(false);
   const profileTarget = useRef(null);
   const [profileShowTooltip, setProfileShowTooltip] = useState(false);
 
@@ -60,8 +54,7 @@ function AddLguSeller(props) {
     age: '',
     birthdate: '',
     contact: '',
-    gender: '',
-    location: ''
+    gender: ''
   });
 
   const handleInputChange = (event) => {
@@ -109,12 +102,6 @@ function AddLguSeller(props) {
       setFirstNameShowTooltip(false);
     }
 
-    if (sellerAddProfile.middleName === "") {
-      setMiddleNameShowTooltip(true);
-    } else {
-      setMiddleNameShowTooltip(false);
-    }
-
     if (sellerAddProfile.address === "") {
       setAddressShowTooltip(true);
     } else {
@@ -145,23 +132,15 @@ function AddLguSeller(props) {
       setGenderShowTooltip(false);
     }
 
-    if (sellerAddProfile.location === "") {
-      setLocationShowTooltip(true);
-    } else {
-      setLocationShowTooltip(false);
-    }
-
 
     if ((sellerAddProfile.email !== "" && sellerAddProfile.email !== null) &&
       (sellerAddProfile.lastName !== "" && sellerAddProfile.lastName !== null) &&
       (sellerAddProfile.firstName !== "" && sellerAddProfile.firstName !== null) &&
-      (sellerAddProfile.middleName !== "" && sellerAddProfile.middleName !== null) &&
       (sellerAddProfile.address !== "" && sellerAddProfile.address !== null) &&
       (sellerAddProfile.age !== "" && sellerAddProfile.age !== null) &&
       (sellerAddProfile.birthdate !== "" && sellerAddProfile.birthdate !== null) &&
       (sellerAddProfile.contact !== "" && sellerAddProfile.contact !== null) &&
       (sellerAddProfile.gender !== "" && sellerAddProfile.gender !== null) &&
-      (sellerAddProfile.location !== "" && sellerAddProfile.location !== null) &&
       (imageUpload !== null && imageUpload !== "")) {
 
       db.collection("PetSellerorAdoption_Profile")
@@ -173,8 +152,7 @@ function AddLguSeller(props) {
             toast.error("This email is already in use.");
             return;
           }
-          console.log(sellerAddProfile.email)
-          console.log(sellerAddProfile.password)
+        
           firebase.auth().createUserWithEmailAndPassword(sellerAddProfile.email, sellerAddProfile.password)
             .then((userCredential) => {
               // Signed in
@@ -203,19 +181,18 @@ function AddLguSeller(props) {
                   PSA_Gender: sellerAddProfile.gender,
                   PSA_LastName: sellerAddProfile.lastName,
                   PSA_MiddleName: sellerAddProfile.middleName,
-                  PSA_NearbyDVMFLoc: sellerAddProfile.location,
+                  PSA_NearbyDVMFLoc: userData.LGU_BranchName,
                   PSA_UserEmail: sellerAddProfile.email
                 })
                 .then(() => {
                   toast.success("Seller Profile Added Successfully!");
                   setTimeout(() => {
                     window.location.reload();
-                  }, 1000);
+                  }, 2000);
                   props.hidemodal();
-                  console.log("success");
                 })
                 .catch((error) => {
-                  toast.error("Error adding seller to Firestore: ");
+                  toast.error(error);
                   console.log(error)
                 });
             })
@@ -227,7 +204,6 @@ function AddLguSeller(props) {
           var errorCode = error.code;
           var errorMessage = error.message;
           console.log(errorCode, errorMessage);
-
         });
     }
   };
@@ -301,7 +277,7 @@ function AddLguSeller(props) {
               <Row>
                 <Form.Label
                   className='h6'
-                >Middle Name<span className='red' ref={middleNameTarget}> *</span></Form.Label>
+                >Middle Name</Form.Label>
                 <Form.Control
                   type="text"
                   name='middleName'
@@ -310,18 +286,6 @@ function AddLguSeller(props) {
                   value={sellerAddProfile.middleName}
                   onChange={handleInputChange}
                 />
-                <Overlay
-                  target={middleNameTarget.current}
-                  show={middleNameShowTooltip}
-                  placement="right"
-                >
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty Middle Name
-                    </Tooltip>
-                  )}
-                </Overlay>
-
               </Row>
 
               <Row>
@@ -375,8 +339,9 @@ function AddLguSeller(props) {
               </Row>
               <Row>
                 <Form.Label
+                  ref={genderTarget}
                   className='h6'
-                >Gender<span className='red' ref={genderTarget}> *</span></Form.Label>
+                >Gender<span className='red'> *</span></Form.Label>
                 <Form.Select
                   aria-label="Default select example"
                   name="gender"
@@ -387,7 +352,7 @@ function AddLguSeller(props) {
                 >
                   <option value="">Select Gender</option>
                   <option value="Adoption">Male</option>
-                  <option value="Sale">Female</option>
+                  <option value="Female">Female</option>
                 </Form.Select>
                 <Overlay
                   target={genderTarget.current}
@@ -472,30 +437,6 @@ function AddLguSeller(props) {
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
                       Empty Contact Number
-                    </Tooltip>
-                  )}
-                </Overlay>
-              </Row>
-              <Row>
-                <Form.Label
-                  className='h6'
-                >Nearest DVMF Location<span className='red' ref={locationTarget}> *</span></Form.Label>
-                <Form.Control
-                  type="text"
-                  name='location'
-                  id='location'
-                  className='mb-2'
-                  value={userName}
-                  readOnly
-                />
-                <Overlay
-                  target={locationTarget.current}
-                  show={locationShowTooltip}
-                  placement="right"
-                >
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty DVMF Location
                     </Tooltip>
                   )}
                 </Overlay>

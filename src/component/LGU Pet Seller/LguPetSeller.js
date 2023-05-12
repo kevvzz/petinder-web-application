@@ -45,7 +45,6 @@ function LguPetSeller() {
         const gender = doc.data().PSA_Gender;
         const location = doc.data().PSA_NearbyDVMFLoc;
 
-
         if (location === userData.LGU_BranchName){
           const promise = storage
           .ref()

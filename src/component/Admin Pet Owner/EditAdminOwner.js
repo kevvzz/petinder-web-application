@@ -13,7 +13,6 @@ import { ToastContainer, toast } from 'react-toastify';
 
 function EditAdminOwner(props) {
   const ownerProfile = props.ownerProfile
-  const data = props.data
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageUpload, setImageUpload] = useState('');
 
@@ -22,14 +21,10 @@ function EditAdminOwner(props) {
     setImageUpload('');
   }
 
-  const emailTarget = useRef(null);
-  const [emailShowTooltip, setEmailShowTooltip] = useState(false);
   const lastNameTarget = useRef(null);
   const [lastNameShowTooltip, setLastNameShowTooltip] = useState(false);
   const firstNameTarget = useRef(null);
   const [firstNameShowTooltip, setFirstNameShowTooltip] = useState(false);
-  const middleNameTarget = useRef(null);
-  const [middleNameShowTooltip, setMiddleNameShowTooltip] = useState(false);
   const addressTarget = useRef(null);
   const [addressShowTooltip, setAddressShowTooltip] = useState(false);
   const ageTarget = useRef(null);
@@ -38,8 +33,6 @@ function EditAdminOwner(props) {
   const [birthdateShowTooltip, setBirthdateShowTooltip] = useState(false);
   const contactTarget = useRef(null);
   const [contactShowTooltip, setContactShowTooltip] = useState(false);
-  const dateRegisterTarget = useRef(null);
-  const [dateRegisterShowTooltip, setDateRegisterShowTooltip] = useState(false);
   const genderTarget = useRef(null);
   const [genderShowTooltip, setGenderShowTooltip] = useState(false);
   const locationTarget = useRef(null);
@@ -59,7 +52,6 @@ function EditAdminOwner(props) {
     owner[e.target.id] = value;
     props.setOwnerProfile(owner);
   }
-  
   const uploadImage = async (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
@@ -100,11 +92,6 @@ function EditAdminOwner(props) {
   const formatedDate = getFormattedDate(new Date(birthString));
 
   const handleSaveChanges = () => {
-    if (ownerProfile.email === "") {
-      setEmailShowTooltip(true);
-    } else {
-      setEmailShowTooltip(false);
-    }
     if (ownerProfile.lastName === "") {
       setLastNameShowTooltip(true);
     } else {
@@ -115,12 +102,6 @@ function EditAdminOwner(props) {
       setFirstNameShowTooltip(true);
     } else {
       setFirstNameShowTooltip(false);
-    }
-
-    if (ownerProfile.middleName === "") {
-      setMiddleNameShowTooltip(true);
-    } else {
-      setMiddleNameShowTooltip(false);
     }
 
     if (ownerProfile.address === "") {
@@ -147,12 +128,6 @@ function EditAdminOwner(props) {
       setContactShowTooltip(false);
     }
 
-    if (ownerProfile.dateRegister === "") {
-      setDateRegisterShowTooltip(true);
-    } else {
-      setDateRegisterShowTooltip(false);
-    }
-
     if (ownerProfile.gender === "") {
       setGenderShowTooltip(true);
     } else {
@@ -166,10 +141,8 @@ function EditAdminOwner(props) {
     }
 
 
-    if ((ownerProfile.email !== "" && ownerProfile.email !== null) &&
-      (ownerProfile.lastName !== "" && ownerProfile.lastName !== null) &&
+    if((ownerProfile.lastName !== "" && ownerProfile.lastName !== null) &&
       (ownerProfile.firstName !== "" && ownerProfile.firstName !== null) &&
-      (ownerProfile.middleName !== "" && ownerProfile.middleName !== null) &&
       (ownerProfile.address !== "" && ownerProfile.address !== null) &&
       (ownerProfile.age !== "" && ownerProfile.age !== null) &&
       (ownerProfile.birthdate !== "" && ownerProfile.birthdate !== null) &&
@@ -178,63 +151,10 @@ function EditAdminOwner(props) {
       (ownerProfile.gender !== "" && ownerProfile.gender !== null) &&
       (ownerProfile.location !== "" && ownerProfile.location !== null)) {
 
-      if (data.email !== ownerProfile.email) {
-        const firestore = firebase.firestore();
-        const oldDocRef = firestore.collection('PetLovers_Profile').doc(data.email);
-        const newDocRef = firestore.collection('PetLovers_Profile').doc(ownerProfile.email);
-
-        oldDocRef.get().then((doc) => {
-          if (doc.exists) {
-            newDocRef.set(doc.data()).then(() => {
-              oldDocRef.delete().then(() => {
-                const storageRef = storage.ref();
-                const oldFileRef = storageRef.child(`PetLover/${data.email.toString()}`);
-                const newFileRef = storageRef.child(`PetLover/${ownerProfile.email.toString()}`);
-
-                // Rename the file
-                oldFileRef.renameTo(newFileRef).then(() => {
-                  console.log('File renamed successfully');
-                }).catch((error) => {
-                  console.error('Error renaming file:', error);
-                });
-
-                db.collection("PetLovers_Profile").doc(ownerProfile.email).update({
-                  PL_Address: ownerProfile.address,
-                  PL_Age: ownerProfile.age,
-                  PL_BirthDate: ownerDate,
-                  PL_ContactNumber: ownerProfile.contact,
-                  PL_FirstName: ownerProfile.firstName,
-                  PL_Gender: ownerProfile.gender,
-                  PL_LastName: ownerProfile.lastName,
-                  PL_MiddleName: ownerProfile.middleName,
-                  PL_NearbyDVMFLoc: ownerProfile.location,
-                  PL_UserEmail: ownerProfile.email
-                }).then(() => {
-                  toast.success("Owner Profile Updated Successfully!");
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 1000);
-                  props.hidemodal1();
-                  console.log("success");
-                }).catch((error) => {
-                  toast.error("Error adding owner to Firestore: ");
-                  console.log(error);
-                });
-              });
-            });
-          }
-        });
-      } else {
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child(`PetLover/${ownerProfile.email.toString()}`);
-        if (selectedFile !== null) {
-          fileRef.put(selectedFile).then(() => {
-            console.log('File uploaded successfully');
-          });
-        }
-
         // Save the pet data to Firestore
-        db.collection("PetLovers_Profile").doc(ownerProfile.email.toString()).update({
+        db.collection("PetLovers_Profile")
+        .doc(ownerProfile.email.toString())
+        .update({
           PL_Address: ownerProfile.address,
           PL_Age: ownerProfile.age,
           PL_BirthDate: ownerDate,
@@ -248,18 +168,25 @@ function EditAdminOwner(props) {
           PL_UserEmail: ownerProfile.email
         }).then(() => {
           toast.success("Owner Profile Updated Successfully!");
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-          props.hidemodal1();
+          props.hidemodal();
           console.log("success");
         }).catch((error) => {
-          toast.error("Error adding owner to Firestore: ");
+          toast.error(error);
           console.log(error);
         });
+
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child(`PetLover/${ownerProfile.email.toString()}`);
+        if (selectedFile !== null) {
+          fileRef.put(selectedFile).then(() => {
+            console.log('File uploaded successfully');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          });
+        }
       }
     }
-  };
 
   return (
     <>
@@ -282,23 +209,23 @@ function EditAdminOwner(props) {
               <Row>
                 <Form.Label
                   className='h6'
-                >Email<span className='red' ref={emailTarget}> *</span></Form.Label>
+                >First Name<span className='red' ref={firstNameTarget}> *</span></Form.Label>
                 <Form.Control
                   type="text"
-                  name='email'
-                  id='email'
+                  name='firstName'
+                  id='firstName'
                   className='mb-2'
-                  value={ownerProfile ? ownerProfile.email : ""}
+                  value={ownerProfile ? ownerProfile.firstName : ""}
                   onChange={handleEdits}
                 />
                 <Overlay
-                  target={emailTarget.current}
-                  show={emailShowTooltip}
+                  target={firstNameTarget.current}
+                  show={firstNameShowTooltip}
                   placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
-                      Empty Email
+                      Empty First Name
                     </Tooltip>
                   )}
                 </Overlay>
@@ -306,32 +233,7 @@ function EditAdminOwner(props) {
               <Row>
                 <Form.Label
                   className='h6'
-                >Last Name<span className='red' ref={lastNameTarget}> *</span></Form.Label>
-                <Form.Control
-                  type="text"
-                  name='lastName'
-                  id='lastName'
-                  className='mb-2'
-                  value={ownerProfile ? ownerProfile.lastName : ""}
-                  onChange={handleEdits}
-                />
-                <Overlay
-                  target={lastNameTarget.current}
-                  show={lastNameShowTooltip}
-                  placement="right"
-                >
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty Last Name
-                    </Tooltip>
-                  )}
-                </Overlay>
-              </Row>
-
-              <Row>
-                <Form.Label
-                  className='h6'
-                >Middle Name<span className='red' ref={middleNameTarget}> *</span></Form.Label>
+                >Middle Name</Form.Label>
                 <Form.Control
                   type="text"
                   name='middleName'
@@ -340,18 +242,6 @@ function EditAdminOwner(props) {
                   value={ownerProfile ? ownerProfile.middleName : ""}
                   onChange={handleEdits}
                 />
-                <Overlay
-                  target={middleNameTarget.current}
-                  show={middleNameShowTooltip}
-                  placement="right"
-                >
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty Middle Name
-                    </Tooltip>
-                  )}
-                </Overlay>
-
               </Row>
 
               <Row>
@@ -384,7 +274,7 @@ function EditAdminOwner(props) {
                   className='h6'
                 >Age<span className='red' ref={ageTarget}> *</span></Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   name='age'
                   id='age'
                   className='mb-2'
@@ -407,14 +297,18 @@ function EditAdminOwner(props) {
                 <Form.Label
                   className='h6'
                 >Gender<span className='red' ref={genderTarget}> *</span></Form.Label>
-                <Form.Control
-                  type="text"
-                  name='gender'
-                  id='gender'
+                <Form.Select
+                  aria-label="Default select example"
+                  name="gender"
+                  id="gender"
                   className='mb-2'
                   value={ownerProfile ? ownerProfile.gender : ""}
                   onChange={handleEdits}
-                />
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </Form.Select>
                 <Overlay
                   target={genderTarget.current}
                   show={genderShowTooltip}
@@ -433,23 +327,23 @@ function EditAdminOwner(props) {
               <Row>
                 <Form.Label
                   className='h6'
-                >First Name<span className='red' ref={firstNameTarget}> *</span></Form.Label>
+                >Last Name<span className='red' ref={lastNameTarget}> *</span></Form.Label>
                 <Form.Control
                   type="text"
-                  name='firstName'
-                  id='firstName'
+                  name='lastName'
+                  id='lastName'
                   className='mb-2'
-                  value={ownerProfile ? ownerProfile.firstName : ""}
+                  value={ownerProfile ? ownerProfile.lastName : ""}
                   onChange={handleEdits}
                 />
                 <Overlay
-                  target={firstNameTarget.current}
-                  show={firstNameShowTooltip}
+                  target={lastNameTarget.current}
+                  show={lastNameShowTooltip}
                   placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
-                      Empty First Name
+                      Empty Last Name
                     </Tooltip>
                   )}
                 </Overlay>
@@ -464,7 +358,6 @@ function EditAdminOwner(props) {
                   id='birthdate'
                   className='mb-2'
                   value={ownerProfile ? formatedDate : ""}
-                  // value={value}
                   onChange={handleEdits}
                 />
                 <Overlay
@@ -484,7 +377,7 @@ function EditAdminOwner(props) {
                   className='h6'
                 >Contact Number<span className='red' ref={contactTarget}> *</span></Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   name='contact'
                   id='contact'
                   className='mb-2'
@@ -513,7 +406,7 @@ function EditAdminOwner(props) {
                   id='location'
                   className='mb-2'
                   value={ownerProfile ? ownerProfile.location : ""}
-                  onChange={handleEdits}
+                  readOnly
                 />
                 <Overlay
                   target={locationTarget.current}

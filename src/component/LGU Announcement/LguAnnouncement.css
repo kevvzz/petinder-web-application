@@ -52,3 +52,11 @@
 .customer-info{
     margin-top: 4vh;
 }
+.announceDelete{
+    border-radius: 10%;
+    background-color: red;
+    border: none;
+    font-weight: bolder;
+    color: white;
+    padding: 2%;
+}

@@ -67,11 +67,12 @@ function AddLguPets(props) {
       setProfileCollection("PetLovers_Profile");
     }
     const owner = db.collection(profileCollection);
-    owner.get()
-      .then((querySnapshot) => {
-        const documents = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    owner.get().then((querySnapshot) => {
+      const documents = querySnapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((doc) => doc.PL_NearbyDVMFLoc === userData.LGU_BranchName || doc.PSA_NearbyDVMFLoc === userData.LGU_BranchName);
         setOwner(documents);
-      });
+    });
 
   }, [petData.petStatus, profileCollection]);
 
@@ -162,12 +163,6 @@ function AddLguPets(props) {
       (petData.petType !== "" && petData.petType !== null) &&
       (selectedFile !== null) &&
       (petData.petBreed !== "" && petData.petBreed !== null)) {
-
-      const storageRef = storage.ref();
-      const fileRef = storageRef.child(`Pet/${petData.id.toString()}`);
-      fileRef.put(selectedFile).then(() => {
-        console.log('File uploaded successfully');
-      });
       
       if (petData.petStatus === "Owned") {
         const docRef = db.collection("PetLovers_Profile").doc(petData.petOwner);
@@ -201,9 +196,6 @@ function AddLguPets(props) {
         })
         .then(() => {
           toast.success("Pet Profile Added Successfully!");
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000); 
           props.hidemodal1();
           console.log("success");
         })
@@ -211,6 +203,15 @@ function AddLguPets(props) {
           toast.error("Error adding pet to Firestore: ");
           console.log(error)
         });
+
+        const storageRef = storage.ref();
+      const fileRef = storageRef.child(`Pet/${petData.id.toString()}`);
+      fileRef.put(selectedFile).then(() => {
+        console.log('File uploaded successfully');
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); 
+      });
     }
 
 

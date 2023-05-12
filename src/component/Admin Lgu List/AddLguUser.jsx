@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { toast } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 
 
 export default function AddLguUser(props) {
@@ -111,16 +111,9 @@ export default function AddLguUser(props) {
       (lguAddProfile.address !== "" && lguAddProfile.address !== null) &&
       (lguAddProfile.contact !== "" && lguAddProfile.contact !== null)){
 
-      const storageRef = storage.ref();
-      const fileRef = storageRef.child(`LGU_DVMF/${lguAddProfile.user.toString()}`);
-      fileRef.put(selectedFile).then(() => {
-        console.log('File uploaded successfully');
-      });
-      
-
       // Save the pet data to Firestore
       db.collection("LGU_Profile")
-        .doc(lguAddProfile.branch.toString())
+        .doc(lguAddProfile.user.toString())
         .set({
           LGU_UserName: lguAddProfile.user,
           LGU_BranchName: lguAddProfile.branch,
@@ -131,21 +124,30 @@ export default function AddLguUser(props) {
           LGU_Password: password,
         })
         .then(() => {
-          toast.success("Owner Profile Added Successfully!");
-          alert("Owner Profile Added Successfully!");
-          window.location.reload();
-          props.hidemodal1();
+          toast.success("LGU Added Successfully!");
+          props.hidemodal();
           console.log("success");
         })
         .catch((error) => {
-          toast.error("Error adding owner to Firestore: ");
+          toast.error("Error adding pet to Firestore: ");
           console.log(error)
+        });
+
+
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child(`LGU_DVMF/${lguAddProfile.user.toString()}`);
+        fileRef.put(selectedFile).then(() => {
+          console.log('File uploaded successfully');
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000); 
         });
     }
   }
 
   return (
     <>
+      <ToastContainer/>
       <Modal
         show={props.showmodal}
         onHide={handClose}

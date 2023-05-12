@@ -295,7 +295,7 @@ function LguPetProfile() {
             toast.success("New Pet Vaccine Added Successfully!");
             setTimeout(() => {
               window.location.reload();
-            }, 2000);
+            }, 1000);
             setShowExist(true)
             setShowVaccineModal(false)
             console.log("success");

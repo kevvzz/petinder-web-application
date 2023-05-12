@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Row, Col, Form, InputGroup, Button, Figure } from 'react-bootstrap'
+import React, { useState, useRef} from 'react';
+import { Modal, Row, Col, Form, Button, Figure } from 'react-bootstrap'
 import Overlay from 'react-bootstrap/Overlay';
 import Tooltip from 'react-bootstrap/Tooltip';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,7 +9,7 @@ import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import { ToastContainer,toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 function EditAdminSeller(props) {
   const sellerProfile = props.sellerProfile
@@ -21,14 +21,10 @@ function EditAdminSeller(props) {
     setImageUpload('');
   }
 
-  const emailTarget = useRef(null);
-  const [emailShowTooltip, setEmailShowTooltip] = useState(false);
   const lastNameTarget = useRef(null);
   const [lastNameShowTooltip, setLastNameShowTooltip] = useState(false);
   const firstNameTarget = useRef(null);
   const [firstNameShowTooltip, setFirstNameShowTooltip] = useState(false);
-  const middleNameTarget = useRef(null);
-  const [middleNameShowTooltip, setMiddleNameShowTooltip] = useState(false);
   const addressTarget = useRef(null);
   const [addressShowTooltip, setAddressShowTooltip] = useState(false);
   const ageTarget = useRef(null);
@@ -37,8 +33,6 @@ function EditAdminSeller(props) {
   const [birthdateShowTooltip, setBirthdateShowTooltip] = useState(false);
   const contactTarget = useRef(null);
   const [contactShowTooltip, setContactShowTooltip] = useState(false);
-  const dateRegisterTarget = useRef(null);
-  const [dateRegisterShowTooltip, setDateRegisterShowTooltip] = useState(false);
   const genderTarget = useRef(null);
   const [genderShowTooltip, setGenderShowTooltip] = useState(false);
   const locationTarget = useRef(null);
@@ -83,30 +77,21 @@ function EditAdminSeller(props) {
   let sellerDate = sellerProfile.birthdate;
 
   const regex = /^\d{4}-\d{2}-\d{2}$/; // regular expression to match the format yyyy-mm-dd
-if (regex.test(sellerDate)) {
-  sellerDate = firebase.firestore.Timestamp.fromDate(new Date(sellerProfile.birthdate)); 
-  console.log("qweqweqwe"+sellerDate);
-  // additional logic here
-}
-  console.log("qweqweqwe"+sellerDate);
+  if (regex.test(sellerDate)) {
+    sellerDate = firebase.firestore.Timestamp.fromDate(new Date(sellerProfile.birthdate));
+  }
 
   const birth = new Date(sellerProfile.birthdate.seconds * 1000 + sellerProfile.birthdate.nanoseconds / 1000000);
-  const birthString = birth.toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric'});
+  const birthString = birth.toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
   const getFormattedDate = (date) => {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
-      return `${year}-${month}-${day}`;
+    return `${year}-${month}-${day}`;
   }
   const formatedDate = getFormattedDate(new Date(birthString));
-  
- 
+
   const handleSaveChanges = () => {
-    if (sellerProfile.email === "") {
-      setEmailShowTooltip(true);
-    } else {
-      setEmailShowTooltip(false);
-    }
     if (sellerProfile.lastName === "") {
       setLastNameShowTooltip(true);
     } else {
@@ -117,12 +102,6 @@ if (regex.test(sellerDate)) {
       setFirstNameShowTooltip(true);
     } else {
       setFirstNameShowTooltip(false);
-    }
-
-    if (sellerProfile.middleName === "") {
-      setMiddleNameShowTooltip(true);
-    } else {
-      setMiddleNameShowTooltip(false);
     }
 
     if (sellerProfile.address === "") {
@@ -149,12 +128,6 @@ if (regex.test(sellerDate)) {
       setContactShowTooltip(false);
     }
 
-    if (sellerProfile.dateRegister === "") {
-      setDateRegisterShowTooltip(true);
-    } else {
-      setDateRegisterShowTooltip(false);
-    }
-
     if (sellerProfile.gender === "") {
       setGenderShowTooltip(true);
     } else {
@@ -168,64 +141,56 @@ if (regex.test(sellerDate)) {
     }
 
 
-    if ((sellerProfile.email !== "" && sellerProfile.email !== null) &&
-      (sellerProfile.lastName !== "" && sellerProfile.lastName !== null) &&
+    if ((sellerProfile.lastName !== "" && sellerProfile.lastName !== null) &&
       (sellerProfile.firstName !== "" && sellerProfile.firstName !== null) &&
-      (sellerProfile.middleName !== "" && sellerProfile.middleName !== null) &&
       (sellerProfile.address !== "" && sellerProfile.address !== null) &&
       (sellerProfile.age !== "" && sellerProfile.age !== null) &&
       (sellerProfile.birthdate !== "" && sellerProfile.birthdate !== null) &&
       (sellerProfile.contact !== "" && sellerProfile.contact !== null) &&
       (sellerProfile.dateRegister !== "" && sellerProfile.dateRegister !== null) &&
       (sellerProfile.gender !== "" && sellerProfile.gender !== null) &&
-      (sellerProfile.location !== "" && sellerProfile.location !== null)){
+      (sellerProfile.location !== "" && sellerProfile.location !== null)) {
+  
+        // Save the pet data to Firestore
+        db.collection("PetSellerorAdoption_Profile")
+          .doc(sellerProfile.email.toString())
+          .update({
+            PSA_Address: sellerProfile.address,
+            PSA_Age: sellerProfile.age,
+            PSA_BirthDate: sellerDate,
+            PSA_ContactNumber: sellerProfile.contact,
+            // PSA_DateRegistered: sellerProfile.dateRegister,
+            PSA_FirstName: sellerProfile.firstName,
+            PSA_Gender: sellerProfile.gender,
+            PSA_LastName: sellerProfile.lastName,
+            PSA_MiddleName: sellerProfile.middleName,
+            PSA_NearbyDVMFLoc: sellerProfile.location,
+            PSA_UserEmail: sellerProfile.email
+          }).then(() => {
+            toast.success("Seller Profile Added Successfully!");
+            props.hidemodal();
+            console.log("success");
+          }).catch((error) => {
+            toast.error(error);
+            console.log(error)
+          });
 
-      const storageRef = storage.ref();
-      const fileRef = storageRef.child(`PetSellerOrAdoption/${sellerProfile.email.toString()}`);
-      if(selectedFile !== null){
-        fileRef.put(selectedFile).then(() => {
-          console.log('File uploaded successfully');
-        });
+          const storageRef = storage.ref();
+          const fileRef = storageRef.child(`PetSellerOrAdoption/${sellerProfile.email.toString()}`);
+          if (selectedFile !== null) {
+            fileRef.put(selectedFile).then(() => {
+              console.log('File uploaded successfully');
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            });
+          }
+        }
       }
       
-      const birthdate = sellerProfile.birthdate; 
-      const birthTimestamp = firebase.firestore.Timestamp.fromDate(new Date(birthdate)); 
-
-      // Save the pet data to Firestore
-      db.collection("PetSellerorAdoption_Profile")
-        .doc(sellerProfile.email.toString())
-        .update({
-          PSA_Address: sellerProfile.address,
-          PSA_Age: sellerProfile.age,
-          PSA_BirthDate: birthTimestamp,
-          PSA_ContactNumber: sellerProfile.contact,
-          // PSA_DateRegistered: sellerProfile.dateRegister,
-          PSA_FirstName: sellerProfile.firstName,
-          PSA_Gender: sellerProfile.gender,
-          PSA_LastName: sellerProfile.lastName,
-          PSA_MiddleName: sellerProfile.middleName,
-          PSA_NearbyDVMFLoc: sellerProfile.location,
-          PSA_UserEmail: sellerProfile.email
-        })
-        .then(() => {
-          toast.success("Seller Profile Added Successfully!");
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000); 
-          props.hidemodal1();
-          console.log("success");
-        })
-        .catch((error) => {
-          toast.error("Error updating seller to Firestore: ");
-          console.log(error)
-        });
-    }
-
-
-  };
   return (
     <>
-      <ToastContainer/>
+      <ToastContainer />
       <Modal
         show={props.showmodal}
         onHide={handClose}
@@ -244,23 +209,23 @@ if (regex.test(sellerDate)) {
               <Row>
                 <Form.Label
                   className='h6'
-                >Email<span className='red' ref={emailTarget}> *</span></Form.Label>
+                >First Name<span className='red' ref={firstNameTarget}> *</span></Form.Label>
                 <Form.Control
                   type="text"
-                  name='email'
-                  id='email'
+                  name='firstName'
+                  id='firstName'
                   className='mb-2'
-                value={sellerProfile?sellerProfile.email:""}
-                onChange={handleEdits}
+                  value={sellerProfile ? sellerProfile.firstName : ""}
+                  onChange={handleEdits}
                 />
                 <Overlay
-                target={emailTarget.current}
-                show={emailShowTooltip}
-                placement="right"
+                  target={firstNameTarget.current}
+                  show={firstNameShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
-                      Empty Email
+                      Empty First Name
                     </Tooltip>
                   )}
                 </Overlay>
@@ -268,70 +233,33 @@ if (regex.test(sellerDate)) {
               <Row>
                 <Form.Label
                   className='h6'
-                >Last Name<span className='red' ref={lastNameTarget}> *</span></Form.Label>
-                <Form.Control
-                  type="text"
-                  name='lastName'
-                  id='lastName'
-                  className='mb-2'
-                value={sellerProfile?sellerProfile.lastName:""}
-                onChange={handleEdits}
-                />
-                <Overlay
-                target={lastNameTarget.current}
-                show={lastNameShowTooltip}
-                placement="right"
-                >
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty Last Name
-                    </Tooltip>
-                  )}
-                </Overlay>
-              </Row>
-
-              <Row>
-                <Form.Label
-                  className='h6'
-                >Middle Name<span className='red' ref={middleNameTarget}> *</span></Form.Label>
+                >Middle Name</Form.Label>
                 <Form.Control
                   type="text"
                   name='middleName'
                   id='middleName'
                   className='mb-2'
-                value={sellerProfile?sellerProfile.middleName:""}
-                onChange={handleEdits}
+                  value={sellerProfile ? sellerProfile.middleName : ""}
+                  onChange={handleEdits}
                 />
-                <Overlay
-                target={middleNameTarget.current}
-                show={middleNameShowTooltip}
-                placement="right"
-                >
-                  {(props) => (
-                    <Tooltip id="overlay-example" {...props}>
-                      Empty Middle Name
-                    </Tooltip>
-                  )}
-                </Overlay>
-
               </Row>
 
               <Row>
                 <Form.Label
                   className='h6'
-                >Address<span className='red'      ref={addressTarget}> *</span></Form.Label>
+                >Address<span className='red' ref={addressTarget}> *</span></Form.Label>
                 <Form.Control
                   type="text"
                   name='address'
                   id='address'
                   className='mb-2'
-                value={sellerProfile?sellerProfile.address:"" }
-              onChange={handleEdits}
+                  value={sellerProfile ? sellerProfile.address : ""}
+                  onChange={handleEdits}
                 />
                 <Overlay
-                target={addressTarget.current}
-                show={addressShowTooltip}
-                placement="right"
+                  target={addressTarget.current}
+                  show={addressShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
@@ -346,17 +274,17 @@ if (regex.test(sellerDate)) {
                   className='h6'
                 >Age<span className='red' ref={ageTarget}> *</span></Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   name='age'
                   id='age'
                   className='mb-2'
-                value={sellerProfile?sellerProfile.age:""}
-                onChange={handleEdits}
+                  value={sellerProfile ? sellerProfile.age : ""}
+                  onChange={handleEdits}
                 />
                 <Overlay
-                target={ageTarget.current}
-                show={ageShowTooltip}
-                placement="right"
+                  target={ageTarget.current}
+                  show={ageShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
@@ -369,18 +297,22 @@ if (regex.test(sellerDate)) {
                 <Form.Label
                   className='h6'
                 >Gender<span className='red' ref={genderTarget}> *</span></Form.Label>
-                <Form.Control
-                  type="text"
-                  name='gender'
-                  id='gender'
+                 <Form.Select
+                  aria-label="Default select example"
+                  name="gender"
+                  id="gender"
                   className='mb-2'
-                value={sellerProfile?sellerProfile.gender:""}
-                onChange={handleEdits}
-                />
+                  value={sellerProfile ? sellerProfile.gender : ""}
+                  onChange={handleEdits}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </Form.Select>
                 <Overlay
-                target={genderTarget.current}
-                show={genderShowTooltip}
-                placement="right"
+                  target={genderTarget.current}
+                  show={genderShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
@@ -390,28 +322,28 @@ if (regex.test(sellerDate)) {
                 </Overlay>
               </Row>
             </Col>
-            <Col xs={1}></Col>        
+            <Col xs={1}></Col>
             <Col>
               <Row>
                 <Form.Label
                   className='h6'
-                >First Name<span className='red' ref={firstNameTarget}> *</span></Form.Label>
+                >Last Name<span className='red' ref={lastNameTarget}> *</span></Form.Label>
                 <Form.Control
                   type="text"
-                  name='firstName'
-                  id='firstName'
+                  name='lastName'
+                  id='lastName'
                   className='mb-2'
-                value={sellerProfile?sellerProfile.firstName:""}
-                onChange={handleEdits}
+                  value={sellerProfile ? sellerProfile.lastName : ""}
+                  onChange={handleEdits}
                 />
                 <Overlay
-                target={firstNameTarget.current}
-                show={firstNameShowTooltip}
-                placement="right"
+                  target={lastNameTarget.current}
+                  show={lastNameShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
-                      Empty First Name
+                      Empty Last Name
                     </Tooltip>
                   )}
                 </Overlay>
@@ -425,13 +357,13 @@ if (regex.test(sellerDate)) {
                   name='birthdate'
                   id='birthdate'
                   className='mb-2'
-                value={sellerProfile?formatedDate:""}
-                onChange={handleEdits}
+                  value={sellerProfile ? formatedDate : ""}
+                  onChange={handleEdits}
                 />
                 <Overlay
-                target={birthdateTarget.current}
-                show={birthdateShowTooltip}
-                placement="right"
+                  target={birthdateTarget.current}
+                  show={birthdateShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
@@ -445,17 +377,17 @@ if (regex.test(sellerDate)) {
                   className='h6'
                 >Contact Number<span className='red' ref={contactTarget}> *</span></Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   name='contact'
                   id='contact'
                   className='mb-2'
-                value={sellerProfile?sellerProfile.contact:"" }
-               onChange={handleEdits}
+                  value={sellerProfile ? sellerProfile.contact : ""}
+                  onChange={handleEdits}
                 />
                 <Overlay
-                target={contactTarget.current}
-                show={contactShowTooltip}
-                placement="right"
+                  target={contactTarget.current}
+                  show={contactShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
@@ -473,13 +405,13 @@ if (regex.test(sellerDate)) {
                   name='location'
                   id='location'
                   className='mb-2'
-                value={sellerProfile?sellerProfile.location:""}
-               onChange={handleEdits}
+                  value={sellerProfile ? sellerProfile.location : ""}
+                  readOnly
                 />
                 <Overlay
-                target={locationTarget.current}
-                show={locationShowTooltip}
-                placement="right"
+                  target={locationTarget.current}
+                  show={locationShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
@@ -502,9 +434,9 @@ if (regex.test(sellerDate)) {
                   }}
                 />
                 <Overlay
-                target={profileTarget.current}
-                show={profileShowTooltip}
-                placement="right"
+                  target={profileTarget.current}
+                  show={profileShowTooltip}
+                  placement="right"
                 >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
@@ -530,7 +462,7 @@ if (regex.test(sellerDate)) {
               )}
             </Col>
           </Row>
-          
+
         </Modal.Body>
         <Modal.Footer>
           <div className='d-flex button-wrapper'>

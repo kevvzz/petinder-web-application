@@ -1,7 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Modal, Row, Col, Form, InputGroup } from 'react-bootstrap'
-import Overlay from 'react-bootstrap/Overlay';
-import Tooltip from 'react-bootstrap/Tooltip';
 import 'bootstrap/dist/css/bootstrap.min.css';
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
@@ -12,11 +10,12 @@ import 'firebase/compat/messaging'; // import the Firebase messaging module
 import "firebase/compat/messaging";
 import 'firebase/messaging';
 import { ToastContainer, toast } from 'react-toastify';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash} from '@fortawesome/free-solid-svg-icons';
 // import { useQuill } from 'react-quilljs';
 // import 'quill/dist/quill.snow.css';
 
-
+import './LguAnnouncement.css';
 function ViewAnnouncement(props) {
 
    const lguAnnounce = props.lguAnnounce
@@ -27,6 +26,24 @@ function ViewAnnouncement(props) {
         const dateString = date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric'});
     
         return dateString;
+    }
+
+    function handleRemove(e) {
+      // Delete the document from Firestore
+      db.collection('LGU_Announcements')
+        .doc(lguAnnounce.id)
+        .delete().then(() => {
+          toast.success("Announcement Deleted Successfully!");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000); 
+          props.hidemodal1();
+          console.log("success");
+        })
+        .catch((error) => {
+          toast.error(error);
+          console.log(error)
+        });
     }
    
   return (
@@ -88,6 +105,12 @@ function ViewAnnouncement(props) {
                 //   onChange={handleInputChange}
                 />
               </InputGroup>
+            </Col>
+            <Col className='center'>
+              <button onClick={handleRemove} type="button" className="announceDelete">
+                <FontAwesomeIcon icon={faTrash} /><span> </span>
+                  DELETE
+              </button>
             </Col>
           </Row>
         </Modal.Body>

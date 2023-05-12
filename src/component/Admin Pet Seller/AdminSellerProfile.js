@@ -1,20 +1,16 @@
 import React, { useState,useEffect } from 'react'
 import {AdminNavbar} from '../Navbar/Navbar';
-import {Row, Col, InputGroup, Form} from 'react-bootstrap'
-import { Table, thead, tbody, tr, th, td } from 'react-bootstrap';
-import picture from '../../Assets/bingo.jpg'
+import {Row, Col} from 'react-bootstrap'
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 import DeleteModal from '../Modal/DeleteModal';
 import EditAdminSeller from './EditAdminSeller';
 
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faDog, faCat, faFileCirclePlus} from '@fortawesome/free-solid-svg-icons';
+import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 //CSS
 import '../../profile.css';
 import '../../App.css';
@@ -25,9 +21,7 @@ function AdminSellerProfile() {
     const navigate = useNavigate()
 
     const location = useLocation();
-    console.log(location.state);
     const data = location.state.doc;
-
 
     const [sellerProfile, setSellerProfile] = useState({
       email: '', 
@@ -57,7 +51,6 @@ function AdminSellerProfile() {
       const docRef = db.collection("PetSellerorAdoption_Profile").doc(data.email);
       docRef.get()
         .then((doc) => {
-          console.log(doc);
           if (doc.exists) {
             const seller = doc.data();
             const { PSA_Address,
@@ -277,6 +270,7 @@ function AdminSellerProfile() {
             hidemodal = {setShowAddModal}
             showmodalhandler = {onClickEditSeller}
             sellerProfile = {sellerProfile}
+            data = {data}
             setSellerProfile = {setSellerProfile}
         />
       </div>

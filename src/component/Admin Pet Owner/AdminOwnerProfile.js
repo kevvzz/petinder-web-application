@@ -47,7 +47,6 @@ function AddAdminPetOwner() {
     function onClickDeletePet() {
       setShowDeleteModal(true);
     }
-  
     useEffect(() => {
       const docRef = db.collection("PetLovers_Profile").doc(data.email);
       docRef.get()
@@ -151,7 +150,10 @@ function AddAdminPetOwner() {
       .then(() => {
         toast.success("Pet Profile Deleted Successfully!");
         setShowDeleteModal(false);
-        navigate("/admin-owner");
+        setTimeout(() => {
+          navigate("/admin-owner");
+        }, 2000); 
+        console.log("success");
       })
       .catch((error) => {
         toast.error("Error deleting pet to Firestore: ");

@@ -1,20 +1,16 @@
 import React, { useState,useEffect } from 'react'
 import {LguNavbar} from '../Navbar/Navbar';
-import {Row, Col, InputGroup, Form} from 'react-bootstrap'
-import { Table, thead, tbody, tr, th, td } from 'react-bootstrap';
-import picture from '../../Assets/bingo.jpg'
+import {Row, Col} from 'react-bootstrap'
 //Firebase Firestore
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 import DeleteModal from '../Modal/DeleteModal';
 import EditLguSeller from './EditLguSeller';
 
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faDog, faCat, faFileCirclePlus} from '@fortawesome/free-solid-svg-icons';
+import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 //CSS
 import '../../profile.css';
 import '../../App.css';
@@ -25,9 +21,7 @@ function LguPetSellerProfile() {
   const navigate = useNavigate()
 
   const location = useLocation();
-  console.log(location.state);
   const data = location.state.doc;
-
 
   const [sellerProfile, setSellerProfile] = useState({
     email: '', 
@@ -45,6 +39,7 @@ function LguPetSellerProfile() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [filterPet, setFilterPet] = useState([]);
   
   function onClickEditSeller() {
       setShowAddModal(true);
@@ -56,7 +51,6 @@ function LguPetSellerProfile() {
     const docRef = db.collection("PetSellerorAdoption_Profile").doc(data.email);
     docRef.get()
       .then((doc) => {
-        console.log(doc);
         if (doc.exists) {
           const seller = doc.data();
           const { PSA_Address,
@@ -93,6 +87,56 @@ function LguPetSellerProfile() {
         console.log("Error getting document:", error);
       });
   }, []);
+
+  useEffect(() => {
+    db.collection("Pets_Profile")
+      .get()
+      .then((querySnapshot) => {
+        const promises = [];
+        querySnapshot.forEach((doc) => {
+          const id = doc.data().P_IDNumber;
+          const name = doc.data().P_Name;
+          const species = doc.data().P_Species;
+          const age = doc.data().P_Age;
+          const breed = doc.data().P_Breed;
+          const color = doc.data().P_Color;
+          const dateRegister = doc.data().P_DateRegistered;
+          const gender = doc.data().P_Gender;
+          const lguAccount = doc.data().P_LGUAccount;
+          const neutering = doc.data().P_Neutering;
+          const owner = doc.data().P_PetOwner;
+          const registerType = doc.data().P_RegisterType;
+          const registerLocation = doc.data().P_RegisteredLocation;
+          const status = doc.data().P_Status;
+          
+          console.log("owner:", owner);
+          console.log("data.email:", data.email);
+
+          if (owner === data.email) {
+            const promise = storage
+              .ref()
+              .child(`Pet/${id}`)
+              .getDownloadURL()
+              .then((url) => {
+                return { id, name, url, species, age, breed, color, dateRegister, gender, lguAccount, neutering, owner, registerType, registerLocation, status};
+              })
+              .catch((error) => {
+                console.log(error);
+                return null;
+              });
+  
+            promises.push(promise);
+          }
+        });
+  
+        Promise.all(promises).then((data) => {
+          setFilterPet(data.filter((item) => item !== null));
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+}, []);
 
   function handleRemove(e) {
     // Delete the document from Firestore
@@ -194,6 +238,25 @@ return (
             </Row>
           </Col>
         </Row>
+        <Row className='mt-10'>
+            <div className='vaccine'>Registered Pets</div>
+          </Row>
+          <Row>
+            <Col>
+              <div className="rowCard">
+                    {filterPet.map((doc) => (
+                        <div className="pet-card" key={doc.id}>
+                            <a>
+                                <img src={doc.url} alt="profile"/>
+                                <div>
+                                    <h4 className='name-transform'><center><b>{doc.name}</b></center></h4> 
+                                </div>
+                            </a>   
+                        </div>
+                    ))}
+                </div>
+            </Col>
+          </Row>
         
       </div>
       <DeleteModal
@@ -207,6 +270,7 @@ return (
           hidemodal = {setShowAddModal}
           showmodalhandler = {onClickEditSeller}
           sellerProfile = {sellerProfile}
+          data = {data}
           setSellerProfile = {setSellerProfile}
       />
     </div>

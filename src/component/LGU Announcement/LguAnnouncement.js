@@ -7,19 +7,15 @@ import db from '../../Firebase.js';
 import AddAnnouncement from './AddAnnouncement';
 import ViewAnnouncement from './ViewAnnouncement';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import lguPhoto from '../../Assets/lgu-cebu-logo.png';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faDog, faCat, faFileCirclePlus} from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faFileCirclePlus} from '@fortawesome/free-solid-svg-icons';
 //CSS
 import '../../profile.css';
 import '../../App.css';
 import { ToastContainer,toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 function LguAnnouncement() {
     const userData = JSON.parse(localStorage.getItem('lguData'));
-    console.log(userData);
-    const navigate = useNavigate()
     const [lguAnnounce, setLguAnnounce] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
@@ -40,7 +36,7 @@ function LguAnnouncement() {
   };
     
 useEffect(() => {
-  const docRef = db.collection("LGU_Announcements")
+  const docRef = db.collection("LGU_Announcements").orderBy('Ann_DateSent', 'desc')
   docRef.get()
     .then((querySnapshot) => {
       const announcements = [];
@@ -57,28 +53,32 @@ useEffect(() => {
           title: Ann_Title,
         });
       });
-      setLguAnnounce(announcements);
+      const filteredAnnouncements = announcements.filter(
+        (announce) => announce.sender === userData.LGU_UserName
+      );
+      setLguAnnounce(filteredAnnouncements);
+      setFilteredAnnounce(filteredAnnouncements);
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
     });
 }, []);
  
-  // function searchFilter(e) {
-  //   let term = e.target.value.toLowerCase();
-  //   if (term == "") {
-  //     setFilteredPets(allPets);
-  //   } else {
-  //     setFilteredPets(
-  //       filteredPets.filter(
-  //         (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
-  //       )
-  //     );
-  //   }
-  // }
+  function searchFilter(e) {
+    let term = e.target.value.toLowerCase();
+    if (term == "") {
+      setFilteredAnnounce(lguAnnounce);
+    } else {
+      setFilteredAnnounce(
+        filteredAnnounce.filter(
+          (announce) => announce.title.toLowerCase().indexOf(term) !== -1
+        )
+      );
+    }
+  }
   function convertTimestamp(stamp) {
     const date = new Date(stamp.seconds * 1000 + stamp.nanoseconds / 1000000);
-    const dateString = date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric'});
+    const dateString = date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric'});
 
     return dateString;
   }
@@ -116,7 +116,7 @@ useEffect(() => {
                                 name="term"
                                 id="term"
                                 required
-                                // onChange={(e) => searchFilter(e)}
+                                onChange={(e) => searchFilter(e)}
                                 />
                             </InputGroup>
                         </Row>
@@ -134,16 +134,11 @@ useEffect(() => {
                     lguAnnounce = {selectedItem}
                 />
                 <div className="row">
-                    {lguAnnounce.map((doc) => (
+                    {filteredAnnounce.map((doc) => (
                       <div class='col-lg-4 col-md-6 mb-4' onClick={() => handleItemClick(doc)}>
                         <div class="card-body">
                           <Card.Text>
                             <Row>
-                              {/* <Col xs={4}>
-                                <Row>
-                                  <img className='petImage' src={lguPhoto} alt="" />
-                                </Row>
-                              </Col> */}
                               <Col>
                                 <Row>
                                   <h6 class="fw-bold center">{doc.receiver}</h6>

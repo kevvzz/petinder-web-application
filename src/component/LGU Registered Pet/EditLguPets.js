@@ -34,8 +34,6 @@ function EditLguPets(props) {
     const [neutringShowTooltip, setNeutringShowTooltip] = useState(false);
     const breedTarget = useRef(null);
     const [breedShowTooltip, setBreedShowTooltip] = useState(false);
-    const statusTarget = useRef(null);
-    const [statusShowTooltip, setStatusShowTooltip] = useState(false);
     const profileTarget = useRef(null);
     const [profileShowTooltip, setProfileShowTooltip] = useState(false);
     const lguTarget = useRef(null);
@@ -390,31 +388,26 @@ function EditLguPets(props) {
                   </Col>
               </Row>
               <Row>
-                  <Col>
-                    <Form.Label ref={lguTarget} className="h6">LGU Accounts<span className='red'> *</span></Form.Label>
+                <Col>
+                    <Form.Label ref={ageTarget} className="h6">Age<span className='red'> *</span></Form.Label>
                     <InputGroup className='mb-3'>
-                      <Form.Select 
-                        aria-label="Default select example" 
-                        name="lguAccount" 
-                        id="lguAccount" 
-                        defaultValue={props.editPetProfile?props.editPetProfile.lguAccount:""} 
+                      <Form.Control
+                        type="number" 
+                        name="age"
+                        id="age"
+                        placeholder=""
+                        className="form-control mb-2"
+                        defaultValue={props.editPetProfile?props.editPetProfile.age:""}
                         onChange={(e) => handleEdit(e)}
-                      >
-                      <option value="">Select Lgu Account</option>
-                       {lguAccount.map((doc) => (
-                          <option key={doc.id} value={doc.LGU_UserName}>
-                            {doc.LGU_UserName}
-                          </option>
-                        ))}
-                      </Form.Select>
-                      <Overlay target={lguTarget.current} show={lguShowTooltip} placement="right">
-                        {(props) => (
-                          <Tooltip id="overlay-example" {...props}>
-                            Empty LGU Accounts
-                          </Tooltip>
-                        )}
-                      </Overlay>
-                    </InputGroup>
+                      />
+                      <Overlay target={ageTarget.current} show={ageShowTooltip} placement="right">
+                          {(props) => (
+                            <Tooltip id="overlay-example" {...props}>
+                              Empty Pet Name
+                            </Tooltip>
+                          )}
+                        </Overlay>
+                      </InputGroup>
                   </Col>
                   <Col>
                     <Form.Label ref={typeTarget} className="h6">Register Type<span className='red'> *</span></Form.Label>
@@ -434,55 +427,6 @@ function EditLguPets(props) {
                         {(props) => (
                           <Tooltip id="overlay-example" {...props}>
                             Empty Register Type
-                          </Tooltip>
-                        )}
-                      </Overlay>
-                    </InputGroup>
-                  </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Form.Label ref={ageTarget} className="h6">Age<span className='red'> *</span></Form.Label>
-                  <InputGroup className='mb-3'>
-                    <Form.Control
-                      type="number" 
-                      name="age"
-                      id="age"
-                      placeholder=""
-                      className="form-control mb-2"
-                      defaultValue={props.editPetProfile?props.editPetProfile.age:""}
-                      onChange={(e) => handleEdit(e)}
-                    />
-                    <Overlay target={ageTarget.current} show={ageShowTooltip} placement="right">
-                        {(props) => (
-                          <Tooltip id="overlay-example" {...props}>
-                            Empty Pet Name
-                          </Tooltip>
-                        )}
-                      </Overlay>
-                    </InputGroup>
-                </Col>
-                <Col>
-                    <Form.Label ref={registerTarget} className="h6">Register Location<span className='red'> *</span></Form.Label>
-                    <InputGroup className='mb-3'>
-                      <Form.Select 
-                        aria-label="Default select example" 
-                        name="registerLocation" 
-                        id="registerLocation" 
-                        defaultValue={props.editPetProfile?props.editPetProfile.registerLocation:""} 
-                        onChange={(e) => handleEdit(e)}
-                      >
-                      <option value="">Select Register Location</option>
-                       {lguAccount.map((doc) => (
-                          <option key={doc.id} value={doc.LGU_BranchName}>
-                            {doc.LGU_BranchName}
-                          </option>
-                        ))}
-                      </Form.Select>
-                      <Overlay target={registerTarget.current} show={registerShowTooltip} placement="right">
-                        {(props) => (
-                          <Tooltip id="overlay-example" {...props}>
-                            Empty Register Location
                           </Tooltip>
                         )}
                       </Overlay>

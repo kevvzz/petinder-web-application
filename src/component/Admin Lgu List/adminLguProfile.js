@@ -85,9 +85,9 @@ function AdminLguProfile() {
       .then(() => {
         toast.success("LGU Profile Deleted Successfully!");
         setShowDeleteModal(false);
-        alert("LGU Profile Deleted Successfully!");
-        navigate("/admin-lgu-list");
-        console.log("success");
+        setTimeout(() => {
+          navigate("/admin-lgu-list");
+        }, 1000); 
       })
       .catch((error) => {
         toast.error("Error deleting pet to Firestore: ");

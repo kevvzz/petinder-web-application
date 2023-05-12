@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import AddAdminSeller from './AddAdminSeller';
   
 function AdminPetSeller() {
+  const userData = JSON.parse(localStorage.getItem('lguData'));
   const navigate = useNavigate()
   const [allSeller, setAllSeller] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -44,7 +45,7 @@ function AdminPetSeller() {
         const gender = doc.data().PSA_Gender;
         const location = doc.data().PSA_NearbyDVMFLoc;
 
-        const promise = storage
+          const promise = storage
           .ref()
           .child(`PetSellerOrAdoption/${email}`)
           .getDownloadURL()
@@ -57,6 +58,7 @@ function AdminPetSeller() {
           });
 
         promises.push(promise);
+        
       });
 
       Promise.all(promises).then((data) => {
@@ -92,7 +94,7 @@ return (
               </h1>
           </header>
           <div className="container">
-            <Row className='bottomSpace center'>
+            <Row className='bottomSpace'>
                 {/* <Col  xs={2}>
                     <Row>
                         <a>
@@ -128,7 +130,7 @@ return (
             />
             <div className="rowCard">
                 {filteredSeller.map((doc) => (
-                    <div className="pet-card" key={doc.email} onClick={() => navigate("/admin-seller-profile", {state: {filteredSeller, doc}} )}>
+                    <div className="pet-card" key={doc.email} onClick={() => navigate("/lgu-seller-profile", {state: {filteredSeller, doc}} )}>
                         <a>
                             <img src={doc.url} alt="profile"/>
                             <div>
@@ -140,8 +142,8 @@ return (
             </div>
         </div>	
       </div>
-  </div>	
-)
+  </div>	  
+  )
 }
 
 export default AdminPetSeller

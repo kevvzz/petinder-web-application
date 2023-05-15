@@ -19,11 +19,11 @@ function DeleteAuthenticate(props) {
     const navigate = useNavigate()
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
+    console.log(email);
     const data = props.data
     const handleSignIn = () => {
         // Sign in the user with their email and password
-        firebase.auth().signInWithEmailAndPassword(email, password)
+        firebase.auth().signInWithEmailAndPassword(props.email, password)
             .then(() => {
                 console.log('User signed in successfully');
                 // Delete the signed-in user's account

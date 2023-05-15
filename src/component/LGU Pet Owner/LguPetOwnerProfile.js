@@ -244,6 +244,7 @@ function LguPetOwnerProfile() {
               collectionName = "PetLovers_Profile"
               storageName = "PetLover"
               navigate = "/lgu-owner"
+              email = {ownerProfile.email}
           />
         <EditLguOwner
             showmodal = {showAddModal}

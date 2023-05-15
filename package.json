@@ -48,5 +48,13 @@
   },
   "devDependencies": {
     "gh-pages": "^5.0.0"
+  },"hosting": {
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
+  
 }

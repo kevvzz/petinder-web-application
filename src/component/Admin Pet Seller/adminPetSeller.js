@@ -134,7 +134,7 @@ return (
             />
             <div className="rowCard">
                 {filteredSeller.map((doc) => (
-                    <div className="pet-card" key={doc.email} onClick={() => navigate("/lgu-seller-profile", {state: {filteredSeller, doc}} )}>
+                    <div className="pet-card" key={doc.email} onClick={() => navigate("/admin-seller-profile", {state: {filteredSeller, doc}} )}>
                         <a>
                             <img src={doc.url} alt="profile"/>
                             <div>

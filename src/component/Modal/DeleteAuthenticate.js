@@ -81,7 +81,8 @@ function DeleteAuthenticate(props) {
                                 <Form.Control
                                     type='email'
                                     placeholder='Email'
-                                    value={email}
+                                    value={props.email?props.email:""}
+                                    disabled
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                             </Row>

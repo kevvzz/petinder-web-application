@@ -271,6 +271,7 @@ function AdminSellerProfile() {
               collectionName = "PetSellerorAdoption_Profile"
               storageName = "PetSellerOrAdoption"
               navigate = "/admin-seller"
+              email = {sellerProfile.email}
           />
         <EditAdminSeller
             showmodal = {showAddModal}

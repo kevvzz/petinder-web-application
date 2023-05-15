@@ -269,6 +269,7 @@ function AddAdminPetOwner() {
             collectionName = "PetLovers_Profile"
             storageName = "PetLover"
             navigate = "/admin-owner"
+            email = {ownerProfile.email}
         />
         <EditAdminOwner
             showmodal = {showAddModal}

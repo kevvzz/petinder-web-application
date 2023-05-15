@@ -269,6 +269,7 @@ return (
             collectionName = "PetSellerorAdoption_Profile"
             storageName = "PetSellerOrAdoption"
             navigate = "/lgu-seller"
+            email = {sellerProfile.email}
         />
       <EditLguSeller
           showmodal = {showAddModal}

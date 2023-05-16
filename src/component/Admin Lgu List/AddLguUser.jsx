@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { ToastContainer,toast } from 'react-toastify';
@@ -46,6 +47,8 @@ export default function AddLguUser(props) {
     dateRegister: '',
     email: ''
   });
+
+  const emailAuth = lguAddProfile.user + "@petinder.com";
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -111,36 +114,46 @@ export default function AddLguUser(props) {
       (lguAddProfile.address !== "" && lguAddProfile.address !== null) &&
       (lguAddProfile.contact !== "" && lguAddProfile.contact !== null)){
 
-      // Save the pet data to Firestore
-      db.collection("LGU_Profile")
-        .doc(lguAddProfile.user.toString())
-        .set({
-          LGU_UserName: lguAddProfile.user,
-          LGU_BranchName: lguAddProfile.branch,
-          LGU_Address: lguAddProfile.address,
-          LGU_ContactNumber: lguAddProfile.contact,
-          LGU_DateRegistered: timestamp,
-          LGU_Email: lguAddProfile.email,
-          LGU_Password: password,
-        })
-        .then(() => {
-          toast.success("LGU Added Successfully!");
-          props.hidemodal();
-          console.log("success");
+
+        firebase.auth().createUserWithEmailAndPassword(emailAuth, password)
+        .then((userCredential) => {
+          // Signed in
+          var user = userCredential.user;
+          console.log(user);
+
+          // Save the pet data to Firestore
+          db.collection("LGU_Profile")
+          .doc(lguAddProfile.user.toString())
+          .set({
+            LGU_UserName: lguAddProfile.user,
+            LGU_BranchName: lguAddProfile.branch,
+            LGU_Address: lguAddProfile.address,
+            LGU_ContactNumber: lguAddProfile.contact,
+            LGU_DateRegistered: timestamp,
+            LGU_Email: lguAddProfile.email,
+          })
+          .then(() => {
+            toast.success("LGU Added Successfully!");
+            props.hidemodal();
+            console.log("success");
+          })
+          .catch((error) => {
+            toast.error("Error adding pet to Firestore: ");
+            console.log(error)
+          });
+
+
+          const storageRef = storage.ref();
+          const fileRef = storageRef.child(`LGU_DVMF/${lguAddProfile.user.toString()}`);
+          fileRef.put(selectedFile).then(() => {
+            console.log('File uploaded successfully');
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000); 
+          });
         })
         .catch((error) => {
-          toast.error("Error adding pet to Firestore: ");
-          console.log(error)
-        });
-
-
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child(`LGU_DVMF/${lguAddProfile.user.toString()}`);
-        fileRef.put(selectedFile).then(() => {
-          console.log('File uploaded successfully');
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000); 
+          console.error('Error creating user:', error);
         });
     }
   }

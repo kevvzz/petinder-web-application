@@ -1,5 +1,5 @@
 import React, { useState,useRef,useEffect } from 'react';
-import {Modal, Row, Col, Form, InputGroup } from 'react-bootstrap'
+import {Modal, Row, Col, Form, InputGroup, Figure } from 'react-bootstrap'
 import Overlay from 'react-bootstrap/Overlay';
 import Tooltip from 'react-bootstrap/Tooltip';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,6 +14,7 @@ import { ToastContainer,toast } from 'react-toastify';
 function EditLguPets(props) {
     const editPetProfile = props.editPetProfile;
     const [selectedFile, setSelectedFile] = useState(null);
+    const [imageUpload, setImageUpload] = useState('');
     const [owner, setOwner] = useState([]);
     const [lguAccount, setLguAccount] = useState([]);
   
@@ -66,15 +67,33 @@ function EditLguPets(props) {
       }
     }, [editPetProfile]);
     
-  
-    function handleFileSelect(event) {
-      setSelectedFile(event.target.files[0]);
-    }
     function handleEdit(e) {
       let editedPetProfile = { ...editPetProfile };
       editedPetProfile[e.target.id] = e.target.value;
       props.setEditPetProfile(editedPetProfile);
     }
+
+    const uploadImage = async (e) => {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      const base64 = await convertBase64(file);
+      setImageUpload(base64);
+    };
+  
+    const convertBase64 = (file) => {
+      return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+  
+        fileReader.onload = () => {
+          resolve(fileReader.result);
+        };
+  
+        fileReader.onerror = (error) => {
+          reject(error);
+        };
+      });
+    };
   
     const handleSaveChanges = () => {
   
@@ -152,13 +171,6 @@ function EditLguPets(props) {
       (editPetProfile.registerLocation !== "" && editPetProfile.registerLocation !== null) &&
       (editPetProfile.breed !== "" && editPetProfile.breed !== null)){
       
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child(`Pet/${editPetProfile.id}`);
-        if(selectedFile !== null){
-          fileRef.put(selectedFile).then(() => {
-            console.log('File uploaded successfully');
-          });
-        }
           // Update the pet data to Firestore
           db.collection("Pets_Profile")
           .doc(editPetProfile.id)
@@ -178,7 +190,6 @@ function EditLguPets(props) {
           })
           .then(() => {
             toast.success("Pet Profile Added Successfully!");
-            window.location.reload();
             props.hidemodal1();
             console.log("success");
           })
@@ -187,6 +198,16 @@ function EditLguPets(props) {
             console.log(error)
           });
        
+          const storageRef = storage.ref();
+          const fileRef = storageRef.child(`Pet/${editPetProfile.id}`);
+          if(selectedFile !== null){
+            fileRef.put(selectedFile).then(() => {
+              console.log('File uploaded successfully');
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000); 
+            });
+          }
       }
     
     };
@@ -435,26 +456,46 @@ function EditLguPets(props) {
               </Row>
               <Row>
                 <Col>
-                  <Form.Label ref={profileTarget} className="h6" htmlFor="notes">Profile Picture</Form.Label>
-                  <InputGroup className="mb-3">
-                      <Form.Control
-                          type="file"
-                          aria-label="file_name" 
-                          aria-describedby="file_name" 
-                          placeholder=""
-                          accept="image/*"
-                          onChange={handleFileSelect}
-                          name="profile" 
-                          id='profile' 
-                      />
-                      <Overlay target={profileTarget.current} show={profileShowTooltip} placement="right">
-                        {(props) => (
-                          <Tooltip id="overlay-example" {...props}>
-                            Empty profile
-                          </Tooltip>
-                        )}
-                      </Overlay>
-                  </InputGroup>
+                  <Row>
+                    <Form.Label
+                      className='h6'
+                    >Upload Image<span className='red' ref={profileTarget}> *</span></Form.Label>
+                    <Form.Control
+                      type="file"
+                      name='profilePicture'
+                      id='profilePicture'
+                      className='mb-2'
+                      onChange={(e) => {
+                        uploadImage(e);
+                      }}
+                    />
+                    <Overlay
+                      target={profileTarget.current}
+                      show={profileShowTooltip}
+                      placement="right"
+                    >
+                      {(props) => (
+                        <Tooltip id="overlay-example" {...props}>
+                          Empty Profile Picture
+                        </Tooltip>
+                      )}
+                    </Overlay>
+                  </Row>
+                {imageUpload !== '' && (
+                  <>
+                    <Row>
+                      <Col>
+                        <Figure className='borderLine center'>
+                          <Figure.Image
+                            width={200}
+                            height={200}
+                            src={imageUpload}
+                          />
+                        </Figure>
+                      </Col>
+                    </Row>
+                  </>
+                )}
                 </Col>
               </Row>
              

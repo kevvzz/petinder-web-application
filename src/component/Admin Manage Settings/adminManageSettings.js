@@ -31,7 +31,7 @@ function AdminManageSettings() {
         new:'',
         confirm:''
     });
-
+    const userAdminAuth = userData.A_UserName+"@petinder.com";
     const [showDiv1, setShowDiv1] = useState(true);
     const [showDiv2, setShowDiv2] = useState(false);
 
@@ -123,8 +123,8 @@ function AdminManageSettings() {
             });
         }
       }
-      console.log(settings)
-      const handlePasswordChanges = () => {
+    
+      const handlePasswordChanges = async (e) => {
         if (settings.old === "") {
           setOldShowTooltip(true);
         } else {
@@ -146,30 +146,70 @@ function AdminManageSettings() {
             (settings.confirm !== "" && settings.confirm !== null) &&
             (settings.new !== "" && settings.new !== null)){
 
-            if(newSettings.old.toString() === settings.old){
-                if(settings.new === settings.confirm){
-                     //   Save the pet data to Firestore
-                     db.collection("Admin_Profile")
-                     .doc(userData.A_IDNumber)
-                     .update({
-                         A_Password: settings.new,
-                     })
-                     .then(() => {
-                         toast.success("Password Updated Successfully!");
-                         setTimeout(() => {
-                             window.location.reload();
-                         }, 2000);
-                         
-                     })
-                     .catch((error) => {
-                         toast.error("Error adding Lgu to Firestore: ");
-                     });
-                }else{
-                    toast.error("New and Confirm Password Does Not Match!!");
+              try {
+                await firebase.auth().signInWithEmailAndPassword(userAdminAuth,settings.old);
+                console.log('User logged in successfully.');
+                const user = firebase.auth().currentUser;
+
+                if(settings.confirm === settings.new){
+                  console.log("confirm is equal to new")
+                  try {
+                    await user.updatePassword(settings.new);
+                    toast.success('Password updated successfully.');
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 1000); 
+                  } catch (error) {
+                    toast.error('Password update failed:', error);
+                  }
+                } else {
+                  toast.error("Confirm Password are not the same with the New Password");
                 }
-            } else {
-                toast.error("Current Password Does Not Match!!");
-            }
+                // const querySnapshot = await db
+                // .collection("LGU_Profile")
+                // .where("LGU_UserName", "==", userData.LGU_UserName)
+                // .get();
+                // if (!querySnapshot.empty) {
+                // // User with the provided email exists
+                // const userDoc = querySnapshot.docs[0];
+                // const lguData = userDoc.data();
+                // localStorage.setItem('lguData', JSON.stringify(lguData));
+                //   toast.success("Password Updated Successfully!");
+                //   setTimeout(() => {
+                //       window.location.reload();
+                //   }, 2000);
+                // } else {
+                // console.error("User with the provided email does not exist!");
+                // toast.error("User with the provided email does not exist!");
+                // }
+              } catch (error) {
+                console.error('Error Change:', error);
+              }
+
+            // if(newSettings.old.toString() === settings.old){
+            //     if(settings.new === settings.confirm){
+            //          //   Save the pet data to Firestore
+            //          db.collection("Admin_Profile")
+            //          .doc(userData.A_IDNumber)
+            //          .update({
+            //              A_Password: settings.new,
+            //          })
+            //          .then(() => {
+            //              toast.success("Password Updated Successfully!");
+            //              setTimeout(() => {
+            //                  window.location.reload();
+            //              }, 2000);
+                         
+            //          })
+            //          .catch((error) => {
+            //              toast.error("Error adding Lgu to Firestore: ");
+            //          });
+            //     }else{
+            //         toast.error("New and Confirm Password Does Not Match!!");
+            //     }
+            // } else {
+            //     toast.error("Current Password Does Not Match!!");
+            // }
             
             
         }

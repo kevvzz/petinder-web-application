@@ -10,6 +10,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
+//Firebase Firestore
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+
 function LguLogin() {
 	const [lguUserName, setLGUUserName] =  useState('');
 	const [lguPassword, setLGUPassword] =  useState('');
@@ -25,11 +30,13 @@ function LguLogin() {
 	  const navigate = useNavigate();
 	  const ref = db.collection("LGU_Profile");
 	  console.log(ref);
-	  
+	  const loginAuth = lguUserName+"@petinder.com";
+
 	  const handleLogin = async (e) => {
 		e.preventDefault();
-	  
 		try {
+		  await firebase.auth().signInWithEmailAndPassword(loginAuth, lguPassword);
+		  console.log('User logged in successfully.');
 		  const querySnapshot = await db
 			.collection("LGU_Profile")
 			.where("LGU_UserName", "==", lguUserName)
@@ -40,24 +47,17 @@ function LguLogin() {
 			const userDoc = querySnapshot.docs[0];
 			const lguData = userDoc.data();
 			localStorage.setItem('lguData', JSON.stringify(lguData));
-			// Check if the password is correct
-			if (lguData.LGU_Password === lguPassword) {
-				console.log("Logged in successfully!");
-				toast.success("Correct Password");
+			toast.success("Correct Password");
 				setTimeout(() => {
 					navigate("/lgu-register"); 
 				  }, 2000); 
-			} else {
-				console.error("Invalid password!");
-				toast.error("Incorrect Password");
-			}
 		  } else {
 			console.error("User with the provided email does not exist!");
 			toast.error("User with the provided email does not exist!");
 		  }
 		} catch (error) {
-		  console.error(error);
-		  toast.error("Error Login");
+		  console.error('Login failed:', error);
+		  toast.error("Incorrect Email or Password");
 		}
 	  };
   return (

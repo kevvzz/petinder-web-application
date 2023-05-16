@@ -10,6 +10,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
+//Firebase Firestore
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+
 function AdminLogin() {
 	const [adminUserName, setAdminUserName] =  useState('');
 	const [adminPassword, setAdminPassword] =  useState('');
@@ -25,11 +30,13 @@ function AdminLogin() {
 	  const navigate = useNavigate();
 	  const ref = db.collection("Admin_Profile");
 	  console.log(ref);
-	  
+	  const adminAuth = adminUserName+"@petinder.com";
+
 	  const handleLogin = async (e) => {
 		e.preventDefault();
-	  
 		try {
+		  await firebase.auth().signInWithEmailAndPassword(adminAuth, adminPassword);
+		  console.log('User logged in successfully.');
 		  const querySnapshot = await db
 			.collection("Admin_Profile")
 			.where("A_UserName", "==", adminUserName)
@@ -40,24 +47,17 @@ function AdminLogin() {
 			const userDoc = querySnapshot.docs[0];
 			const userData = userDoc.data();
 			localStorage.setItem('userData', JSON.stringify(userData));
-			// Check if the password is correct
-			if (userData.A_Password === adminPassword) {
-				console.log("Logged in successfully!");
-				toast.success("Correct Password");
-				setTimeout(() => {
-					navigate("/admin-dashboard"); 
-				  }, 2000); 	
-			} else {
-			  console.error("Invalid password!");
-			  toast.error("Incorrect Password");
-			}
+			toast.success("Correct Password");
+			setTimeout(() => {
+				navigate("/admin-dashboard"); 
+				}, 2000)
 		  } else {
 			console.error("User with the provided email does not exist!");
 			toast.error("User with the provided email does not exist!");
 		  }
 		} catch (error) {
-		  console.error(error);
-		  toast.error("Error Login");
+			console.error(error);
+			toast.error("Incorrect Email or Password");
 		}
 	  };
   return (

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Row, Col, Form, InputGroup } from 'react-bootstrap'
+import { Modal, Row, Col, Form, InputGroup, Figure } from 'react-bootstrap'
 import Overlay from 'react-bootstrap/Overlay';
 import Tooltip from 'react-bootstrap/Tooltip';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -42,6 +42,7 @@ function AddAdminPets(props) {
 
   const [profileCollection, setProfileCollection] = useState("PetLovers_Profile");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [imageUpload, setImageUpload] = useState('');
   const [owner, setOwner] = useState([]);
   const [lguAccount, setLguAccount] = useState([]);
   const currentDate = new Date();
@@ -90,12 +91,31 @@ function AddAdminPets(props) {
 
   }, [petData.petStatus, profileCollection]);
 
-  function handleFileSelect(event) {
-    setSelectedFile(event.target.files[0]);
-  }
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setPetData({ ...petData, [name]: value });
+  };
+
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+    const base64 = await convertBase64(file);
+    setImageUpload(base64);
+  };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
   };
 
   const handleSaveChanges = () => {
@@ -541,26 +561,46 @@ function AddAdminPets(props) {
           </Row>
           <Row>
             <Col>
-              <Form.Label ref={profileTarget} className="h6" htmlFor="notes">Profile Picture</Form.Label>
-              <InputGroup className="mb-3">
+              <Row>
+                <Form.Label
+                  className='h6'
+                >Upload Image<span className='red' ref={profileTarget}> *</span></Form.Label>
                 <Form.Control
                   type="file"
-                  aria-label="file_name"
-                  aria-describedby="file_name"
-                  placeholder=""
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                  name="profile"
-                  id='profile'
+                  name='profilePicture'
+                  id='profilePicture'
+                  className='mb-2'
+                  onChange={(e) => {
+                    uploadImage(e);
+                  }}
                 />
-                <Overlay target={profileTarget.current} show={profileShowTooltip} placement="right">
+                <Overlay
+                  target={profileTarget.current}
+                  show={profileShowTooltip}
+                  placement="right"
+                >
                   {(props) => (
                     <Tooltip id="overlay-example" {...props}>
-                      Empty profile
+                      Empty Profile Picture
                     </Tooltip>
                   )}
                 </Overlay>
-              </InputGroup>
+              </Row>
+                {imageUpload !== '' && (
+                  <>
+                    <Row>
+                      <Col>
+                        <Figure className='borderLine center'>
+                          <Figure.Image
+                            width={200}
+                            height={200}
+                            src={imageUpload}
+                          />
+                        </Figure>
+                      </Col>
+                    </Row>
+                  </>
+                )}
             </Col>
           </Row>
 

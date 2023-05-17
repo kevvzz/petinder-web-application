@@ -15,14 +15,16 @@ import { ToastContainer,toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 function LguLostPet() {
     const userData = JSON.parse(localStorage.getItem('lguData'));
-    console.log(userData);
     const navigate = useNavigate()
     const [allPets, setAllPets] = useState([]);
-    const [showAddModal, setShowAddModal] = useState(false);
+    const [allLgu, setAllLgu] = useState([]);
     const [filteredPets, setFilteredPets] = useState([]);
-    function onClickAddPet() {
-        setShowAddModal(true);
-    }
+    const [showInfo, setShowInfo ] = useState({
+        breed:'',
+        type:'',
+        lgu:'',
+        gender: ''
+    });
 
     useEffect(() => {
         db.collection("Pets_Profile")
@@ -45,7 +47,7 @@ function LguLostPet() {
               const registerLocation = doc.data().P_RegisteredLocation;
               const status = doc.data().P_Status;
     
-              if (status === "Lost" && (registerLocation === userData.LGU_BranchName || lguAccount === userData.LGU_UserName)) {
+              if (status === "Lost") {
                 const promise = storage
                   .ref()
                   .child(`Pet/${id}`)
@@ -71,7 +73,23 @@ function LguLostPet() {
             console.log("Error getting documents: ", error);
           });
       }, []);
- 
+      
+      useEffect(() => {
+        db.collection("LGU_Profile")
+          .get()
+          .then((querySnapshot) => {
+            const branches = [];
+            querySnapshot.forEach((doc) => {
+              const branch = doc.data().LGU_BranchName;
+              branches.push(branch);
+            });
+      
+            setAllLgu(branches);
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
+      }, []);      
   function searchFilter(e) {
     let term = e.target.value.toLowerCase();
     if (term == "") {
@@ -79,13 +97,13 @@ function LguLostPet() {
     } else {
       setFilteredPets(
         allPets.filter(
-          (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
+          (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1 || pet.color.indexOf(term) !== -1
         )
       );
     }
   }
 
-function petFilter(filter) {
+    function petFilter(filter) {
    
         if (filter === "all") {
             setFilteredPets(allPets);
@@ -99,7 +117,59 @@ function petFilter(filter) {
         } else {
             toast.error("error pets");
         }
-}
+    }
+    const handleBreedChange = (event) => {
+        const { name, value } = event.target;
+        setShowInfo({ ...showInfo, [name]: value });
+      
+        if(name === "breed"){
+            filterPets(value, showInfo.gender, showInfo.type, showInfo.lgu);
+        }
+      };
+      
+      const handleGenderChange = (event) => {
+        const { name, value } = event.target;
+        setShowInfo({ ...showInfo, [name]: value });
+        
+        if(name === "gender"){
+            filterPets(showInfo.breed, value, showInfo.type, showInfo.lgu);
+        }
+      };
+      
+      const handleTypeChange = (event) => {
+        const { name, value } = event.target;
+        setShowInfo({ ...showInfo, [name]: value });
+
+        if(name === "type"){
+            filterPets(showInfo.breed, showInfo.gender, value, showInfo.lgu);
+        }
+      };
+      
+      const handleLguChange = (event) => {
+        const { name, value } = event.target;
+        setShowInfo({ ...showInfo, [name]: value });
+
+        if(name === "lgu"){
+            filterPets(showInfo.breed, showInfo.gender, showInfo.type, value);
+        }
+      };
+      
+      function filterPets(breedFilter, genderFilter, registerTypeFilter, lguFilter) {
+
+        console.log("Breed: " + breedFilter);
+        console.log("Gender: " + genderFilter);
+        console.log("Type: " + registerTypeFilter);
+        console.log("Lgu: " + lguFilter);
+        setFilteredPets(
+          allPets.filter((pet) =>
+            (breedFilter ? pet.breed === breedFilter : true) &&
+            (genderFilter ? pet.gender === genderFilter : true) &&
+            (registerTypeFilter ? pet.registerType === registerTypeFilter : true) &&
+            (lguFilter ? pet.registerLocation === lguFilter : true)
+          )
+        );
+      }
+      
 
   return (
     <div className='main-bg'>
@@ -132,7 +202,7 @@ function petFilter(filter) {
                                     autoComplete="off"
                                     aria-label="term"
                                     aria-describedby="term"
-                                    placeholder="Search Pets"
+                                    placeholder="Search Name, Id Number, and Color"
                                     name="term"
                                     id="term"
                                     required
@@ -174,6 +244,70 @@ function petFilter(filter) {
                                     </button>
                                 </div>
                             </a>
+                        </Row>
+                    </Col>
+                </Row>
+                <Row className='marginBottom'>
+                    <Col className='dropdown-padding'>
+                        <Row>
+                            <Form.Select
+                                name="breed"
+                                id="breed"
+                                value={showInfo.breed}
+                                onChange={handleBreedChange}
+                                >
+                                <option value="">Select Breed</option>
+                                {allPets.map((doc) => (
+                                    <option key={doc.id} value={doc.breed}>
+                                    {doc.breed}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Row>
+                    </Col>
+                    <Col className='dropdown-padding' xs={3}>
+                        <Row>
+                            <Form.Select
+                                name="type"
+                                id="type"
+                                value={showInfo.type}
+                                onChange={handleTypeChange}
+                                >
+                                <option value="">Select Register Type</option>
+                                <option value="Annual">Annual</option>
+                                <option value="Perpetual">Perpetual</option>
+                            </Form.Select>
+                        </Row>
+                    </Col>
+                    <Col className='dropdown-padding'>
+                        <Row>
+                            <Form.Select
+                                name="lgu"
+                                id="lgu"
+                                value={showInfo.lgu}
+                                onChange={handleLguChange}
+                                >
+                                <option value="">Select LGU</option>
+                                {allLgu.map((doc,index) => (
+                                    <option key={index} value={doc}>
+                                    {doc}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Row>
+                    </Col>
+                    <Col className='dropdown-padding'>
+                        <Row>
+                            <Form.Select
+                                name="gender"
+                                id="gender"
+                                value={showInfo.gender}
+                                onChange={handleGenderChange}
+                                >
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </Form.Select>
                         </Row>
                     </Col>
                 </Row>

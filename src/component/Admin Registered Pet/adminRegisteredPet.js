@@ -96,7 +96,7 @@ function AdminRegisteredPet() {
         } else {
           setFilteredPets(
             filteredPets.filter(
-              (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1
+              (pet) => pet.name.toLowerCase().indexOf(term) !== -1 || pet.id.indexOf(term) !== -1 || pet.color.indexOf(term) !== -1
             )
           );
         }
@@ -179,7 +179,7 @@ function AdminRegisteredPet() {
                                 autoComplete="off"
                                 aria-label="term"
                                 aria-describedby="term"
-                                placeholder="Search Pets"
+                                placeholder="Search Name, Id Number, and Color"
                                 name="term"
                                 id="term"
                                 required

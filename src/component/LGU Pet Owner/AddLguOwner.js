@@ -159,12 +159,6 @@ function AddLguOwner(props) {
               var user = userCredential.user;
               console.log(user);
 
-              const storageRef = storage.ref();
-              const fileRef = storageRef.child(`PetLover/${ownerAddProfile.email.toString()}`);
-              fileRef.put(selectedFile).then(() => {
-                console.log('File uploaded successfully');
-              });
-
               const birthdate = ownerAddProfile.birthdate;
               const birthTimestamp = firebase.firestore.Timestamp.fromDate(new Date(birthdate));
 
@@ -186,14 +180,20 @@ function AddLguOwner(props) {
                 })
                 .then(() => {
                   toast.success("Owner Profile Added Successfully!");
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 2000);
                   props.hidemodal1();
                 })
                 .catch((error) => {
                   toast.error(error);
                   console.log(error)
+                });
+
+                const storageRef = storage.ref();
+                const fileRef = storageRef.child(`PetLover/${ownerAddProfile.email.toString()}`);
+                fileRef.put(selectedFile).then(() => {
+                  console.log('File uploaded successfully');
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 2000);
                 });
             })
             .catch((error) => {

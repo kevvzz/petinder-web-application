@@ -211,12 +211,6 @@ function AddAdminPets(props) {
       (petData.petRegister !== "" && petData.petRegister !== null) &&
       (selectedFile !== null) &&
       (petData.petBreed !== "" && petData.petBreed !== null)) {
-
-      const storageRef = storage.ref();
-      const fileRef = storageRef.child(`Pet/${petData.id.toString()}`);
-      fileRef.put(selectedFile).then(() => {
-        console.log('File uploaded successfully');
-      });
       
       if (petData.petStatus === "Owned") {
         const docRef = db.collection("PetLovers_Profile").doc(petData.petOwner);
@@ -250,15 +244,21 @@ function AddAdminPets(props) {
         })
         .then(() => {
           toast.success("Pet Profile Added Successfully!");
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000); 
           props.hidemodal1();
           console.log("success");
         })
         .catch((error) => {
           toast.error("Error adding pet to Firestore: ");
           console.log(error)
+        });
+
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child(`Pet/${petData.id.toString()}`);
+        fileRef.put(selectedFile).then(() => {
+          console.log('File uploaded successfully');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000); 
         });
     }
 

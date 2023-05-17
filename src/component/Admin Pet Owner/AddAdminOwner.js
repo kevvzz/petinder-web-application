@@ -158,12 +158,6 @@ function AddAdminOwner(props) {
       (ownerAddProfile.gender !== "" && ownerAddProfile.gender !== null) &&
       (ownerAddProfile.location !== "" && ownerAddProfile.location !== null) &&
       (imageUpload !== null && imageUpload !== "")){
-
-      const storageRef = storage.ref();
-      const fileRef = storageRef.child(`PetLover/${ownerAddProfile.email.toString()}`);
-      fileRef.put(selectedFile).then(() => {
-        console.log('File uploaded successfully');
-      });
       
       const birthdate = ownerAddProfile.birthdate; 
       const birthTimestamp = firebase.firestore.Timestamp.fromDate(new Date(birthdate)); 
@@ -186,14 +180,19 @@ function AddAdminOwner(props) {
         })
         .then(() => {
           toast.success("Owner Profile Added Successfully!");
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000); 
           props.hidemodal1();
         })
         .catch((error) => {
           toast.error("Error adding owner to Firestore: ");
           console.log(error)
+        });
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child(`PetLover/${ownerAddProfile.email.toString()}`);
+        fileRef.put(selectedFile).then(() => {
+          console.log('File uploaded successfully');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000); 
         });
     }
 

@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import logoName from '../../Assets/petinder_logo.png';
 import './Navbar.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faUser, faPaw, faBullhorn, faSliders } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faUser, faPaw, faBullhorn, faSliders, faClipboard, faList} from '@fortawesome/free-solid-svg-icons';
 export function AdminNavbar() {
     const [showManageAdmin, setShowManageAdmin] = useState(false);
     const [showAdminSettings, setShowAdminSettings] = useState(false);
@@ -130,6 +130,16 @@ export function LguNavbar() {
         <NavLink style={{transition: "all .3s"}} to = "/lgu-announcement" className={({isActive}) => (isActive ? "navText navText-selected": "navText")}>
             <div>
                 <span style={{fontSize:"18px"}}><FontAwesomeIcon icon={faBullhorn}/>ANNOUNCEMENT</span>
+            </div>
+        </NavLink>
+        <NavLink style={{transition: "all .3s"}} to = "/lgu-request" className={({isActive}) => (isActive ? "navText navText-selected": "navText")}>
+            <div>
+                <span style={{fontSize:"18px"}}><FontAwesomeIcon icon={faClipboard}/>REQUEST TRANSFER</span>
+            </div>
+        </NavLink>
+        <NavLink style={{transition: "all .3s"}} to = "/lgu-transfer" className={({isActive}) => (isActive ? "navText navText-selected": "navText")}>
+            <div>
+                <span style={{fontSize:"18px"}}><FontAwesomeIcon icon={faList}/>NEW TRANSFER</span>
             </div>
         </NavLink>
         <div className='navText' onClick={(e) => setShowSettings(!showSettings)}>

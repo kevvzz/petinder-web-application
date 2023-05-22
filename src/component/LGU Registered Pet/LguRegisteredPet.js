@@ -51,7 +51,7 @@ function LguRegisteredPet() {
               const registerLocation = doc.data().P_RegisteredLocation;
               const status = doc.data().P_Status;
     
-              if ((registerLocation === userData.LGU_BranchName || lguAccount === userData.LGU_UserName) && status != "Lost") {
+              if (registerLocation === userData.LGU_BranchName && status != "Lost") {
                 const promise = storage
                   .ref()
                   .child(`Pet/${id}`)

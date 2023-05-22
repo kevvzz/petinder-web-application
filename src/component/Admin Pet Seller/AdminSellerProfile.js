@@ -6,9 +6,8 @@ import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import DeleteModal from '../Modal/DeleteModal';
-import DeleteAuthenticate from '../Modal/DeleteAuthenticate';
-import EditAdminSeller from './EditAdminSeller';
+// import DeleteAuthenticate from '../Modal/DeleteAuthenticate';
+// import EditAdminSeller from './EditAdminSeller';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
@@ -188,14 +187,14 @@ function AdminSellerProfile() {
                 </Col>
               </Row>
               <Row>
-                <Col className='marginTop' xs={3}>
+                {/* <Col className='marginTop' xs={3}>
                   <Row className="button-wrapper">
                     <Col className='center'><button type="button" className="add" onClick={onClickEditSeller}><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>UPDATE</button></Col>
                   </Row>
                   <Row className="button-wrapper">
                     <Col className='center'><button type="button" className="add" onClick={onClickDeletePet}><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>DELETE</button></Col>
                   </Row>
-                </Col>
+                </Col> */}
                 <Col className='mt-4'>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>Address:</Col>
@@ -261,7 +260,7 @@ function AdminSellerProfile() {
           
         </div>
 
-          <DeleteAuthenticate
+          {/* <DeleteAuthenticate
               name = {(sellerProfile.firstName+" "+sellerProfile.lastName)}
               show = {showDeleteModal}
               hide = {() => setShowDeleteModal(false)}
@@ -280,7 +279,7 @@ function AdminSellerProfile() {
             sellerProfile = {sellerProfile}
             data = {data}
             setSellerProfile = {setSellerProfile}
-        />
+        /> */}
       </div>
     </div>
   

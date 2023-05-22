@@ -6,8 +6,8 @@ import storage from '../../FirebaseStorage';
 import db from '../../Firebase.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import DeleteAuthenticate from '../Modal/DeleteAuthenticate';
-import EditAdminOwner from './EditAdminOwner';
+// import DeleteAuthenticate from '../Modal/DeleteAuthenticate';
+// import EditAdminOwner from './EditAdminOwner';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faFileCirclePlus} from '@fortawesome/free-solid-svg-icons';
@@ -187,14 +187,14 @@ function AddAdminPetOwner() {
                 </Col>
               </Row>
               <Row>
-                <Col className='marginTop' xs={3}>
+                {/* <Col className='marginTop' xs={3}>
                   <Row className="button-wrapper">
                     <Col className='center'><button type="button" className="add" onClick={onClickEditOwner}><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>UPDATE</button></Col>
                   </Row>
                   <Row className="button-wrapper">
                     <Col className='center'><button type="button" className="add" onClick={onClickDeletePet}><FontAwesomeIcon icon={faFileCirclePlus}/><span> </span>DELETE</button></Col>
                   </Row>
-                </Col>
+                </Col> */}
                 <Col className='mt-4'>
                   <Row className="button-wrapper mb-2">
                     <Col className='bold' xs={4}>Address:</Col>
@@ -259,7 +259,7 @@ function AddAdminPetOwner() {
           </Row>
           
         </div>
-        <DeleteAuthenticate
+        {/* <DeleteAuthenticate
             name = {(ownerProfile.firstName+" "+ownerProfile.lastName)}
             show = {showDeleteModal}
             hide = {() => setShowDeleteModal(false)}
@@ -278,7 +278,7 @@ function AddAdminPetOwner() {
             ownerProfile = {ownerProfile}
             data = {data}
             setOwnerProfile = {setOwnerProfile}
-        />
+        /> */}
       </div>
     </div>
   

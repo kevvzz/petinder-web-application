@@ -316,7 +316,7 @@ export default function AddLguUser(props) {
                   <Form.Label
                     ref={profileTarget}
                     className='h6'
-                  >Upload Image<span className='red'> *</span></Form.Label>
+                  >Upload Profile Picture<span className='red'> *</span></Form.Label>
                   <Form.Control
                     type="file"
                     name='profilePicture'

@@ -220,60 +220,6 @@ function EditLguPets(props) {
             </Modal.Header>
             <Modal.Body>
               <Row>
-                {/* <Col>
-                    <Form.Label ref={statusTarget} className="h6">Status<span className='red'> *</span></Form.Label>
-                    <InputGroup className='mb-3'>
-                      <Form.Select 
-                        aria-label="Default select example" 
-                        name="status" 
-                        id="status" 
-                        defaultValue={props.editPetProfile?props.editPetProfile.status:""} 
-                        onChange={(e) => handleEdit(e)}
-                      >
-                        <option value="">Select Status</option>
-                        <option value="Adoption">For Adoption</option>
-                        <option value="Sale">For Sale</option>
-                        <option value="Owned">For Ownership</option>
-                      </Form.Select>
-                      <Overlay target={statusTarget.current} show={statusShowTooltip} placement="right">
-                        {(props) => (
-                          <Tooltip id="overlay-example" {...props}>
-                            Empty Pet Name
-                          </Tooltip>
-                        )}
-                      </Overlay>
-                    </InputGroup>
-                  </Col>
-                  <Col>
-                    <Form.Label ref={ownerTarget} className="h6">Pet Owner<span className='red'> *</span></Form.Label>
-                    <InputGroup className='mb-3'>
-                      <Form.Select 
-                        aria-label="Default select example"
-                        name="owner" 
-                        id="owner" 
-                        defaultValue={props.editPetProfile?props.editPetProfile.owner:""} 
-                        onChange={(e) => handleEdit(e)}
-                        disabled={!props.editPetProfile.status}
-                      >
-                        <option value="">Select Owner</option>
-                        {owner.map((doc) => (
-                          <option key={doc.id} value={props.editPetProfile.status === "Owned" ? doc.PL_UserEmail : doc.PSA_UserEmail}>
-                            {props.editPetProfile.status === "Owned" ? `${doc.PL_FirstName} ${doc.PL_LastName}` : `${doc.PSA_FirstName} ${doc.PSA_LastName}`}
-                          </option>
-                          
-                        ))}
-                      </Form.Select>
-                      <Overlay target={ownerTarget.current} show={ownerShowTooltip} placement="right">
-                        {(props) => (
-                          <Tooltip id="overlay-example" {...props}>
-                            Empty Pet owner
-                          </Tooltip>
-                        )}
-                      </Overlay>
-                    </InputGroup>
-                  </Col> */}
-              </Row>
-              <Row>
                   <Col>
                     <Form.Label ref={nameTarget} className="h6">Pet Name<span className='red'> *</span></Form.Label>
                     <InputGroup className='mb-3'>
@@ -459,7 +405,7 @@ function EditLguPets(props) {
                   <Row>
                     <Form.Label
                       className='h6'
-                    >Upload Image<span className='red' ref={profileTarget}> *</span></Form.Label>
+                    >Upload Profile Picture<span className='red' ref={profileTarget}> *</span></Form.Label>
                     <Form.Control
                       type="file"
                       name='profilePicture'

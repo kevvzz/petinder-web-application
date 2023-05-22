@@ -107,6 +107,14 @@
   .red{
     color: red;
   }
+  .newSize{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding-bottom: 2vh;
+  }
+  .padBottom{
+    padding-bottom: 2vh;
+  }
   .rowCard{
     display: grid;
     grid-template-columns: repeat(4, 1fr);

@@ -423,7 +423,7 @@ function EditLguSeller(props) {
               <Row>
                 <Form.Label
                   className='h6'
-                >Upload Image<span className='red' ref={profileTarget}> *</span></Form.Label>
+                >Upload Profile Picture<span className='red' ref={profileTarget}> *</span></Form.Label>
                 <Form.Control
                   type="file"
                   name='profilePicture'

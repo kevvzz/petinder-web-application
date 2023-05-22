@@ -136,7 +136,7 @@ useEffect(() => {
                 <div className="row">
                     {filteredAnnounce.map((doc) => (
                       <div class='col-lg-4 col-md-6 mb-4' onClick={() => handleItemClick(doc)}>
-                        <div class="card-body">
+                        <div class="request-body">
                           <Card.Text>
                             <Row>
                               <Col>

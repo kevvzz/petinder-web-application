@@ -82,6 +82,7 @@ function ViewLguRequestTransfer(props) {
     
         db.collection("Request_Transfer")
           .where("Req_Sender", "==", request.sender)
+          .where("Req_Status", "==", "Pending")
           .get()
           .then((querySnapshot) => {
             const updatePromises = querySnapshot.docs.map((doc) =>
@@ -92,6 +93,7 @@ function ViewLguRequestTransfer(props) {
             return Promise.all(updatePromises);
           })
           .then(() => {
+            notify(request.type, request.sender,"Your Request For Transfer has been APPROVED by the LGU");
             toast.success("AGREED REQUEST!!");
             setTimeout(() => {
               window.location.reload();
@@ -110,6 +112,7 @@ function ViewLguRequestTransfer(props) {
       if (request.status === "Pending") {
         db.collection("Request_Transfer")
           .where("Req_Sender", "==", request.sender)
+          .where("Req_Status", "==", "Pending")
           .get()
           .then((querySnapshot) => {
             const updatePromises = querySnapshot.docs.map((doc) =>
@@ -120,6 +123,7 @@ function ViewLguRequestTransfer(props) {
             return Promise.all(updatePromises);
           })
           .then(() => {
+            notify(request.type, request.sender,"Your Request For Transfer has been DECLINED by the LGU");
             toast.success("DECLINE REQUEST!!");
             setTimeout(() => {
               window.location.reload();
@@ -133,6 +137,51 @@ function ViewLguRequestTransfer(props) {
       }
     }
     
+    const notify = (Reqtype, ReqSenderEmail,Message) => {
+      let collection = "";
+      let email = "";
+      if(Reqtype === "PetLover"){
+        collection = "PetLovers_Profile";
+        email = "PL_UserEmail";
+      } else{
+        collection = "PetSellerorAdoption_Profile";
+        email = "PSA_UserEmail";
+      }
+      const db = firebase.firestore();
+      const devicesCollection = db.collection(collection).where(email, "==", ReqSenderEmail);
+  
+      // Send message to all devices
+      devicesCollection.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const deviceToken = doc.data().RegistrationToken;
+  
+          console.log('Registration token:', deviceToken);
+  
+          // Send the notification
+          fetch('https://fcm.googleapis.com/fcm/send', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'key=AAAAp19aKsI:APA91bHq0SsZEdxRkUqsy5GHubUld5HFz95vioS7VOvusbbbLvrpDuKuk0bDawVA_8sGyPQTt5PZ-fCxPtH_TKsPiaD1EtiBoivS72kKZ2FHpZFZ_9E6ljcQlYxzRxlV5hBmXO5X2urs'
+            },
+            body: JSON.stringify({
+              notification: {
+                title: "Notification for Request Transfer!!",
+                body: Message
+              },
+              to: deviceToken
+            })
+          }).then((response) => {
+            console.log('Notification sent:', response);
+          }).catch((error) => {
+            console.error('Error sending notification:', error);
+          });
+  
+        })
+  
+      });
+    }
+
    return (
      <div>
        <ToastContainer />

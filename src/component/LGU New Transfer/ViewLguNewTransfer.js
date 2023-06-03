@@ -12,9 +12,9 @@ import 'firebase/messaging';
 import { ToastContainer, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faCheck, faXmark} from '@fortawesome/free-solid-svg-icons';
-import './LguRequestTransfer.css';
+import './LguNewTransfer.css';
 
-function ViewLguRequestTransfer(props) {
+function ViewLguNewTransfer(props) {
     const request = props.transferAccount?props.transferAccount:""; 
     const [allOwner, setAllOwner] = useState([]);
      function convertTimestamp(stamp) {
@@ -271,18 +271,6 @@ function ViewLguRequestTransfer(props) {
                   />
                 </InputGroup>
               </Col>
-              {/* <Col className='center'>
-                <button type="button" className="announceAgree">
-                  <FontAwesomeIcon icon={faCheck} /><span> </span>
-                    APPROVED
-                </button>
-              </Col>
-              <Col className='center'>
-                <button type="button" className="announceDelete">
-                  <FontAwesomeIcon icon={faXmark} /><span> </span>
-                    DECLINE
-                </button>
-              </Col> */}
             </Row>
           </Modal.Body>
        </Modal>
@@ -290,4 +278,4 @@ function ViewLguRequestTransfer(props) {
    )
 }
 
-export default ViewLguRequestTransfer
+export default ViewLguNewTransfer

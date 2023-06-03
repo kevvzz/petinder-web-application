@@ -1,0 +1,111 @@
+/* ANNOUNCEMENT */
+
+.announcement-header h2{
+    color: rgb(254 80 2);
+    font-size: 8vh;
+    font-weight: bolder;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.line{
+    border-bottom: 10px solid rgb(255 141 1);
+    margin-top: 5px;
+    width: 100%;
+}
+.announcement-col{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.announcement-button button:hover{
+    background-color: black;
+    color: white;
+}
+.announcement-button button{
+    margin-left: 32vw;
+	border:none;
+	cursor:pointer;
+	width:250px;
+	height:50px;
+    border: black solid;
+	border-radius:5px;
+	background:#ff8333;
+	color:#fff;
+	font-weight:700;
+	transition:.5s;
+}
+.lguLogo{
+    height: auto;
+    width: 8vw;
+}
+/* Customer */
+.customer{
+    display: flex;
+    align-items: center;
+    margin-bottom: 3vh;
+}
+
+.customer-table{
+    display: flex;
+}
+.customer-info{
+    margin-top: 4vh;
+}
+.announceDelete{
+    border-radius: 10%;
+    background-color: red;
+    border: none;
+    font-weight: bolder;
+    color: white;
+    padding: 2%;
+}
+.announceAgree{
+    border-radius: 10%;
+    background-color: green;
+    border: none;
+    font-weight: bolder;
+    color: white;
+    padding: 2%;
+}
+.request-body{
+    margin-top: 1rem;
+    padding: 1rem;
+    border-style: solid;
+    background: #fff;
+}
+.request-body:hover{
+    background-color: rgb(255 141 1);
+    cursor: pointer;
+}
+.request-body table{
+    border-collapse: collapse;
+}
+
+.request-body td{
+    width: 25%;
+}
+.request-body td:nth-child(3){
+    text-align: center;
+}
+
+.history-body{
+    margin-top: 1rem;
+    padding: 1rem;
+    border-style: solid;
+    background: orange;
+}
+.history-body table{
+    border-collapse: collapse;
+}
+
+.history-body td{
+    width: 25%;
+}
+.history-body td:nth-child(3){
+    text-align: center;
+}
+.txtColor{
+    color: white;
+    font-weight: bolder;
+}

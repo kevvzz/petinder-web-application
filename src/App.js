@@ -1,4 +1,5 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import MainPage from './Pages/Main Page/main.js';
 import LguLogin from './component/Login/LGU_Login/lguLogin.js';
 import AdminLogin from './component/Login/ADMIN_Login/adminLogin.js';
